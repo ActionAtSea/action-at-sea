@@ -6,9 +6,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-/*
- * Handles logic for the ship's cannons.
- */
+/**
+* Handles logic for the ship's cannons.
+*/
 public class CannonController : MonoBehaviour, IAimable
 {
     public bool controllable = false;
@@ -21,16 +21,13 @@ public class CannonController : MonoBehaviour, IAimable
     private float currentReloadTimeRight = 0.0f;
     private float currentReloadTimeLeft = 0.0f;
 
-
     private Vector3 startPosition;                  //Contains the parent's position for use in aiming calculations.
     private Vector3 mousePositionWorld;             //Contains the mousePosition in world space.
     private Cannon[] cannonList;                    //Array of all the cannons on the ship.
     private List<Cannon> rightSideCannons;
     private List<Cannon> leftSideCannons;
-
     private bool fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
-
-    // Use this for initialization
+	
     void Start()
     {
         currentReloadTimeRight = reloadTime;
@@ -51,8 +48,6 @@ public class CannonController : MonoBehaviour, IAimable
                 leftSideCannons.Add(c);
             }
         }
-        //Debug.Log(rightSideCannons.Count);
-        //Debug.Log(leftSideCannons.Count);
     }
 
     public void AimWeapon(Vector3 fireDirection)
@@ -64,11 +59,10 @@ public class CannonController : MonoBehaviour, IAimable
     {
         fireGuns = true;
     }
-
-    // Update is called once per frame
+	
     void Update()
     {
-        if(!GameInformation.IsPVP() || (GameInformation.IsPVP() && controllable))
+        if(controllable)
         {
             UpdateMouseCursorAngle();
             FireCannons();
@@ -79,8 +73,6 @@ public class CannonController : MonoBehaviour, IAimable
     {
         startPosition = transform.parent.position;
 
-        //TODO: remove old  mouse input
-        //Vector3 mouseDelta = Camera.main.ScreenToWorldPoint(Input.mousePosition) - startPosition;
         Vector3 mouseDelta = mousePositionWorld - startPosition;
 
         if (mouseDelta.sqrMagnitude < 0.1f)
@@ -108,10 +100,6 @@ public class CannonController : MonoBehaviour, IAimable
         currentReloadTimeRight += Time.deltaTime;
         currentReloadTimeLeft += Time.deltaTime;
 
-        //Debug.Log(currentReloadTime);
-
-        //TODO: remove this old if statement
-        //if (Input.GetMouseButtonDown(0))
         if(fireGuns)
         {
             //Left side Cannon reload time

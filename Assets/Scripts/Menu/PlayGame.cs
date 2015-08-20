@@ -7,13 +7,13 @@ using System.Collections;
 
 public class PlayGame : MonoBehaviour 
 {
-    private SharedSoundHandler menuMusicHandler;
+	private SoundManager menuMusicHandler;
     private FadeGame fadeGameHandler;
     private bool playGameRequest = false;
     
     void Start () 
     {
-        menuMusicHandler = FindObjectOfType<SharedSoundHandler> ();
+		menuMusicHandler = FindObjectOfType<SoundManager> ();
         if(!menuMusicHandler)
         {
             Debug.Log("MenuMusicHandler could not be found in scene.");
@@ -25,7 +25,6 @@ public class PlayGame : MonoBehaviour
             Debug.Log("FadeGame could not be found in scene.");
         }
 
-        GameInformation.SetPVP(false);
         GameInformation.SetPlayerName("unnamed");
     }
 
@@ -36,9 +35,11 @@ public class PlayGame : MonoBehaviour
             GameInformation.SetPlayerName(GameObject.FindGameObjectWithTag(
                 "PlayerNameText").GetComponent<UnityEngine.UI.Text>().text);
 
-            menuMusicHandler.PlayButtonClick ();
-            menuMusicHandler.StopPlayingMenu();
-            menuMusicHandler.StartPlayingGame();
+			menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+			menuMusicHandler.StopMusic(SoundManager.MusicID.MENU_TRACK);
+			menuMusicHandler.PlayMusic(SoundManager.MusicID.GAME_TRACK);
+			menuMusicHandler.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
+
             fadeGameHandler.FadeIn();
             playGameRequest = true;
         }
@@ -46,8 +47,8 @@ public class PlayGame : MonoBehaviour
 
     public void HowToPlayButton ()
     {
-        menuMusicHandler.PlayButtonClick();
-        Application.LoadLevel(2);
+		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+		Application.LoadLevel((int)SceneID.MOVE_AND_FIRE);
     }
 
     public void QuitButton ()
@@ -61,7 +62,7 @@ public class PlayGame : MonoBehaviour
         {
             playGameRequest = false;
             fadeGameHandler.FadeOut();
-            Application.LoadLevel(GameInformation.IsPVP() ? 6 : 1);
+			Application.LoadLevel((int)SceneID.GAME);
         }
     }
 }

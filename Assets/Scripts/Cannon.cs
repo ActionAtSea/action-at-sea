@@ -18,47 +18,36 @@ public class Cannon : MonoBehaviour
     private BulletFireScript fireScript;
     private CannonController controller;
     public PhotonView photonView = null;
-
-    // Use this for initialization
+	
     void Start()
     {
         fireScript = GetComponent<BulletFireScript>();
         controller = GetComponentInParent<CannonController>();
         swivelRangeDegrees = controller.SwivelRangeDegrees;
     }
-
-    // Update is called once per frame
+	
     void Update()
     {
-        if(GameInformation.IsPVP())
-        {
-            if(controller.controllable)
-            {
-                firePosition = fireScript.FirePosition();
-                fireRotation = fireScript.FireRotation();
-                UpdateRotation();
-            }
-            
-            if(shouldFire)
-            {
-                FireGun();
-                shouldFire = false;
-            }
-        }
-        else
+        if(controller.controllable)
         {
             firePosition = fireScript.FirePosition();
             fireRotation = fireScript.FireRotation();
             UpdateRotation();
         }
+        
+        if(shouldFire)
+        {
+            FireGun();
+            shouldFire = false;
+        }
     }
 
-    /*TODO:
-     * Set the cannon's firing angle to their limits closest to the mouse cursor
-     * angle when the mouse cursor move from the one side of the ship to the other
-     * and is outside of the cannon tracking range.
-     */
-
+    /*
+    * TODO:
+    * Set the cannon's firing angle to their limits closest to the mouse cursor
+    * angle when the mouse cursor move from the one side of the ship to the other
+    * and is outside of the cannon tracking range.
+    */
     private void UpdateRotation()
     {
         cursorAngle = controller.MouseCursorAngle;
@@ -105,14 +94,7 @@ public class Cannon : MonoBehaviour
 
     public void FireGun()
     {
-        if(GameInformation.IsPVP())
-        {
-            fireScript.Fire(transform.parent.transform.parent.GetComponent<NetworkedPlayer>().PlayerID, firePosition, fireRotation);
-        }
-        else
-        {
-            fireScript.Fire(transform.parent.transform.parent.tag, firePosition, fireRotation);
-        }
+        fireScript.Fire(transform.parent.transform.parent.GetComponent<NetworkedPlayer>().PlayerID, firePosition, fireRotation);
         hasFired = controller.controllable;
     }
 }

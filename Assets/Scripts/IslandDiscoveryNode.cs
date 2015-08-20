@@ -9,11 +9,11 @@ public class IslandDiscoveryNode : MonoBehaviour
 {
     public Sprite altSprite;
     private bool discovered = false;
-    private SoundEffectHandler soundEffects;
+	private SoundManager soundEffects;
 	
     void Start()
     {
-        soundEffects = FindObjectOfType<SoundEffectHandler>();
+		soundEffects = FindObjectOfType<SoundManager>();
         if (!soundEffects)
         {
             Debug.Log("SoundEffectHandler could not be found in scene.");
@@ -28,7 +28,7 @@ public class IslandDiscoveryNode : MonoBehaviour
 
             if(!discovered)
             {
-                soundEffects.PlayOnIslandNode();
+                soundEffects.PlaySound(SoundManager.SoundID.ISLAND_NODE);
             }
             discovered = true;
         }

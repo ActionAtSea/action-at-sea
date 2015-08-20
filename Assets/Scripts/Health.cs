@@ -29,7 +29,7 @@ public class Health : MonoBehaviour, IDamageable
     {
         if(!HasHealthBar())
         {
-            if((!GameInformation.IsPVP() || (controllable && GameInformation.IsPVP())))
+            if(controllable)
             {
                 var player = GameObject.FindWithTag("Player");
                 if(player != null)
@@ -37,7 +37,7 @@ public class Health : MonoBehaviour, IDamageable
                     healthBar = GameObject.FindWithTag("PlayerHealth");
                 }
             }
-            else if(!controllable && GameInformation.IsPVP())
+            else
             {
                 var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
                 healthBar = floatingHealthBar.FindChild("HealthBar").gameObject;
@@ -123,7 +123,7 @@ public class Health : MonoBehaviour, IDamageable
 
     public void InflictDamage(float damage)
     {
-        if(!GameInformation.IsPVP() || (controllable && GameInformation.IsPVP()))
+        if(controllable)
         {
             healthLevel -= damage;
         }
@@ -131,7 +131,7 @@ public class Health : MonoBehaviour, IDamageable
 
     public void RepairDamage(float repairAmount)
     {
-        if(!GameInformation.IsPVP() || (controllable && GameInformation.IsPVP()))
+        if(controllable)
         {
             healthLevel += repairAmount;
         }

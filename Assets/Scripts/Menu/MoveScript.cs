@@ -8,11 +8,11 @@ using System.Collections;
 public class MoveScript : MonoBehaviour 
 {
 
-    private SharedSoundHandler menuMusicHandler;
+	private SoundManager menuMusicHandler;
     
     void Start () 
     {
-        menuMusicHandler = FindObjectOfType<SharedSoundHandler> ();
+		menuMusicHandler = FindObjectOfType<SoundManager> ();
         if(!menuMusicHandler)
         {
             Debug.Log("MenuMusicHandler could not be found in scene.");
@@ -21,12 +21,12 @@ public class MoveScript : MonoBehaviour
 
     public void BackToMenuButton()
     {
-        menuMusicHandler.PlayButtonClick();
-        Application.LoadLevel (0);
+		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+		Application.LoadLevel ((int)SceneID.MENU);
     }
     public void NextButton ()
     {
-        menuMusicHandler.PlayButtonClick ();
-        Application.LoadLevel (3);
+		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+		Application.LoadLevel ((int)SceneID.DISCOVER_LAND);
     }
 }

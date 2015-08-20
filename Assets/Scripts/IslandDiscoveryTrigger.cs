@@ -13,11 +13,11 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     private bool islandDiscovered = false;
     private bool scoreAwarded = false;
     private PlayerScore scoreController = null;
-    private SoundEffectHandler soundEffects;
+	private SoundManager soundEffects;
 	
     void Start()
     {
-        soundEffects = FindObjectOfType<SoundEffectHandler>();
+		soundEffects = FindObjectOfType<SoundManager>();
         if (!soundEffects)
         {
             Debug.Log("SoundEffectHandler could not be found in scene.");
@@ -64,7 +64,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         {
 			GetComponent<SpriteRenderer>().enabled = true;
             scoreController.AddScore(scoreValue);
-            soundEffects.PlayOnIslandFind();
+			soundEffects.PlaySound(SoundManager.SoundID.ISLAND_FIND);
             scoreAwarded = true;
         }
     }

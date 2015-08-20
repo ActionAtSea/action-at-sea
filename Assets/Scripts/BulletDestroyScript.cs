@@ -5,7 +5,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class BulletDestoryScript : MonoBehaviour 
+public class BulletDestroyScript : MonoBehaviour 
 {
     void OnEnable()
     {

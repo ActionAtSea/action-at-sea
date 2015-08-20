@@ -7,20 +7,13 @@ using System.Collections;
 
 public class Crosshair : MonoBehaviour
 {
-
     private Vector3 mousePos;
     public bool hideCursor = false;
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
+	
     void Update()
     {
         HideCursor();
+
         //Attached object (the crosshair) matches the position of the mouse
         mousePos = Input.mousePosition;
         mousePos.z = 10.0f;

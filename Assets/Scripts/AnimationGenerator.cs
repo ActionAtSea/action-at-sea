@@ -19,43 +19,29 @@ public class AnimationGenerator : MonoBehaviour
     private List<GameObject> explosions = new List<GameObject> ();
     private List<GameObject> hits = new List<GameObject> ();
     private List<GameObject> splashes = new List<GameObject> ();
-    private SoundEffectHandler soundEffects;
-
-    bool IsCloseToPlayer(Vector3 position)
-    {
-        if(GameInformation.IsPVP())
-        {
-            var player = GameObject.FindGameObjectWithTag("Player");
-            if(player != null)
-            {
-                const float maxDistance = 30.0f;
-                return (player.transform.position - position).magnitude <= maxDistance;
-            }
-        }
-        return true;
-    }
+    private SoundManager soundManager;
     
     public void PlaceExplosion(Vector3 position)
     {
-        if(IsCloseToPlayer(position) && StartAnimation(position, explosions))
+        if(Utilities.IsCloseToPlayer(position) && StartAnimation(position, explosions))
         {
-            soundEffects.PlayOnExplode();
+			soundManager.PlaySound(SoundManager.SoundID.EXPLODE);
         }
     }
 
     public void PlaceHit(Vector3 position)
     {
-        if(IsCloseToPlayer(position) && StartAnimation(position, hits))
+		if(Utilities.IsCloseToPlayer(position) && StartAnimation(position, hits))
         {
-            soundEffects.PlayOnHit();
+			soundManager.PlaySound(SoundManager.SoundID.HIT);
         }
     }
 
     public void PlaceSplash(Vector3 position)
     {
-        if(IsCloseToPlayer(position) && StartAnimation(position, splashes))
+		if(Utilities.IsCloseToPlayer(position) && StartAnimation(position, splashes))
         {
-            soundEffects.PlayOnSplash();
+			soundManager.PlaySound(SoundManager.SoundID.SPLASH);
         }
     }
 
@@ -76,12 +62,7 @@ public class AnimationGenerator : MonoBehaviour
     
     void Start () 
     {
-        soundEffects = FindObjectOfType<SoundEffectHandler>();
-        if (!soundEffects)
-        {
-            Debug.Log("SoundEffectHandler could not be found in scene.");
-        }
-
+		soundManager = SoundManager.Get();
         CreateAnimations (explosionCount, explosions, explosionAnimation, "Explosion");
         CreateAnimations (hitCount, hits, hitAnimation, "Hit");
         CreateAnimations (splashCount, splashes, splashAnimation, "Splash");

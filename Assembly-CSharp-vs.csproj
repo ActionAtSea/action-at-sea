@@ -107,7 +107,7 @@
      <Compile Include="Assets\Photon Unity Networking\UtilityScripts\TimeKeeper.cs" />
      <Compile Include="Assets\Scripts\AnimationGenerator.cs" />
      <Compile Include="Assets\Scripts\Bullet.cs" />
-     <Compile Include="Assets\Scripts\BulletDestoryScript.cs" />
+     <Compile Include="Assets\Scripts\BulletDestroyScript.cs" />
      <Compile Include="Assets\Scripts\BulletFireScript.cs" />
      <Compile Include="Assets\Scripts\BulletImpact.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
@@ -115,11 +115,7 @@
      <Compile Include="Assets\Scripts\CannonController.cs" />
      <Compile Include="Assets\Scripts\Common.cs" />
      <Compile Include="Assets\Scripts\Crosshair.cs" />
-     <Compile Include="Assets\Scripts\Enemy.cs" />
-     <Compile Include="Assets\Scripts\EnemyAiming.cs" />
-     <Compile Include="Assets\Scripts\EnemyDeath.cs" />
      <Compile Include="Assets\Scripts\EnemyHealth.cs" />
-     <Compile Include="Assets\Scripts\EnemyMovement.cs" />
      <Compile Include="Assets\Scripts\FadeGame.cs" />
      <Compile Include="Assets\Scripts\FillScoreBoard.cs" />
      <Compile Include="Assets\Scripts\FogOfWar.cs" />
@@ -151,8 +147,7 @@
      <Compile Include="Assets\Scripts\RandomMatchmaker.cs" />
      <Compile Include="Assets\Scripts\RepairDock.cs" />
      <Compile Include="Assets\Scripts\ScoreTextUpdate.cs" />
-     <Compile Include="Assets\Scripts\SharedSoundHandler.cs" />
-     <Compile Include="Assets\Scripts\SoundEffectHandler.cs" />
+     <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\TileCaustics.cs" />
      <None Include="Assets\Plugins\Photon3Unity3D.xml" />
      <None Include="Assets\Plugins\release_history.txt" />

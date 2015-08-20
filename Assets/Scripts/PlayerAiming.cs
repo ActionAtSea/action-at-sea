@@ -21,7 +21,7 @@ public class PlayerAiming : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GameInformation.IsPVP() && !controllable)
+        if(!controllable)
         {
             return;
         }

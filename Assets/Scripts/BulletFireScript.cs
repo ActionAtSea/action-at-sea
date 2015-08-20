@@ -12,20 +12,11 @@ public class BulletFireScript : MonoBehaviour
     public float bulletSpeed = 100.0f;
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector2 firingDirection;
-	private SoundEffectHandler soundEffects;
+	private SoundManager soundManager = null;
 
     void Start()
     {
-		soundEffects = FindObjectOfType<SoundEffectHandler>();
-		if (!soundEffects)
-		{
-			Debug.Log("SoundEffectHandler could not be found in scene.");
-		}
-    }
-
-    void Update()
-    {
-
+		soundManager = SoundManager.Get();
     }
 
 	public Vector3 FirePosition()
@@ -53,19 +44,12 @@ public class BulletFireScript : MonoBehaviour
         obj.SetActive(true);
 		obj.GetComponent<Bullet>().owner = owner;
 
-        //Vector2 bulletVelocity = transform.TransformDirection(Vector3.right * 100.0f);
-
-        //Vector2 bulletVelocity = (firingDirection.normalized * bulletSpeed);
         Vector2 bulletVelocity = transform.right * bulletSpeed;
-
-        //bulletVelocity += body2D.velocity;
-        //Debug.Log(body2D.velocity);
-        //obj.GetComponent<Rigidbody2D>().velocity = body2D.velocity;
         obj.GetComponent<Rigidbody2D>().AddForce(bulletVelocity);
 
-		if(soundEffects.IsCloseToPlayer(obj.transform.position))
+		if(Utilities.IsCloseToPlayer(obj.transform.position))
 		{
-			soundEffects.PlayOnFire();
+			soundManager.PlaySound(SoundManager.SoundID.FIRE);
 		}
     }
 }
