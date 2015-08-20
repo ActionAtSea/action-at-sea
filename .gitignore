@@ -1,0 +1,9 @@
+*.opensdf
+*.sdf
+*.suo
+*.db
+*.exe
+*.pdb
+*.ilk
+*.vcxproj.user
+Library/
