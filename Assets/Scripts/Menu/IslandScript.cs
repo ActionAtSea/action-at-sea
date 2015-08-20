@@ -1,32 +1,37 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - IslandScript.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
-public class IslandScript : MonoBehaviour {
+public class IslandScript : MonoBehaviour 
+{
 
-	private SharedSoundHandler menuMusicHandler;
-	
-	void Start () 
-	{
-		menuMusicHandler = FindObjectOfType<SharedSoundHandler>();
-		if(!menuMusicHandler)
-		{
-			Debug.Log("MenuMusicHandler could not be found in scene.");
-		}		
-	}
+    private SharedSoundHandler menuMusicHandler;
+    
+    void Start () 
+    {
+        menuMusicHandler = FindObjectOfType<SharedSoundHandler>();
+        if(!menuMusicHandler)
+        {
+            Debug.Log("MenuMusicHandler could not be found in scene.");
+        }        
+    }
 
-	public void NextButton ()
-	{
-		menuMusicHandler.PlayButtonClick ();
-		Application.LoadLevel (4);
-	}
-	public void BackButton ()
-	{
-		menuMusicHandler.PlayButtonClick ();
-		Application.LoadLevel (2);
-	}
-	public void BackToMenuButton ()
-	{
-		menuMusicHandler.PlayButtonClick ();
-		Application.LoadLevel (0);
-	}
+    public void NextButton ()
+    {
+        menuMusicHandler.PlayButtonClick ();
+        Application.LoadLevel (4);
+    }
+    public void BackButton ()
+    {
+        menuMusicHandler.PlayButtonClick ();
+        Application.LoadLevel (2);
+    }
+    public void BackToMenuButton ()
+    {
+        menuMusicHandler.PlayButtonClick ();
+        Application.LoadLevel (0);
+    }
 }

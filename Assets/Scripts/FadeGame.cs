@@ -1,78 +1,106 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - FadeGame.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
+/**
+* Cross-scene fading to black
+* Note: Must be on top of all other sprites but not on GUI components
+*/
 public class FadeGame : MonoBehaviour 
 {
-	private static GameObject fadeSprite = null;
-	private static bool shouldFadeIn = false;
-	private static bool shouldFadeOut = false;
-	private bool firstTick = true;
-
+	static GameObject sm_fadeSprite = null;            // Image to fade in/out
+	static FadeState sm_fadeState = FadeState.NO_FADE; // State of fading
+	static float sm_alpha = 0.0f;                      // Alpha for the fade sprite
+	float m_fadeSpeed = 0.75f;                         // Speed for fading
+	
+	/**
+    * Initialises the fader
+    */
 	void Start () 
 	{
-		if(fadeSprite == null)
+		if(sm_fadeSprite == null)
 		{
-			fadeSprite = Instantiate(this.gameObject);
-			GetFadeSprite().enabled = true;
-			GetFadeSprite().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-			DontDestroyOnLoad(fadeSprite);
-			fadeSprite.transform.SetParent (this.transform);
-			shouldFadeOut = true;
+			sm_fadeSprite = Instantiate(this.gameObject);
+			sm_fadeSprite.transform.SetParent (this.transform);
+			GetSprite().enabled = true;
+			GetSprite().color = new Color(0.0f, 0.0f, 0.0f, sm_alpha);
 		}
-	}
-
-	UnityEngine.UI.Image GetFadeSprite()
-	{
-		return fadeSprite.GetComponent<UnityEngine.UI.Image> ();
-	}
-
-	public void FadeIn()
-	{
-		shouldFadeOut = false;
-		shouldFadeIn = true;
-	}
-
-	public void FadeOut()
-	{
-		shouldFadeIn = false;
-		shouldFadeOut = true;
-	}
-
-	public bool IsFullyFadedIn()
-	{
-		return GetFadeSprite().color.a >= 1.0f;
 	}
 	
+	/**
+    * Returns the UI image for the fader
+    */
+	UnityEngine.UI.Image GetSprite()
+	{
+		return sm_fadeSprite.GetComponent<UnityEngine.UI.Image> ();
+	}
+	
+	/**
+    * Fades into black
+    */
+	public void FadeIn()
+	{
+		sm_fadeState = FadeState.FADE_IN;
+	}
+	
+	/**
+    * Fades out of black
+    */
+	public void FadeOut()
+	{
+		sm_fadeState = FadeState.FADE_OUT;
+	}
+	
+	/**
+    * Whether the scene is fully visible
+    */
+	public bool IsFadedOut()
+	{
+		return GetSprite().color.a <= 0.0f;
+	}
+	
+	/**
+    * Whether the scene is fully occluded
+    */
+	public bool IsFadedIn()
+	{
+		return GetSprite().color.a >= 1.0f;
+	}
+	
+	/**
+    * Fades the sprite in/out
+    */
 	void Update () 
 	{
-		if(fadeSprite != null && (shouldFadeIn || shouldFadeOut) && !firstTick)
+		if(sm_fadeState != FadeState.NO_FADE)
 		{
-			const float fadeSpeed = 0.75f;
-			float alpha = GetFadeSprite().color.a;
-
-			if(shouldFadeOut)
+			bool fadeIn = sm_fadeState == FadeState.FADE_IN;
+			
+			sm_alpha += Time.deltaTime * (fadeIn ? m_fadeSpeed : -m_fadeSpeed);
+			sm_alpha = Mathf.Min(Mathf.Max(0.0f, sm_alpha), 1.0f);
+			
+			if((fadeIn && sm_alpha >= 1.0f) || (!fadeIn && sm_alpha <= 0.0f))
 			{
-				alpha -= Time.deltaTime * fadeSpeed;
-				if(alpha <= 0.0f)
-				{
-					alpha = 0.0f;
-					shouldFadeOut = false;
-				}
+				sm_fadeState = FadeState.NO_FADE;
 			}
-
-			if(shouldFadeIn)
-			{
-				alpha += Time.deltaTime * fadeSpeed;
-				if(alpha >= 1.0f)
-				{
-					alpha = 1.0f;
-					shouldFadeIn = false;
-				} 
-			}
-
-			GetFadeSprite().color = new Color(1.0f, 1.0f, 1.0f, alpha);
+			
+			GetSprite().color = new Color(0.0f, 0.0f, 0.0f, sm_alpha);
 		}
-
-		firstTick = false;
+	}
+	
+	/**
+    * Gets the FadeGame from the scene
+    */
+	public static FadeGame Get()
+	{
+		var obj = FindObjectOfType<FadeGame>();
+		if (!obj)
+		{
+			Debug.LogError("FadeGame could not be found in scene");
+		}
+		return obj;
 	}
 }

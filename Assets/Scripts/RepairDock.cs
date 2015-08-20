@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - RepairDock.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
 public class RepairDock : MonoBehaviour
@@ -19,32 +23,32 @@ public class RepairDock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(player == null)
-		{
-			player = GameObject.FindWithTag("Player");
-			if(player != null)
-			{
-				playerHealth = player.GetComponent<Health>();
-				if (!playerHealth)
-				{
-					Debug.LogError("Repair Dock could not find Player Health.");
-				}
-				
-				score = player.GetComponent<PlayerScore>();
-				if (!score)
-				{
-					Debug.LogError("Repair Dock could not find PlayerScore.");
-				}
-			}
-		}
+        if(player == null)
+        {
+            player = GameObject.FindWithTag("Player");
+            if(player != null)
+            {
+                playerHealth = player.GetComponent<Health>();
+                if (!playerHealth)
+                {
+                    Debug.LogError("Repair Dock could not find Player Health.");
+                }
+                
+                score = player.GetComponent<PlayerScore>();
+                if (!score)
+                {
+                    Debug.LogError("Repair Dock could not find PlayerScore.");
+                }
+            }
+        }
     }
 
     void OnTriggerStay2D(Collider2D other)
     {
-		if(player == null)
-		{
-			return;
-		}
+        if(player == null)
+        {
+            return;
+        }
 
         if (other.gameObject.tag == "Player")
         {

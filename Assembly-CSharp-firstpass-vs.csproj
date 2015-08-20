@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{DA374C1E-5C38-BB8C-1953-48AC8DF567C3}</ProjectGuid>
+	<ProjectGuid>{8092DD06-3E0A-E6EA-665D-7279BFB76DA4}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -67,10 +67,10 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Photon3Unity3D">
- <HintPath>C:/Users/Public/Documents/Unity Projects/Action At Sea/Assets/Plugins/Photon3Unity3D.dll</HintPath>
+ <HintPath>D:/Projects/ActionAtSea/Assets/Plugins/Photon3Unity3D.dll</HintPath>
  </Reference>
  <Reference Include="websocket-sharp">
- <HintPath>C:/Users/Public/Documents/Unity Projects/Action At Sea/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
+ <HintPath>D:/Projects/ActionAtSea/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iossupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

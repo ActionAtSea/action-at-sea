@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - EnemyDeath.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
 /*
@@ -9,7 +13,7 @@ public class EnemyDeath : MonoBehaviour, IKillable
 {
     private Health parentHealth;
     private PlayerScore scoreController;
-	private AnimationGenerator animationGenerator;
+    private AnimationGenerator animationGenerator;
 
     //TODO: move score values elsewhere.
     private float enemyScoreValue = 100.0f;
@@ -20,28 +24,28 @@ public class EnemyDeath : MonoBehaviour, IKillable
     {
         parentHealth = GetComponentInParent<Health>();
         
-		animationGenerator = FindObjectOfType<AnimationGenerator> ();
-		if(!animationGenerator)
-		{
-			Debug.Log("ExplosionGenerator could not be found in scene.");
-		}
+        animationGenerator = FindObjectOfType<AnimationGenerator> ();
+        if(!animationGenerator)
+        {
+            Debug.Log("ExplosionGenerator could not be found in scene.");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-		if(scoreController == null)
-		{
-			scoreController = FindObjectOfType<PlayerScore>();
-			return;
-		}
+        if(scoreController == null)
+        {
+            scoreController = FindObjectOfType<PlayerScore>();
+            return;
+        }
 
         CheckIfAlive();
     }
 
     public void Death()
     {
-		animationGenerator.PlaceExplosion (transform.position);
+        animationGenerator.PlaceExplosion (transform.position);
         scoreController.AddScore(enemyScoreValue);
         Destroy(transform.parent.gameObject);
     }

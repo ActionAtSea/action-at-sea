@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - TreasureScript.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
-public class TreasureScript : MonoBehaviour {
+public class TreasureScript : MonoBehaviour 
+{
 
     private SharedSoundHandler menuMusicHandler;
 
@@ -13,19 +18,19 @@ public class TreasureScript : MonoBehaviour {
             Debug.Log("MenuMusicHandler could not be found in scene.");
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-	public void BackButton ()
-	{
+    
+    // Update is called once per frame
+    void Update () {
+    
+    }
+    public void BackButton ()
+    {
         menuMusicHandler.PlayButtonClick();
-		Application.LoadLevel (5);
-	}
-	public void BackToMenuButton ()
-	{
+        Application.LoadLevel (5);
+    }
+    public void BackToMenuButton ()
+    {
         menuMusicHandler.PlayButtonClick();
-		Application.LoadLevel (0);
-	}
+        Application.LoadLevel (0);
+    }
 }

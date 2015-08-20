@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - GetPlayerName.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
-public class GetPlayerName : MonoBehaviour {
-	
-	void Start () 
-	{
-		GetComponent<UnityEngine.UI.Text>().text = 
-			GameInformation.GetPlayerName();
-	}
+public class GetPlayerName : MonoBehaviour
+{
+    
+    void Start () 
+    {
+        GetComponent<UnityEngine.UI.Text>().text = 
+            GameInformation.GetPlayerName();
+    }
 }

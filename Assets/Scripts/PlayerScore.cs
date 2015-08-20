@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - PlayerScore.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 /*
@@ -47,8 +51,8 @@ public class PlayerScore : MonoBehaviour
         get { return score; }
     }
 
-	public float RoundedScore
-	{
-		get { return roundedScore; }
-	}
+    public float RoundedScore
+    {
+        get { return roundedScore; }
+    }
 }

@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - PlayerAiming.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerAiming : MonoBehaviour
 {
-	public bool controllable = false;
+    public bool controllable = false;
     private Vector3 mousePos;
     private CannonController controller;
 
@@ -17,10 +21,10 @@ public class PlayerAiming : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(GameInformation.IsPVP() && !controllable)
-		{
-			return;
-		}
+        if(GameInformation.IsPVP() && !controllable)
+        {
+            return;
+        }
 
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         controller.AimWeapon(mousePos);

@@ -1,52 +1,51 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - IslandDiscoveryTrigger.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
     public float scoreValue = 20.0f;
-    
 
     private IslandDiscoveryNode[] nodes;
     private bool islandDiscovered = false;
     private bool scoreAwarded = false;
-	private PlayerScore scoreController = null;
-    private SpriteRenderer renderer;
-	private SoundEffectHandler soundEffects;
-
-    // Use this for initialization
+    private PlayerScore scoreController = null;
+    private SoundEffectHandler soundEffects;
+	
     void Start()
     {
-		soundEffects = FindObjectOfType<SoundEffectHandler>();
-		if (!soundEffects)
-		{
-			Debug.Log("SoundEffectHandler could not be found in scene.");
-		}
+        soundEffects = FindObjectOfType<SoundEffectHandler>();
+        if (!soundEffects)
+        {
+            Debug.Log("SoundEffectHandler could not be found in scene.");
+        }
 
         nodes = GetComponentsInChildren<IslandDiscoveryNode>();
-        renderer = GetComponent<SpriteRenderer>();
-        renderer.enabled = false;
+		GetComponent<SpriteRenderer>().enabled = false;
     }
-
-    // Update is called once per frame
+	
     void Update()
     {
-		if(scoreController == null)
-		{
-			var player = GameObject.FindGameObjectWithTag("Player");
-			if(player != null)
-			{
-				scoreController = player.GetComponent<PlayerScore>();
-			}
-			return;
-		}
+        if(scoreController == null)
+        {
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if(player != null)
+            {
+                scoreController = player.GetComponent<PlayerScore>();
+            }
+            return;
+        }
 
         CheckIfDiscovered();
     }
 
-	public bool IsDiscovered()
-	{
-		return renderer.enabled;
-	}
+    public bool IsDiscovered()
+    {
+		return GetComponent<SpriteRenderer>().enabled;
+    }
 
     void CheckIfDiscovered()
     {
@@ -63,10 +62,9 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         }
         else if(!scoreAwarded)
         {
-            //Debug.Log("Island Discovered");
-            renderer.enabled = true;
+			GetComponent<SpriteRenderer>().enabled = true;
             scoreController.AddScore(scoreValue);
-			soundEffects.PlayOnIslandFind();
+            soundEffects.PlayOnIslandFind();
             scoreAwarded = true;
         }
     }

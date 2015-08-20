@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - Crosshair.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 
 public class Crosshair : MonoBehaviour
@@ -34,9 +38,9 @@ public class Crosshair : MonoBehaviour
         }
     }
 
-	public void ShowCursor()
-	{
-		Cursor.visible = true;
-		hideCursor = false;
-	}
+    public void ShowCursor()
+    {
+        Cursor.visible = true;
+        hideCursor = false;
+    }
 }

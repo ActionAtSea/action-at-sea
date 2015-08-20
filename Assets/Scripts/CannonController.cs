@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿////////////////////////////////////////////////////////////////////////////////////////
+// Action At Sea - CannonController.cs
+////////////////////////////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,10 +11,7 @@ using System.Collections.Generic;
  */
 public class CannonController : MonoBehaviour, IAimable
 {
-    //TODO: Actually implement reload times.
-    //TODO: Implement independent reload times for both sides of the ship.
-
-	public bool controllable = false;
+    public bool controllable = false;
     private float mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
 
     private float swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
@@ -67,11 +68,11 @@ public class CannonController : MonoBehaviour, IAimable
     // Update is called once per frame
     void Update()
     {
-		if(!GameInformation.IsPVP() || (GameInformation.IsPVP() && controllable))
-		{
-        	UpdateMouseCursorAngle();
-        	FireCannons();
-		}
+        if(!GameInformation.IsPVP() || (GameInformation.IsPVP() && controllable))
+        {
+            UpdateMouseCursorAngle();
+            FireCannons();
+        }
     }
 
     private void UpdateMouseCursorAngle()

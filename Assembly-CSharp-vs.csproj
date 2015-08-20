@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{12503205-A989-6314-A210-5B7143556C94}</ProjectGuid>
+	<ProjectGuid>{F4D6CC2F-700D-6BF3-6A88-D19A0F3A9A6B}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -110,17 +110,16 @@
      <Compile Include="Assets\Scripts\BulletDestoryScript.cs" />
      <Compile Include="Assets\Scripts\BulletFireScript.cs" />
      <Compile Include="Assets\Scripts\BulletImpact.cs" />
-     <Compile Include="Assets\Scripts\BulletManager.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Cannon.cs" />
      <Compile Include="Assets\Scripts\CannonController.cs" />
+     <Compile Include="Assets\Scripts\Common.cs" />
      <Compile Include="Assets\Scripts\Crosshair.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemyAiming.cs" />
      <Compile Include="Assets\Scripts\EnemyDeath.cs" />
      <Compile Include="Assets\Scripts\EnemyHealth.cs" />
      <Compile Include="Assets\Scripts\EnemyMovement.cs" />
-     <Compile Include="Assets\Scripts\ExplosionGenerator.cs" />
      <Compile Include="Assets\Scripts\FadeGame.cs" />
      <Compile Include="Assets\Scripts\FillScoreBoard.cs" />
      <Compile Include="Assets\Scripts\FogOfWar.cs" />
@@ -139,7 +138,6 @@
      <Compile Include="Assets\Scripts\Menu\PlayGame.cs" />
      <Compile Include="Assets\Scripts\Menu\TreasureScript.cs" />
      <Compile Include="Assets\Scripts\Menu\UpgradingDock.cs" />
-     <Compile Include="Assets\Scripts\MenuMusicHandler.cs" />
      <Compile Include="Assets\Scripts\Minimap.cs" />
      <Compile Include="Assets\Scripts\MinimapPlacement.cs" />
      <Compile Include="Assets\Scripts\NetworkedPlayer.cs" />
@@ -166,10 +164,10 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Photon3Unity3D">
- <HintPath>C:/Users/Public/Documents/Unity Projects/Action At Sea/Assets/Plugins/Photon3Unity3D.dll</HintPath>
+ <HintPath>D:/Projects/ActionAtSea/Assets/Plugins/Photon3Unity3D.dll</HintPath>
  </Reference>
  <Reference Include="websocket-sharp">
- <HintPath>C:/Users/Public/Documents/Unity Projects/Action At Sea/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
+ <HintPath>D:/Projects/ActionAtSea/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iossupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -177,7 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
-      <Project>{DA374C1E-5C38-BB8C-1953-48AC8DF567C3}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
+      <Project>{8092DD06-3E0A-E6EA-665D-7279BFB76DA4}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
