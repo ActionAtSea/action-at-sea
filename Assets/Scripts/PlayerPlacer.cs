@@ -12,6 +12,17 @@ public class PlayerPlacer : MonoBehaviour
     private float gameboardOffset = 20.0f;
     private float playerRadious = 5.0f;
 
+    static public bool IsCloseToPlayer(Vector3 position)
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if(player != null)
+        {
+            const float maxDistance = 30.0f;
+            return (player.transform.position - position).magnitude <= maxDistance;
+        }
+        return false;
+    }
+
     public Vector2 GetNewPosition()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("EnemyPlayer");

@@ -9,7 +9,7 @@ public class Crosshair : MonoBehaviour
 {
     private Vector3 mousePos;
     public bool hideCursor = false;
-	
+    
     void Update()
     {
         HideCursor();

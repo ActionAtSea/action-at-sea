@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public float movementVelocity = 10.0f;
     public float turningAmount = 50.0f;
     public Vector2 maxVelocity = new Vector2(10.0f, 10.0f);
-	private Rigidbody2D body2D = null;
+    private Rigidbody2D body2D = null;
 
     void Start () 
     {

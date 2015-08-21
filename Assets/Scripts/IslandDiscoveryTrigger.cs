@@ -13,20 +13,20 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     private bool islandDiscovered = false;
     private bool scoreAwarded = false;
     private PlayerScore scoreController = null;
-	private SoundManager soundEffects;
-	
+    private SoundManager soundEffects;
+    
     void Start()
     {
-		soundEffects = FindObjectOfType<SoundManager>();
+        soundEffects = FindObjectOfType<SoundManager>();
         if (!soundEffects)
         {
             Debug.Log("SoundEffectHandler could not be found in scene.");
         }
 
         nodes = GetComponentsInChildren<IslandDiscoveryNode>();
-		GetComponent<SpriteRenderer>().enabled = false;
+        GetComponent<SpriteRenderer>().enabled = false;
     }
-	
+    
     void Update()
     {
         if(scoreController == null)
@@ -44,7 +44,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
 
     public bool IsDiscovered()
     {
-		return GetComponent<SpriteRenderer>().enabled;
+        return GetComponent<SpriteRenderer>().enabled;
     }
 
     void CheckIfDiscovered()
@@ -62,9 +62,9 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         }
         else if(!scoreAwarded)
         {
-			GetComponent<SpriteRenderer>().enabled = true;
+            GetComponent<SpriteRenderer>().enabled = true;
             scoreController.AddScore(scoreValue);
-			soundEffects.PlaySound(SoundManager.SoundID.ISLAND_FIND);
+            soundEffects.PlaySound(SoundManager.SoundID.ISLAND_FIND);
             scoreAwarded = true;
         }
     }

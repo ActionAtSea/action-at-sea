@@ -12,11 +12,11 @@ public class PlayerMovement : MonoBehaviour
     public float forwardSpeed = 10.0f;
     public float rotationSpeed = 1.0f;
     private Vector3 forwardForce = new Vector3();
-	private SoundManager soundEffects;
+    private SoundManager soundEffects;
 
     void Start()
     {
-		soundEffects = FindObjectOfType<SoundManager>();
+        soundEffects = FindObjectOfType<SoundManager>();
         if (!soundEffects)
         {
             Debug.Log("SoundEffectHandler could not be found in scene.");
@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")
         {
-            if(Utilities.IsCloseToPlayer(other.transform.position))
+            if(PlayerPlacer.IsCloseToPlayer(other.transform.position))
             {
                 soundEffects.PlaySound(SoundManager.SoundID.RAM);
             }

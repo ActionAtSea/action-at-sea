@@ -19,14 +19,14 @@ public class GameOverScript : MonoBehaviour
     private bool hasLostGame = false;
     private List<GameObject> enemies = new List<GameObject> ();
     private List<GameObject> islands = new List<GameObject>();
-	private SoundManager sharedSoundHandler;
+    private SoundManager sharedSoundHandler;
     private FadeGame fadeGameHandler;
     private bool toMenuRequest = false;
     private bool toPlayRequest = false;
 
     void Start () 
     {
-		sharedSoundHandler = FindObjectOfType<SoundManager> ();
+        sharedSoundHandler = FindObjectOfType<SoundManager> ();
         if(sharedSoundHandler == null)
         {
             Debug.LogError("Could not find shared sound handler");
@@ -60,10 +60,10 @@ public class GameOverScript : MonoBehaviour
     {
         if (isGameOver && !toPlayRequest)
         {
-			sharedSoundHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-			sharedSoundHandler.StopMusic(SoundManager.MusicID.MENU_TRACK);
-			sharedSoundHandler.PlayMusic(SoundManager.MusicID.GAME_TRACK);
-			sharedSoundHandler.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
+            sharedSoundHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+            sharedSoundHandler.StopMusic(SoundManager.MusicID.MENU_TRACK);
+            sharedSoundHandler.PlayMusic(SoundManager.MusicID.GAME_TRACK);
+            sharedSoundHandler.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
             fadeGameHandler.FadeIn();
             toPlayRequest = true;
         }
@@ -74,8 +74,8 @@ public class GameOverScript : MonoBehaviour
         if (isGameOver && !toMenuRequest)
         {
             FindObjectOfType<Crosshair>().ShowCursor();
-			sharedSoundHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-			sharedSoundHandler.PlayMusic(SoundManager.MusicID.MENU_TRACK);
+            sharedSoundHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+            sharedSoundHandler.PlayMusic(SoundManager.MusicID.MENU_TRACK);
             fadeGameHandler.FadeIn();
             toMenuRequest = true;
         }
@@ -104,7 +104,7 @@ public class GameOverScript : MonoBehaviour
                 fadeGameHandler.FadeOut();
 
                 PhotonNetwork.Disconnect();
-				Application.LoadLevel (toMenuRequest ? (int)SceneID.MENU : (int)SceneID.GAME);
+                Application.LoadLevel (toMenuRequest ? (int)SceneID.MENU : (int)SceneID.GAME);
             }
         }
         else if (!isGameOver) 
@@ -125,9 +125,9 @@ public class GameOverScript : MonoBehaviour
         
             if (isGameOver) 
             {
-				sharedSoundHandler.StopMusic(SoundManager.MusicID.GAME_TRACK);
-				sharedSoundHandler.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
-				sharedSoundHandler.PlayMusic(SoundManager.MusicID.MENU_TRACK);
+                sharedSoundHandler.StopMusic(SoundManager.MusicID.GAME_TRACK);
+                sharedSoundHandler.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
+                sharedSoundHandler.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
                 player.GetComponent<Health>().SetHealthLevel(0.0f);
 

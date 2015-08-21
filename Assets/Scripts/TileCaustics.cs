@@ -11,8 +11,8 @@ public class TileCaustics : MonoBehaviour
     public float animationSpeed = 0.5f;
     public int tileAmountX = 20;
     public int tileAmountY = 20;
-	public GameObject causticFrames = null;
-	public GameObject baseFrame = null;
+    public GameObject causticFrames = null;
+    public GameObject baseFrame = null;
 
     private float timePassed = 0.0f;
     private List<GameObject> tiles = new List<GameObject>();

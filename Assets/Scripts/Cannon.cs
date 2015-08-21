@@ -18,14 +18,14 @@ public class Cannon : MonoBehaviour
     private BulletFireScript fireScript;
     private CannonController controller;
     public PhotonView photonView = null;
-	
+    
     void Start()
     {
         fireScript = GetComponent<BulletFireScript>();
         controller = GetComponentInParent<CannonController>();
         swivelRangeDegrees = controller.SwivelRangeDegrees;
     }
-	
+    
     void Update()
     {
         if(controller.controllable)

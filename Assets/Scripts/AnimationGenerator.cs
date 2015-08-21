@@ -8,107 +8,153 @@ using System.Collections.Generic;
 
 public class AnimationGenerator : MonoBehaviour 
 {
+    /**
+    * Game objects passed in
+    */
     public GameObject explosionAnimation;
     public GameObject hitAnimation;
     public GameObject splashAnimation;
 
-    public int explosionCount = 5;
-    public int hitCount = 20;
-    public int splashCount = 20;
-
-    private List<GameObject> explosions = new List<GameObject> ();
-    private List<GameObject> hits = new List<GameObject> ();
-    private List<GameObject> splashes = new List<GameObject> ();
-    private SoundManager soundManager;
+    /**
+    * Available animations to play 
+    */
+    public enum ID
+    {
+        EXPLOSION,
+        HIT,
+        SPLASH,
+        MAX_ANIMATIONS
+    };
     
-    public void PlaceExplosion(Vector3 position)
+    /**
+    * Information for an animation
+    */
+    class AnimationData
     {
-        if(Utilities.IsCloseToPlayer(position) && StartAnimation(position, explosions))
-        {
-			soundManager.PlaySound(SoundManager.SoundID.EXPLODE);
-        }
-    }
+        public SoundManager.SoundID effect;   // Sound effect to play when it starts
+        public List<GameObject> instances;    // Container of all animation instances
+    };
 
-    public void PlaceHit(Vector3 position)
-    {
-		if(Utilities.IsCloseToPlayer(position) && StartAnimation(position, hits))
-        {
-			soundManager.PlaySound(SoundManager.SoundID.HIT);
-        }
-    }
+    private List<AnimationData> m_animations; // Container of all animations
+    private SoundManager m_soundManager;      // Allows playing of sound effects
 
-    public void PlaceSplash(Vector3 position)
-    {
-		if(Utilities.IsCloseToPlayer(position) && StartAnimation(position, splashes))
-        {
-			soundManager.PlaySound(SoundManager.SoundID.SPLASH);
-        }
-    }
-
-    bool StartAnimation(Vector3 position, List<GameObject> animations)
-    {
-        for(int i = 0; i < animations.Count; ++i)
-        {
-            if(!animations[i].activeSelf)
-            {
-                animations[i].SetActive(true);
-                animations[i].transform.position = position;
-                animations[i].GetComponent<Animator>().enabled = true;
-                return true;
-            }
-        }
-        return false;
-    }
-    
+    /**
+    * Initialises the animation manager
+    */
     void Start () 
     {
-		soundManager = SoundManager.Get();
-        CreateAnimations (explosionCount, explosions, explosionAnimation, "Explosion");
-        CreateAnimations (hitCount, hits, hitAnimation, "Hit");
-        CreateAnimations (splashCount, splashes, splashAnimation, "Splash");
+        m_animations = new List<AnimationData>();
+
+        for(int i = 0; i < (int)ID.MAX_ANIMATIONS; ++i)
+        {
+            m_animations.Add(new AnimationData());
+        }
+
+        CreateAnimations(5, ID.EXPLOSION, SoundManager.SoundID.EXPLODE, explosionAnimation, "Explosion");
+        CreateAnimations(20, ID.HIT, SoundManager.SoundID.HIT, hitAnimation, "Hit");
+        CreateAnimations(20, ID.SPLASH, SoundManager.SoundID.SPLASH, splashAnimation, "Splash");
     }
 
-    void CreateAnimations(int count, List<GameObject> animations, GameObject animation, string name)
+    /**
+    * Creates the instances for an animation
+    */
+    void CreateAnimations(int count, 
+                          ID id,
+                          SoundManager.SoundID effectID,
+                          GameObject animation, 
+                          string name)
     {
+        int index = (int)id;
+        m_animations[index].instances = new List<GameObject>();
+
         for(int i = 0; i < count; ++i)
         {
-            if(i == 0)
-            {
-                animations.Add (animation);
-            }
-            else
-            {
-                animations.Add((GameObject)(Instantiate(animation)));
-            }
+            m_animations[index].effect = effectID;
+            m_animations[index].instances.Add (
+                i == 0 ? animation : (GameObject)(Instantiate(animation)));
             
-            animations[i].name = name + i.ToString();
-            animations[i].transform.parent = this.transform;
-            
-            animations[i].SetActive(false);
-            animations[i].GetComponent<Animator>().enabled = false;
+            m_animations[index].instances[i].name = name + i.ToString();
+            m_animations[index].instances[i].transform.parent = this.transform;
+            m_animations[index].instances[i].SetActive(false);
+            m_animations[index].instances[i].GetComponent<Animator>().enabled = false;
         }
     }
 
+    /**
+    * Updates the animations that are playing
+    */
     void UpdateAnimations(List<GameObject> animations)
     {
         for(int i = 0; i < animations.Count; ++i)
         {
             if(animations[i].activeSelf)
             {
-                if(animations[i].GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Exit"))
+                var animator = animations[i].GetComponent<Animator>();
+                if(animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Exit"))
                 {
                     animations[i].SetActive(false);
-                    animations[i].GetComponent<Animator>().CrossFade("Base Layer.Entry", 0.0f);
-                    animations[i].GetComponent<Animator>().enabled = false;
+                    animator.CrossFade("Base Layer.Entry", 0.0f);
+                    animator.enabled = false;
                 }
             }
         }    
     }
 
+    /**
+    * Updates the animations that are playing
+    */
     void Update () 
     {
-        UpdateAnimations (explosions);
-        UpdateAnimations (hits);
-        UpdateAnimations (splashes);
+        foreach(var animation in m_animations)
+        {
+            UpdateAnimations(animation.instances);
+        }
+    }
+
+    /**
+    * Plays an animation at the given position
+    * @note y position not used
+    */    
+    public void PlayAnimation(Vector3 position, ID id)
+    {
+        if(PlayerPlacer.IsCloseToPlayer(position) && StartAnimation(position, id))
+        {
+            SoundManager.Get().PlaySound(m_animations[(int)id].effect);
+        }
+    }
+
+    /**
+    * Starts an animation playing if possible
+    * * @note y position not used
+    */   
+    bool StartAnimation(Vector3 position, ID id)
+    {
+        int index = (int)id;
+        var instances = m_animations[index].instances;
+
+        for(int i = 0; i < instances.Count; ++i)
+        {
+            if(!instances[i].activeSelf)
+            {
+                instances[i].SetActive(true);
+                instances[i].transform.position = position;
+                instances[i].GetComponent<Animator>().enabled = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+    * Gets the AnimationGenerator from the scene
+    */
+    public static AnimationGenerator Get()
+    {
+        var obj = FindObjectOfType<AnimationGenerator>();
+        if (!obj)
+        {
+            Debug.LogError("AnimationGenerator could not be found in scene");
+        }
+        return obj;
     }
 }

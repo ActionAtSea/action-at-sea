@@ -9,23 +9,83 @@ using System.Collections;
 public class Bullet : MonoBehaviour 
 {
     public float initialVelocity = 15.0f;
-    public string owner = "";
-    private float damage = 10.0f;    //Percentage of health removed when damage is inflicted.
-	Rigidbody2D body2D = null;
-	
+    private string m_owner = "";            // Player that shot the bullet
+    private float m_damage = 10.0f;         // Percentage of health removed when damage is inflicted.
+
+    /**
+    * Initialises the bullet
+    */
     void Start () 
     {
-        body2D = GetComponent<Rigidbody2D>(); 
-        body2D.velocity = transform.forward*initialVelocity; 
-    }
-    
-    void Update() 
-    {
-        body2D.AddForce(transform.forward*initialVelocity);
+        GetComponent<Rigidbody2D>().velocity = transform.forward * initialVelocity; 
     }
 
+    /**
+    * Adds movement to the bullet
+    */
+    void Update() 
+    {
+        GetComponent<Rigidbody2D>().AddForce(transform.forward * initialVelocity);
+    }
+
+    /**
+    * Returns the amount of damange this bullet does
+    */
     public float Damage
     {
-        get { return damage; }
+        get { return m_damage; }
+    }
+
+    /**
+    * Get/Set the player that shot the bullet
+    */
+    public string Owner
+    {
+        get { return m_owner; }
+        set { m_owner = value; }
+    }
+
+    /**
+    * Called on bullet enable
+    */
+    void OnEnable()
+    {
+        Invoke("DestroyOnSplash", 2f);
+    }
+
+    /**
+    * Called on bullet disable
+    */
+    void OnDisable()
+    {
+        CancelInvoke();
+    }
+
+    /**
+    * Destroys the bullet on impact
+    */
+    public void DestroyOnImpact()
+    {
+        if(gameObject.activeSelf)
+        {
+            gameObject.SetActive(false);
+
+            AnimationGenerator.Get().PlayAnimation(
+                gameObject.transform.position, AnimationGenerator.ID.HIT);
+        }
+    }
+
+    /**
+    * Destroys the bullet on splash
+    */
+    public void DestroyOnSplash()
+    {
+        if(gameObject.activeSelf)
+        {
+            gameObject.SetActive(false);
+
+            AnimationGenerator.Get().PlayAnimation(
+                gameObject.transform.position, AnimationGenerator.ID.SPLASH);
+        }
     }
 }

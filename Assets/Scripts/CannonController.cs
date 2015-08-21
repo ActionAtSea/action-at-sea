@@ -27,7 +27,7 @@ public class CannonController : MonoBehaviour, IAimable
     private List<Cannon> rightSideCannons;
     private List<Cannon> leftSideCannons;
     private bool fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
-	
+    
     void Start()
     {
         currentReloadTimeRight = reloadTime;
@@ -59,7 +59,7 @@ public class CannonController : MonoBehaviour, IAimable
     {
         fireGuns = true;
     }
-	
+    
     void Update()
     {
         if(controllable)

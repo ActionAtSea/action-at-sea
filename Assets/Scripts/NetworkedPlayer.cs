@@ -44,7 +44,9 @@ public class NetworkedPlayer : MonoBehaviour
                     GetComponent<Health>().SetHealthLevel(HealthLevel);
                     if(!GetComponent<Health>().IsAlive)
                     {
-                        FindObjectOfType<AnimationGenerator>().PlaceExplosion(transform.position);
+                        AnimationGenerator.Get().PlayAnimation(
+                            transform.position, AnimationGenerator.ID.EXPLOSION);
+
                         Destroy(transform.parent.gameObject);
                     }
                 }

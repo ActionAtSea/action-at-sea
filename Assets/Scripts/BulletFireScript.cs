@@ -12,22 +12,22 @@ public class BulletFireScript : MonoBehaviour
     public float bulletSpeed = 100.0f;
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector2 firingDirection;
-	private SoundManager soundManager = null;
+    private SoundManager soundManager = null;
 
     void Start()
     {
-		soundManager = SoundManager.Get();
+        soundManager = SoundManager.Get();
     }
 
-	public Vector3 FirePosition()
-	{
-		return transform.position;
-	}
+    public Vector3 FirePosition()
+    {
+        return transform.position;
+    }
 
-	public Quaternion FireRotation()
-	{
-		return transform.rotation;
-	}
+    public Quaternion FireRotation()
+    {
+        return transform.rotation;
+    }
 
     public void Fire(string owner, Vector3 firePosition, Quaternion fireRotation)
     {
@@ -38,18 +38,18 @@ public class BulletFireScript : MonoBehaviour
             return;
         }
 
-		obj.transform.position = firePosition;
-		obj.transform.rotation = fireRotation;
+        obj.transform.position = firePosition;
+        obj.transform.rotation = fireRotation;
         obj.transform.Translate(SpawnOffset);
         obj.SetActive(true);
-		obj.GetComponent<Bullet>().owner = owner;
+        obj.GetComponent<Bullet>().Owner = owner;
 
         Vector2 bulletVelocity = transform.right * bulletSpeed;
         obj.GetComponent<Rigidbody2D>().AddForce(bulletVelocity);
 
-		if(Utilities.IsCloseToPlayer(obj.transform.position))
-		{
-			soundManager.PlaySound(SoundManager.SoundID.FIRE);
-		}
+        if(PlayerPlacer.IsCloseToPlayer(obj.transform.position))
+        {
+            soundManager.PlaySound(SoundManager.SoundID.FIRE);
+        }
     }
 }

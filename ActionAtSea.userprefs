@@ -1,14 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NewObjectPooler.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerMovement.cs">
     <Files>
-      <File FileName="Assets\Scripts\RandomMatchmaker.cs" Line="17" Column="51" />
-      <File FileName="Assets\Scripts\Menu\PlayGame.cs" Line="27" Column="3" />
-      <File FileName="Assets\Scripts\Health.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SoundManager.cs" Line="217" Column="1" />
-      <File FileName="Assets\Scripts\GameInformation.cs" Line="29" Column="4" />
-      <File FileName="Assets\Scripts\NewObjectPooler.cs" Line="31" Column="22" />
+      <File FileName="Assets\Scripts\ParticleSpray.cs" Line="22" Column="6" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="12" Column="38" />
+      <File FileName="Assets\Scripts\AnimationGenerator.cs" Line="128" Column="23" />
+      <File FileName="Assets\Scripts\BulletFireScript.cs" Line="50" Column="24" />
+      <File FileName="Assets\Scripts\BulletImpact.cs" Line="22" Column="10" />
+      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="47" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
