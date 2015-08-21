@@ -9,57 +9,69 @@ using System.Collections.Generic;
 /**
 * Handles logic for the ship's cannons.
 */
-public class CannonController : MonoBehaviour, IAimable
+public class CannonController : MonoBehaviour
 {
     public bool controllable = false;
-    private float mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
+    private float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
 
-    private float swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
-    private float aimingRangeDegrees = 90.0f;       //The range within which which side's cannons can be fired is determined.
+    private float m_swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
+    private float m_aimingRangeDegrees = 90.0f;       //The range within which which side's cannons can be fired is determined.
 
-    private float reloadTime = 2.0f;                //The time in seconds that it takes to reload.
-    private float currentReloadTimeRight = 0.0f;
-    private float currentReloadTimeLeft = 0.0f;
+    private float m_reloadTime = 2.0f;                //The time in seconds that it takes to reload.
+    private float m_currentReloadTimeRight = 0.0f;
+    private float m_currentReloadTimeLeft = 0.0f;
 
-    private Vector3 startPosition;                  //Contains the parent's position for use in aiming calculations.
-    private Vector3 mousePositionWorld;             //Contains the mousePosition in world space.
-    private Cannon[] cannonList;                    //Array of all the cannons on the ship.
-    private List<Cannon> rightSideCannons;
-    private List<Cannon> leftSideCannons;
-    private bool fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
-    
+    private Vector3 m_startPosition;                  //Contains the parent's position for use in aiming calculations.
+    private Vector3 m_mousePositionWorld;             //Contains the mousePosition in world space.
+    private Cannon[] m_cannonList;                    //Array of all the cannons on the ship.
+    private List<Cannon> m_rightSideCannons;
+    private List<Cannon> m_leftSideCannons;
+    private bool m_fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
+
+    /**
+    * Initialises the script
+    */    
     void Start()
     {
-        currentReloadTimeRight = reloadTime;
-        currentReloadTimeLeft = reloadTime;
+        m_currentReloadTimeRight = m_reloadTime;
+        m_currentReloadTimeLeft = m_reloadTime;
 
-        cannonList = GetComponentsInChildren<Cannon>();
-        rightSideCannons = new List<Cannon>(4);
-        leftSideCannons = new List<Cannon>(4);
+        m_cannonList = GetComponentsInChildren<Cannon>();
+        m_rightSideCannons = new List<Cannon>(4);
+        m_leftSideCannons = new List<Cannon>(4);
 
-        foreach (Cannon c in cannonList)
+        foreach (Cannon c in m_cannonList)
         {
             if (c.rightSideCannon)
             {
-                rightSideCannons.Add(c);
+                m_rightSideCannons.Add(c);
             }
             else
             {
-                leftSideCannons.Add(c);
+                m_leftSideCannons.Add(c);
             }
         }
     }
 
+    /**
+    * Aims the cannons at the direction
+    */  
     public void AimWeapon(Vector3 fireDirection)
     {
-        mousePositionWorld = fireDirection;
+        m_mousePositionWorld = fireDirection;
     }
 
+    /**
+    * Fires the cannons
+    */  
     public void FireWeapon()
     {
-        fireGuns = true;
+        m_fireGuns = true;
     }
-    
+
+    /**
+    * Updates the cannones
+    */  
     void Update()
     {
         if(controllable)
@@ -69,11 +81,14 @@ public class CannonController : MonoBehaviour, IAimable
         }
     }
 
+    /**
+    * Updates the cannons according to the mouse position
+    */  
     private void UpdateMouseCursorAngle()
     {
-        startPosition = transform.parent.position;
+        m_startPosition = transform.parent.position;
 
-        Vector3 mouseDelta = mousePositionWorld - startPosition;
+        Vector3 mouseDelta = m_mousePositionWorld - m_startPosition;
 
         if (mouseDelta.sqrMagnitude < 0.1f)
         {
@@ -92,72 +107,87 @@ public class CannonController : MonoBehaviour, IAimable
                 angle += 360.0f;
             }
         }
-        mouseCursorAngle = angle;
+        m_mouseCursorAngle = angle;
     }
 
+    /**
+    * Fires the cannones
+    */  
     private void FireCannons()
     {
-        currentReloadTimeRight += Time.deltaTime;
-        currentReloadTimeLeft += Time.deltaTime;
+        m_currentReloadTimeRight += Time.deltaTime;
+        m_currentReloadTimeLeft += Time.deltaTime;
 
-        if(fireGuns)
+        if(m_fireGuns)
         {
             //Left side Cannon reload time
-            if (currentReloadTimeLeft >= reloadTime)
+            if (m_currentReloadTimeLeft >= m_reloadTime)
             {
                 //If the mouse cursor is within the ship's left side firing range.
-                if (mouseCursorAngle >= (180.0f - aimingRangeDegrees) && mouseCursorAngle <= (180.0f + aimingRangeDegrees))
+                if (m_mouseCursorAngle >= (180.0f - m_aimingRangeDegrees) && m_mouseCursorAngle <= (180.0f + m_aimingRangeDegrees))
                 {
-                    foreach (Cannon c in leftSideCannons)
+                    foreach (Cannon c in m_leftSideCannons)
                     {
                         c.FireGun();
                     }
-                    currentReloadTimeLeft = 0.0f;
+                    m_currentReloadTimeLeft = 0.0f;
                 }
             }
             //Right side Cannon reload time
-            if (currentReloadTimeRight >= reloadTime)
+            if (m_currentReloadTimeRight >= m_reloadTime)
             {
                 //If the mouse cursor is within the ship's right side firing range.
-                if (mouseCursorAngle <= (0.0f + aimingRangeDegrees) && mouseCursorAngle >= 0.0f)
+                if (m_mouseCursorAngle <= (0.0f + m_aimingRangeDegrees) && m_mouseCursorAngle >= 0.0f)
                 {
-                    foreach (Cannon c in rightSideCannons)
+                    foreach (Cannon c in m_rightSideCannons)
                     {
                         c.FireGun();
                     }
-                    currentReloadTimeRight = 0.0f;
+                    m_currentReloadTimeRight = 0.0f;
                 }
-                else if (mouseCursorAngle >= (360.0f - aimingRangeDegrees))
+                else if (m_mouseCursorAngle >= (360.0f - m_aimingRangeDegrees))
                 {
-                    foreach (Cannon c in rightSideCannons)
+                    foreach (Cannon c in m_rightSideCannons)
                     {
                         c.FireGun();
                     }
-                    currentReloadTimeRight = 0.0f;
+                    m_currentReloadTimeRight = 0.0f;
                 }
             }
             //Resets the fireGuns condition
-            fireGuns = false;
+            m_fireGuns = false;
         }
     }
 
+    /**
+    * Returns the mouse cursor angle
+    */  
     public float MouseCursorAngle
     {
-        get { return mouseCursorAngle; }
+        get { return m_mouseCursorAngle; }
     }
 
+    /**
+    * Returns the range for swivel
+    */  
     public float SwivelRangeDegrees
     {
-        get { return swivelRangeDegrees; }
+        get { return m_swivelRangeDegrees; }
     }
 
+    /**
+    * Returns the range for aiming
+    */  
     public float AimingRangeDegrees
     {
-        get { return aimingRangeDegrees; }
+        get { return m_aimingRangeDegrees; }
     }
 
+    /**
+    * Returns the cannon reload time
+    */  
     public float ReloadTime
     {
-        get { return reloadTime; }
+        get { return m_reloadTime; }
     }
 }

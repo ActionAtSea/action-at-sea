@@ -8,35 +8,38 @@ using System.Collections;
 [RequireComponent(typeof(Collider2D))]
 public class BulletImpact : MonoBehaviour 
 {
-    
-    private Health parentHealth;
+    private Health m_parentHealth = null; // Health bar for the parent of this script
 
+    /**
+    * Initialises the script
+    */
     void Start () 
     {
-        parentHealth = GetComponentInParent<Health>();
+        m_parentHealth = GetComponentInParent<Health>();
     }
 
+    /**
+    * Collision detection between the bullet and player
+    */
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Bullet")
         {
             var bullet = other.gameObject.GetComponent<Bullet>();
 
-            // Don't kill yourself!
-            if(bullet.Owner == transform.parent.GetComponent<NetworkedPlayer>().PlayerID)
+            // Ensure the owner is not colliding with their own bullet
+            if(bullet.Owner != transform.parent.GetComponent<NetworkedPlayer>().PlayerID)
             {
-                return;
-            }
+                m_parentHealth.InflictDamage(bullet.Damage);
+                other.gameObject.GetComponent<Bullet>().DestroyOnImpact();
 
-            parentHealth.InflictDamage(bullet.Damage);
-            other.gameObject.GetComponent<Bullet>().DestroyOnImpact();
-
-            if(bullet.Owner == "Player")
-            {
-                var player = GameObject.FindGameObjectWithTag("Player");
-                if(player)
+                if(bullet.Owner == "Player")
                 {
-                    player.GetComponent<PlayerScore>().AddScore(1.0f);
+                    var player = GamePlayers.GetControllablePlayer();
+                    if(player)
+                    {
+                        player.GetComponent<PlayerScore>().AddScore(1.0f);
+                    }
                 }
             }
         }

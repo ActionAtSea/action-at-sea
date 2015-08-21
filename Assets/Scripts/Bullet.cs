@@ -8,7 +8,7 @@ using System.Collections;
 [RequireComponent (typeof(Rigidbody2D))]
 public class Bullet : MonoBehaviour 
 {
-    public float initialVelocity = 15.0f;
+    private float m_initialVelocity = 30.0f;
     private string m_owner = "";            // Player that shot the bullet
     private float m_damage = 10.0f;         // Percentage of health removed when damage is inflicted.
 
@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour
     */
     void Start () 
     {
-        GetComponent<Rigidbody2D>().velocity = transform.forward * initialVelocity; 
+        GetComponent<Rigidbody2D>().velocity = transform.forward * m_initialVelocity; 
     }
 
     /**
@@ -25,7 +25,7 @@ public class Bullet : MonoBehaviour
     */
     void Update() 
     {
-        GetComponent<Rigidbody2D>().AddForce(transform.forward * initialVelocity);
+        GetComponent<Rigidbody2D>().AddForce(transform.forward * m_initialVelocity);
     }
 
     /**

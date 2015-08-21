@@ -9,29 +9,31 @@ using System.Linq;
 
 public class FillScoreBoard : MonoBehaviour 
 {
+    /**
+    * Compiles a score board from all game players
+    */
     void Update () 
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("EnemyPlayer");
-        GameObject mainPlayer = GameObject.FindGameObjectWithTag("Player");
-        List<GameObject> allPlayers = new List<GameObject>();
+        List<GameObject> players = new List<GameObject>();
 
-        if(mainPlayer != null)
+        if(GamePlayers.GetControllablePlayer() != null)
         {
-            allPlayers.Add(mainPlayer);
+            players.Add(GamePlayers.GetControllablePlayer());
         }
 
-        if(players.Length > 0)
+        GameObject[] enemies = GamePlayers.GetEnemies();
+        if(enemies.Length > 0)
         {
-            allPlayers.AddRange(players);
+            players.AddRange(enemies);
         }
 
-        allPlayers = allPlayers.OrderByDescending(x => x.GetComponent<NetworkedPlayer>().PlayerScore).ToList();
-        var text = GetComponent<UnityEngine.UI.Text>();
-        text.text = "";
+        players = players.OrderByDescending(x => x.GetComponent<NetworkedPlayer>().PlayerScore).ToList();
+        var textUI = GetComponent<UnityEngine.UI.Text>();
+        textUI.text = "";
 
-        foreach(GameObject player in allPlayers)
+        foreach(GameObject player in players)
         {
-            text.text += player.GetComponent<NetworkedPlayer>().PlayerScore.ToString() + ": " 
+            textUI.text += player.GetComponent<NetworkedPlayer>().PlayerScore.ToString() + ": " 
                 + player.GetComponent<NetworkedPlayer>().PlayerName + "\n";
         }
     }

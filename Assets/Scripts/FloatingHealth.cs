@@ -1,16 +1,19 @@
 ﻿////////////////////////////////////////////////////////////////////////////////////////
-// Action At Sea - EnemyHealth.cs
+// Action At Sea - FloatingHealth.cs
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
 using System.Collections;
 
-public class EnemyHealth : MonoBehaviour 
+public class FloatingHealth : MonoBehaviour 
 {
     public float xOffset = 1.0f;
     public float yOffset = 1.0f;
     public GameObject enemyShip;
-    
+
+    /**
+    * Moves a floating health bar alongside the game object
+    */
     void Update () 
     {
         if(enemyShip != null)

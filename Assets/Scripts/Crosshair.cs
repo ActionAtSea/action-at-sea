@@ -7,15 +7,17 @@ using System.Collections;
 
 public class Crosshair : MonoBehaviour
 {
-    private Vector3 mousePos;
     public bool hideCursor = false;
-    
+
+    /**
+    * Updates the cursor
+    */
     void Update()
     {
         HideCursor();
 
         //Attached object (the crosshair) matches the position of the mouse
-        mousePos = Input.mousePosition;
+        Vector3 mousePos = Input.mousePosition;
         mousePos.z = 10.0f;
 
         //converts the screen space postion of the mouse to relative game world position
@@ -23,6 +25,9 @@ public class Crosshair : MonoBehaviour
         gameObject.transform.position = mousePos;
     }
 
+    /**
+    * Hides the cursor
+    */
     private void HideCursor()
     {
         if (hideCursor)
@@ -31,6 +36,9 @@ public class Crosshair : MonoBehaviour
         }
     }
 
+    /**
+    * Shows the cursor
+    */
     public void ShowCursor()
     {
         Cursor.visible = true;

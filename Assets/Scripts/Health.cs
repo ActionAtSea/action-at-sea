@@ -5,7 +5,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Health : MonoBehaviour, IDamageable
+public class Health : MonoBehaviour
 {
     public GameObject healthBar = null;
     private GameObject floatingHealthBarText = null;

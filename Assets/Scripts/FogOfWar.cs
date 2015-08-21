@@ -27,10 +27,9 @@ public class FogOfWar : MonoBehaviour
     public int tileAmountX = 20;                // Number of tiles along the X axis
     public int tileAmountY = 20;                // Number of tiles along the Y axis
     public float tileOffset = 1.0f;
-    public float tileSize = 1.0f;                // Size multiplier of the tiles
+    public float tileSize = 1.0f;               // Size multiplier of the tiles
     public float minRevealRadius = 5.0f;        // Distance the tiles are fully transparent from the player
     public float maxRevealRadius = 10.0f;       // Distance the tiles are fully opaque from the player
-    public GameObject player;                   // Player to remove the fog
     public GameObject generatedFogParent;        
     public GameObject minimapFogParent;
     public float minimapScale = 1.0f;
@@ -133,6 +132,9 @@ public class FogOfWar : MonoBehaviour
         initialised = true;
     }
 
+    /**
+    * Creates a new editable fog tile
+    */
     void CreateNewTile(bool isBorder, int x, int y, int ID)
     {
         List<FogTile> tileContainer = isBorder ? borderTiles : tiles;
@@ -154,6 +156,9 @@ public class FogOfWar : MonoBehaviour
             transform.position.z);
     }
 
+    /**
+    * Initialises a new editable fog tile
+    */
     void InitialiseTile(FogTile tile, int size, string name, Color[] pixels, Transform parent)
     {
         var renderer = this.GetComponent<SpriteRenderer> ();
@@ -227,15 +232,10 @@ public class FogOfWar : MonoBehaviour
             return;
         }
 
-        if(player == null)
+        var player = GamePlayers.GetControllablePlayer();
+        if(player != null && IsInsideFog(player))
         {
-            player = GameObject.FindWithTag("Player");
-            return;
-        }
-
-        if(IsInsideFog())
-        {
-            SolveSmoothFog();
+            SolveSmoothFog(player);
         }
 
         //Debug.Log (revealedCount);
@@ -245,7 +245,7 @@ public class FogOfWar : MonoBehaviour
     /**
     * Detemines which of the tiles the player is inside
     */
-    bool IsInsideFog()
+    bool IsInsideFog(GameObject player)
     {
         if (tileInside.x == -1.0f || tileInside.y == -1.0f || 
             !IsInsideTile (player.transform.position, (int)tileInside.x, (int)tileInside.y))
@@ -269,7 +269,10 @@ public class FogOfWar : MonoBehaviour
 
         return true;
     }
-    
+
+    /**
+    * Removes pixels from a tile
+    */
     void RemoveFog(Vector2 playerPosition, FogTile tile, float scale, int dimensions, float minReveal, float maxReveal)
     {
         if (tile.pixels == null) 
@@ -312,11 +315,17 @@ public class FogOfWar : MonoBehaviour
         tile.texture.Apply();
     }
 
+    /**
+    * Removes fog from the minimap
+    */
     void RemoveMinimap(Vector2 playerPosition)
     {
         RemoveFog (playerPosition, minimapFog, minimapWorldScale, minimapSize, minimapRevealRadius, minimapRevealRadius);
     }
-    
+
+    /**
+    * Bounds checks the tile before removing fog
+    */
     void RemoveFogSmoothly(Vector2 playerPosition, int x, int y)
     {
         var index = GetIndex (x, y);
@@ -337,36 +346,30 @@ public class FogOfWar : MonoBehaviour
     /**
     * Solves for a smooth fog effect
     */
-    void SolveSmoothFog() 
+    void SolveSmoothFog(GameObject player) 
     {
-        // Only remove fog if player has moved
-        // This is because smooth fog is expensive
-        //const float minMovement = 0.01f;
-        //if (isFirstTick || Vector2.Distance (previousPlayerPosition, player.transform.position) > minMovement) 
-        {
-            // Assumes tile scale is less than max reveal radius from initialisation check
-            // Because of this only remove fog from tile inside and all 8 surrounding tiles
+        // Assumes tile scale is less than max reveal radius from initialisation check
+        // Because of this only remove fog from tile inside and all 8 surrounding tiles
 
-            Vector2 playerPosition = new Vector2(player.transform.position.x, 
-                                                 player.transform.position.y);
+        Vector2 playerPosition = new Vector2(player.transform.position.x, 
+                                             player.transform.position.y);
 
-            int x = (int)tileInside.x;
-            int y = (int)tileInside.y;
+        int x = (int)tileInside.x;
+        int y = (int)tileInside.y;
 
-            RemoveFogSmoothly(playerPosition, x, y);
-            RemoveFogSmoothly(playerPosition, x, y+1);
-            RemoveFogSmoothly(playerPosition, x, y-1);
-            RemoveFogSmoothly(playerPosition, x+1, y);
-            RemoveFogSmoothly(playerPosition, x-1, y);
-            RemoveFogSmoothly(playerPosition, x+1, y+1);
-            RemoveFogSmoothly(playerPosition, x-1, y-1);
-            RemoveFogSmoothly(playerPosition, x+1, y-1);
-            RemoveFogSmoothly(playerPosition, x-1, y+1);
-            RemoveMinimap(playerPosition);
+        RemoveFogSmoothly(playerPosition, x, y);
+        RemoveFogSmoothly(playerPosition, x, y+1);
+        RemoveFogSmoothly(playerPosition, x, y-1);
+        RemoveFogSmoothly(playerPosition, x+1, y);
+        RemoveFogSmoothly(playerPosition, x-1, y);
+        RemoveFogSmoothly(playerPosition, x+1, y+1);
+        RemoveFogSmoothly(playerPosition, x-1, y-1);
+        RemoveFogSmoothly(playerPosition, x+1, y-1);
+        RemoveFogSmoothly(playerPosition, x-1, y+1);
+        RemoveMinimap(playerPosition);
 
-            previousPlayerPosition.x = player.transform.position.x;
-            previousPlayerPosition.y = player.transform.position.y;
-            previousPlayerPosition.z = player.transform.position.z;
-        }
+        previousPlayerPosition.x = player.transform.position.x;
+        previousPlayerPosition.y = player.transform.position.y;
+        previousPlayerPosition.z = player.transform.position.z;
     }
 }
