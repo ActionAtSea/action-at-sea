@@ -8,18 +8,24 @@ using System.Collections;
 public class ParticleSpray : MonoBehaviour 
 {    
     public float minSpeedForEmission = 1.0f;
-    public GameObject parent;
-    private ParticleSystem particles;
+    public GameObject parent = null;
+    private ParticleSystem m_particles;
 
+    /**
+    * Initialises the particle spray effect
+    */
     void Start () 
     {
-        particles = GetComponent<ParticleSystem> ();
-        particles.GetComponent<Renderer>().sortingLayerName = "World";
-        particles.GetComponent<Renderer>().sortingOrder = parent.GetComponent<SpriteRenderer>().sortingOrder - 1;
+        m_particles = GetComponent<ParticleSystem> ();
+        m_particles.GetComponent<Renderer>().sortingLayerName = "World";
+        m_particles.GetComponent<Renderer>().sortingOrder = parent.GetComponent<SpriteRenderer>().sortingOrder - 1;
     }
 
+    /**
+    * Updates the particle spray effect
+    */
     void Update () 
     {
-        particles.enableEmission = parent.GetComponent<Rigidbody2D>().velocity.magnitude >= minSpeedForEmission;
+        m_particles.enableEmission = parent.GetComponent<Rigidbody2D>().velocity.magnitude >= minSpeedForEmission;
     }
 }

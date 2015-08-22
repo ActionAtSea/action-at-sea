@@ -4,53 +4,63 @@ using System.Collections.Generic;
 
 public class NewObjectPooler : MonoBehaviour
 {
+    private static NewObjectPooler sm_objPooler = null;
+    public GameObject pooledObject = null;
+    private int m_pooledAmount = 20;
+    private bool m_willGrow = true; // Determines if more objects can be added to the poolwhen needed.
+    List<GameObject> m_pooledObjects = null;
 
-    public static NewObjectPooler current;
-    public GameObject pooledObject;
-    public int pooledAmount = 20;
-
-    List<GameObject> pooledObjects;
-
-    /*
-    determines if more objects can be added to the pool
-    when needed.
+    /**
+    * Initialises the object pooler
     */
-    public bool willGrow = true;
-
-    void Awake()
-    {
-        current = this; 
-    }
-
-    // Use this for initialization
     void Start()
     {
-        pooledObjects = new List<GameObject>();
-        for (int i = 0; i < pooledAmount; ++i)
+        m_pooledObjects = new List<GameObject>();
+        for (int i = 0; i < m_pooledAmount; ++i)
         {
             GameObject obj = (GameObject)Instantiate(pooledObject);
             obj.SetActive(false);
-            pooledObjects.Add(obj);
+            obj.transform.parent = transform;
+            m_pooledObjects.Add(obj);
         }
     }
 
+    /**
+    * Gets a new object or adds to the pool if not enough available
+    */
     public GameObject GetPooledObject()
     {
-        for (int i = 0; i < pooledObjects.Count; ++i)
+        for (int i = 0; i < m_pooledObjects.Count; ++i)
         {
-            if (!pooledObjects[i].activeInHierarchy)
+            if (!m_pooledObjects[i].activeInHierarchy)
             {
-                return pooledObjects[i]; 
+                return m_pooledObjects[i]; 
             }
         }
 
-        if (willGrow)
+        if (m_willGrow)
         {
             GameObject obj = (GameObject)Instantiate(pooledObject);
-            pooledObjects.Add(obj);
+            m_pooledObjects.Add(obj);
             return obj;
         }
 
         return null;
+    }
+
+    /**
+    * Gets the Object pooler from the scene
+    */
+    public static NewObjectPooler Get()
+    {
+        if(sm_objPooler == null)
+        {
+            sm_objPooler = FindObjectOfType<NewObjectPooler>();
+            if(sm_objPooler == null)
+            {
+                Debug.LogError("Could not find NewObjectPooler");
+            }
+        }
+        return sm_objPooler;
     }
 }

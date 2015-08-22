@@ -9,53 +9,48 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour 
 {
     public bool controllable = false;
-    public float forwardSpeed = 10.0f;
-    public float rotationSpeed = 1.0f;
-    private Vector3 forwardForce = new Vector3();
-    private SoundManager soundEffects;
+    private float m_forwardSpeed = 8.0f;
+    private float m_rotationSpeed = 1.0f;
+    private Vector3 m_forwardForce = new Vector3();
 
-    void Start()
-    {
-        soundEffects = FindObjectOfType<SoundManager>();
-        if (!soundEffects)
-        {
-            Debug.Log("SoundEffectHandler could not be found in scene.");
-        }
-
-    }
-
+    /**
+    * Updates the player movement
+    */
     void FixedUpdate() 
     {
-        if(!controllable)
+        if(controllable)
         {
-            return;
-        }
+            var rb = GetComponent<Rigidbody2D>();
 
-        var rb = GetComponent<Rigidbody2D> ();
+            if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))
+            {
+                m_forwardForce.x = transform.up.x * m_forwardSpeed;
+                m_forwardForce.y = transform.up.y * m_forwardSpeed;
+                rb.AddForce(m_forwardForce);
+            }
 
-        if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))
-        {
-            forwardForce.x = transform.up.x * forwardSpeed;
-            forwardForce.y = transform.up.y * forwardSpeed;
-            rb.AddForce(forwardForce);
-        }
-        if (Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.LeftArrow))
-        {
-            rb.AddTorque(rotationSpeed);
-        }
-        if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.RightArrow))
-        {
-            rb.AddTorque(-rotationSpeed);
+            if (Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.LeftArrow))
+            {
+                rb.AddTorque(m_rotationSpeed);
+            }
+
+            if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.RightArrow))
+            {
+                rb.AddTorque(-m_rotationSpeed);
+            }
         }
     }
 
+    /**
+    * On collision with another player
+    */
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")
         {
             if(PlayerPlacer.IsCloseToPlayer(other.transform.position))
             {
-                soundEffects.PlaySound(SoundManager.SoundID.RAM);
+                SoundManager.Get().PlaySound(SoundManager.SoundID.RAM);
             }
         }
     }

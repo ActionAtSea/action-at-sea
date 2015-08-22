@@ -117,9 +117,10 @@
      <Compile Include="Assets\Scripts\FillScoreBoard.cs" />
      <Compile Include="Assets\Scripts\FloatingHealth.cs" />
      <Compile Include="Assets\Scripts\FogOfWar.cs" />
+     <Compile Include="Assets\Scripts\GUI\GUICoinScore.cs" />
+     <Compile Include="Assets\Scripts\GUI\GUIPlayerName.cs" />
      <Compile Include="Assets\Scripts\GameInformation.cs" />
      <Compile Include="Assets\Scripts\GameOverScript.cs" />
-     <Compile Include="Assets\Scripts\GetPlayerName.cs" />
      <Compile Include="Assets\Scripts\Health.cs" />
      <Compile Include="Assets\Scripts\IslandDiscoveryNode.cs" />
      <Compile Include="Assets\Scripts\IslandDiscoveryTrigger.cs" />
@@ -130,7 +131,6 @@
      <Compile Include="Assets\Scripts\Menu\TreasureScript.cs" />
      <Compile Include="Assets\Scripts\Menu\UpgradingDock.cs" />
      <Compile Include="Assets\Scripts\Minimap.cs" />
-     <Compile Include="Assets\Scripts\MinimapPlacement.cs" />
      <Compile Include="Assets\Scripts\NetworkedPlayer.cs" />
      <Compile Include="Assets\Scripts\NewObjectPooler.cs" />
      <Compile Include="Assets\Scripts\ParticleSpray.cs" />
@@ -141,7 +141,6 @@
      <Compile Include="Assets\Scripts\PlayerScore.cs" />
      <Compile Include="Assets\Scripts\RandomMatchmaker.cs" />
      <Compile Include="Assets\Scripts\RepairDock.cs" />
-     <Compile Include="Assets\Scripts\ScoreTextUpdate.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\TileCaustics.cs" />
      <Compile Include="Assets\Scripts\Utilities.cs" />

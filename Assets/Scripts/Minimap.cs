@@ -17,21 +17,20 @@ class MapItem
 
 public class Minimap : MonoBehaviour 
 {
-    public float shipMarkerSize = 12.0f;
     public GameObject gameBoard;
     public GameObject fog;
     public GameObject terrain;
-    private GameObject player = null;
     public GameObject playerMarker;
     public GameObject enemyMarker;
-    
-    private bool isInitialised = false;
-    private List<MapItem> staticItems = new List<MapItem>();
-    private List<MapItem> dynamicItems = new List<MapItem>();
+
+    private float m_shipMarkerSize = 40.0f;
+    private bool m_isInitialised = false;
+    private bool m_hasPlayer = false;
+    private List<MapItem> m_staticItems = new List<MapItem>();
+    private List<MapItem> m_dynamicItems = new List<MapItem>();
 
     /**
     * Adds a new item to the minimap
-    * @param parent The object to copy from
     */
     void AddItem(Transform parentTransform, 
                  SpriteRenderer parentRenderer, 
@@ -42,13 +41,13 @@ public class Minimap : MonoBehaviour
 
         if(isStatic)
         {
-            staticItems.Add (new MapItem ());
-            item =  staticItems [staticItems.Count - 1];
+            m_staticItems.Add (new MapItem ());
+            item =  m_staticItems [m_staticItems.Count - 1];
         }
         else
         {
-            dynamicItems.Add (new MapItem ());
-            item =  dynamicItems [dynamicItems.Count - 1];
+            m_dynamicItems.Add (new MapItem ());
+            item = m_dynamicItems [m_dynamicItems.Count - 1];
         }
 
         item.parentTransform = parentTransform;
@@ -73,9 +72,9 @@ public class Minimap : MonoBehaviour
 
         if(isStatic)
         {
-            for(int i = 0; i < staticItems.Count; ++i)
+            for(int i = 0; i < m_staticItems.Count; ++i)
             {
-                UpdateMapItem(staticItems[i]);
+                UpdateMapItem(m_staticItems[i]);
             }
         }
     }
@@ -85,7 +84,7 @@ public class Minimap : MonoBehaviour
     */
     void Update () 
     {
-        if(!isInitialised)
+        if(!m_isInitialised)
         {
             AddItem(gameBoard.transform, gameBoard.GetComponent<SpriteRenderer>(), true);
 
@@ -115,42 +114,61 @@ public class Minimap : MonoBehaviour
                 }
             }
 
-            // Add enemies as a dot on the map
-            var enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            for(int i = 0; i < enemies.Length; ++i)
-            {
-                AddItem(enemies[i].GetComponent<Transform>(), 
-                   enemyMarker.GetComponent<SpriteRenderer>(), false, shipMarkerSize);
-            }
-
-            isInitialised = true;
+            m_isInitialised = true;
         }
 
-        if(player == null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player");
-            if(player != null)
-            {
-                AddItem(player.transform, playerMarker.GetComponent<SpriteRenderer>(), false, shipMarkerSize);
-            }
-        }
+        AddPlayer();
+        UpdateMap();
+    }
 
-        for(int i = 0; i < dynamicItems.Count; ++i)
+    /**
+    * Updates the minimap
+    */
+    void UpdateMap()
+    {
+        for(int i = 0; i < m_dynamicItems.Count; ++i)
         {
-            UpdateMapItem(dynamicItems[i]);
+            if(!UpdateMapItem(m_dynamicItems[i]))
+            {
+                Destroy (m_dynamicItems[i].item);
+                m_dynamicItems.Remove(m_dynamicItems[i]);
+                --i;
+            }
         }
     }
 
-    void UpdateMapItem(MapItem item)
+    /**
+    * Adds the player to the minimap
+    * The player can be created any time so continue to check until found
+    */
+    void AddPlayer()
+    {
+        if(!m_hasPlayer)
+        {
+            var player = PlayerManager.GetControllablePlayer();
+            if(player != null)
+            {
+                m_hasPlayer = true;
+                AddItem(player.transform, 
+                        playerMarker.GetComponent<SpriteRenderer>(), 
+                        false, 
+                        m_shipMarkerSize);
+            }
+        }
+    }
+
+    /**
+    * Updates a map item positions
+    */
+    bool UpdateMapItem(MapItem item)
     {
         if(item.parentTransform == null)
         {
             // Item has been destroyed
             if(item.item.activeSelf)
             {
-                item.item.SetActive(false);
+                return false;
             }
-            return;
         }
 
         item.item.transform.localPosition = new Vector3 (
@@ -168,5 +186,7 @@ public class Minimap : MonoBehaviour
             item.parentTransform.localScale.x * item.scale,
             item.parentTransform.localScale.y * item.scale,
             item.parentTransform.localScale.z * item.scale);
+
+        return true;
     }
 }

@@ -8,34 +8,30 @@ using System.Collections;
 public class IslandDiscoveryNode : MonoBehaviour
 {
     public Sprite altSprite;
-    private bool discovered = false;
-    private SoundManager soundEffects;
-    
-    void Start()
-    {
-        soundEffects = FindObjectOfType<SoundManager>();
-        if (!soundEffects)
-        {
-            Debug.Log("SoundEffectHandler could not be found in scene.");
-        }
-    }
+    private bool m_discovered = false;
 
+    /**
+    * On collision with a player
+    */
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.transform.tag == "Player")
         {
             GetComponent<SpriteRenderer>().sprite = altSprite;
 
-            if(!discovered)
+            if(!m_discovered)
             {
-                soundEffects.PlaySound(SoundManager.SoundID.ISLAND_NODE);
+                SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
             }
-            discovered = true;
+            m_discovered = true;
         }
     }
 
+    /**
+    * Gets whether this node has been discovered
+    */
     public bool Discovered
     {
-        get { return discovered; }
+        get { return m_discovered; }
     }
 }

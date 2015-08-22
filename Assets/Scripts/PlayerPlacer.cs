@@ -9,12 +9,15 @@ public class PlayerPlacer : MonoBehaviour
 {    
     public GameObject gameboard;
     public GameObject terrain;
-    private float gameboardOffset = 20.0f;
-    private float playerRadious = 5.0f;
+    private float m_gameboardOffset = 20.0f;
+    private float m_playerRadious = 5.0f;
 
+    /**
+    * Utility function to determine if the given position is roughly visible to the player
+    */
     static public bool IsCloseToPlayer(Vector3 position)
     {
-        var player = GameObject.FindGameObjectWithTag("Player");
+        var player = PlayerManager.GetControllablePlayer();
         if(player != null)
         {
             const float maxDistance = 30.0f;
@@ -23,9 +26,12 @@ public class PlayerPlacer : MonoBehaviour
         return false;
     }
 
+    /**
+    * Retrieves a new position on the map that doesn't collide
+    */
     public Vector2 GetNewPosition()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("EnemyPlayer");
+        GameObject[] players = PlayerManager.GetEnemies();
 
         bool foundPosition = false;
         Vector2 position = new Vector3(0, 0);
@@ -34,8 +40,11 @@ public class PlayerPlacer : MonoBehaviour
         while (!foundPosition) 
         {
             foundPosition = true;
-            position.x = Random.Range (-boardBounds.extents.x + gameboardOffset, boardBounds.extents.x - gameboardOffset);
-            position.y = Random.Range (-boardBounds.extents.y + gameboardOffset, boardBounds.extents.y - gameboardOffset);
+            position.x = Random.Range(-boardBounds.extents.x + m_gameboardOffset, 
+                                      boardBounds.extents.x - m_gameboardOffset);
+
+            position.y = Random.Range(-boardBounds.extents.y + m_gameboardOffset, 
+                                      boardBounds.extents.y - m_gameboardOffset);
             
             var islands = terrain.GetComponentsInChildren<SpriteRenderer>();
             for(int i = 0; i < islands.Length; ++i)
@@ -57,7 +66,7 @@ public class PlayerPlacer : MonoBehaviour
                 {
                     Vector2 playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
                     Vector2 difference = position - playerPosition;
-                    if(difference.magnitude <= playerRadious)
+                    if(difference.magnitude <= m_playerRadious)
                     {
                         foundPosition = false;
                         break;

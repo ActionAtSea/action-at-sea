@@ -11,48 +11,60 @@ using System.Collections;
 public class PlayerScore : MonoBehaviour
 {
     public float startingScore = 100.0f;
-    private float score = 0.0f;
-    private float roundedScore;
+    private float m_score = 0.0f;
+    private float m_roundedScore;
 
-    // Use this for initialization
+    /**
+    * Initialises the script
+    */
     void Start()
     {
-        score = startingScore;
+        m_score = startingScore;
+        m_score = Mathf.Max(m_score, 0.0f);
+        m_roundedScore = Mathf.Round(m_score);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (score < 0.0f)
-        {
-            score = 0.0f;
-        }
-
-        roundedScore = Mathf.Round(score);
-    }
-
+    /**
+    * Removes from the score
+    */
     public void MinusScore(float scoreToMinus)
     {
-        score -= scoreToMinus;
+        m_score -= scoreToMinus;
+        m_score = Mathf.Max(m_score, 0.0f);
+        m_roundedScore = Mathf.Round(m_score);
     }
 
+    /**
+    * Adds to the score
+    */
     public void AddScore(float scoreValue)
     {
-        score += scoreValue;
+        m_score += scoreValue;
+        m_roundedScore = Mathf.Round(m_score);
     }
 
+    /**
+    * Resets the score
+    */
     public void ResetScore()
     {
-        score = 0.0f;
+        m_score = 0.0f;
+        m_roundedScore = 0.0f;
     }
 
+    /**
+    * Gets the score
+    */
     public float Score
     {
-        get { return score; }
+        get { return m_score; }
     }
 
+    /**
+    * Gets the rounded score
+    */
     public float RoundedScore
     {
-        get { return roundedScore; }
+        get { return m_roundedScore; }
     }
 }

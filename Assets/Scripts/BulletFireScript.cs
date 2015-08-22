@@ -43,10 +43,11 @@ public class BulletFireScript : MonoBehaviour
     */
     public void Fire(string owner, Vector3 firePosition, Quaternion fireRotation)
     {
-        GameObject obj = NewObjectPooler.current.GetPooledObject();
+        GameObject obj = NewObjectPooler.Get().GetPooledObject();
 
         if (obj == null)
         {
+            Debug.LogError("Could not generate bullet from pooler");
             return;
         }
 

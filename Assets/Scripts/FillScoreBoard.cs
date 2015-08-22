@@ -23,7 +23,7 @@ public class FillScoreBoard : MonoBehaviour
         }
 
         GameObject[] enemies = PlayerManager.GetEnemies();
-        if(enemies.Length > 0)
+        if(enemies != null && enemies.Length > 0)
         {
             players.AddRange(enemies);
         }

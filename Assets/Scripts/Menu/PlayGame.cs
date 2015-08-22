@@ -24,8 +24,6 @@ public class PlayGame : MonoBehaviour
         {
             Debug.Log("FadeGame could not be found in scene.");
         }
-
-        GameInformation.SetPlayerName("unnamed");
     }
 
     public void PlayGameButton ()

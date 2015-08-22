@@ -8,30 +8,32 @@ using System.Collections;
 public class PlayerAiming : MonoBehaviour
 {
     public bool controllable = false;
-    private Vector3 mousePos;
-    private CannonController controller;
+    private Vector3 m_mousePos;
+    private CannonController m_controller;
 
-    // Use this for initialization
+    /**
+    * Initialises the aiming script
+    */
     void Start()
     {
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        controller = GetComponentInChildren<CannonController>();
+        m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        m_controller = GetComponentInChildren<CannonController>();
     }
 
-    // Update is called once per frame
+    /**
+    * Updates the player aiming
+    */
     void Update()
     {
-        if(!controllable)
+        if(controllable)
         {
-            return;
-        }
+            m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            m_controller.AimWeapon(m_mousePos);
 
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        controller.AimWeapon(mousePos);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            controller.FireWeapon();
+            if (Input.GetMouseButtonDown(0))
+            {
+                m_controller.FireWeapon();
+            }
         }
     }
 }

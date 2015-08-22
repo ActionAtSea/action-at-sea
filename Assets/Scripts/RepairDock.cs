@@ -9,66 +9,25 @@ public class RepairDock : MonoBehaviour
 {
     public float repairAmountPerSecond = 15.0f;
     public float scoreCostRate = 5.0f;
-    //private Player player;
-    private Health playerHealth;
-    private GameObject player;
-    private PlayerScore score;
 
-
-    // Use this for initialization
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(player == null)
-        {
-            player = GameObject.FindWithTag("Player");
-            if(player != null)
-            {
-                playerHealth = player.GetComponent<Health>();
-                if (!playerHealth)
-                {
-                    Debug.LogError("Repair Dock could not find Player Health.");
-                }
-                
-                score = player.GetComponent<PlayerScore>();
-                if (!score)
-                {
-                    Debug.LogError("Repair Dock could not find PlayerScore.");
-                }
-            }
-        }
-    }
-
+    /**
+    * On collision with the repair dock
+    */
     void OnTriggerStay2D(Collider2D other)
     {
-        if(player == null)
-        {
-            return;
-        }
-
         if (other.gameObject.tag == "Player")
         {
-            if (!playerHealth)
+            var health = other.gameObject.GetComponent<Health>();
+            if (health.HealthLevel < health.HealthMax)
             {
-                other.gameObject.GetComponent<Health>();
-                //Debug.Log("yes it works");
-            }
-            else
-            {
-                if (playerHealth.HealthLevel < playerHealth.HealthMax)
+                var score = other.gameObject.GetComponent<PlayerScore>();
+                if (score.Score > 0.0f)
                 {
-                    if (score.Score > 0.0f)
+                    if (Input.GetKey("e"))
                     {
-                        if (Input.GetKey("e"))
-                        {
-                            playerHealth.RepairDamage(repairAmountPerSecond * Time.deltaTime);
-                            score.MinusScore(scoreCostRate * Time.deltaTime);
-                            Debug.Log("health yes");
-                        }
+                        health.RepairDamage(repairAmountPerSecond * Time.deltaTime);
+                        score.MinusScore(scoreCostRate * Time.deltaTime);
+                        Debug.Log("health yes");
                     }
                 }
             }

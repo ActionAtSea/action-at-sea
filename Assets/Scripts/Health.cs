@@ -7,158 +7,171 @@ using System.Collections;
 
 public class Health : MonoBehaviour
 {
-    public GameObject healthBar = null;
-    private GameObject floatingHealthBarText = null;
     public bool controllable = false;
-    private bool initialised = false;
-    private float minBarWidth = 0.0f;
-    private float maxBarWidth = 0.0f;
-    private float barHeight = 0.0f;
-    private bool hasScreenSpaceBar = false;
-    private float healthMax = 100.0f;
-    private float healthMin = 0.0f;
-    private float healthLevel;
-    private bool isAlive = true;
+    private GameObject m_healthBar = null;
+    private GameObject m_floatingHealthBarText = null;
+    private float m_minBarWidth = 0.0f;
+    private float m_maxBarWidth = 0.0f;
+    private float m_barHeight = 0.0f;
+    private bool m_hasScreenSpaceBar = false;
+    private float m_healthMax = 100.0f;
+    private float m_healthMin = 0.0f;
+    private float m_healthLevel;
+    private bool m_isAlive = true;
 
-    bool HasHealthBar()
-    {
-        return healthBar != null;
-    }
-
-    void InitialiseHealthBar()
-    {
-        if(!HasHealthBar())
-        {
-            if(controllable)
-            {
-                var player = GameObject.FindWithTag("Player");
-                if(player != null)
-                {
-                    healthBar = GameObject.FindWithTag("PlayerHealth");
-                }
-            }
-            else
-            {
-                var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
-                healthBar = floatingHealthBar.FindChild("HealthBar").gameObject;
-                floatingHealthBarText = floatingHealthBar.FindChild("Canvas").FindChild("Text").gameObject;
-            }
-        }
-
-        if(HasHealthBar() && !initialised)
-        {
-            initialised = true;
-
-            if(healthBar.GetComponent<RectTransform>() != null)
-            {
-                hasScreenSpaceBar = true;
-                maxBarWidth = healthBar.GetComponent<RectTransform>().rect.width;
-                barHeight = healthBar.GetComponent<RectTransform>().rect.height;
-            }
-            else
-            {
-                maxBarWidth = healthBar.transform.localScale.x;
-                barHeight = healthBar.transform.localScale.y;
-            }
-        }
-    }
-
-    // Use this for initialization
+    /**
+    * Initialises the health
+    */
     void Start()
     {
-        healthLevel = healthMax;
+        m_healthLevel = m_healthMax;
+    }
+
+    /**
+    * Initialises the health once the player has been created
+    */
+    void InitialiseBar()
+    {
+        if(controllable)
+        {
+            m_healthBar = GameObject.FindWithTag("PlayerHealth");
+        }
+        else
+        {
+            var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
+            m_healthBar = floatingHealthBar.FindChild("HealthBar").gameObject;
+            m_floatingHealthBarText = floatingHealthBar.FindChild("Canvas").FindChild("Text").gameObject;
+        }
+        
+        if(m_healthBar)
+        {
+            if(m_healthBar.GetComponent<RectTransform>() != null)
+            {
+                m_hasScreenSpaceBar = true;
+                m_maxBarWidth = m_healthBar.GetComponent<RectTransform>().rect.width;
+                m_barHeight = m_healthBar.GetComponent<RectTransform>().rect.height;
+            }
+            else
+            {
+                m_maxBarWidth = m_healthBar.transform.localScale.x;
+                m_barHeight = m_healthBar.transform.localScale.y;
+            }
+        }
     }
     
-    // Update is called once per frame
+    /**
+    * Updates the health
+    */
     void Update()
     {
-        if(isAlive)
+        if(m_isAlive && !m_healthBar)
         {
-            InitialiseHealthBar();
+            InitialiseBar();
         }
 
-        if(floatingHealthBarText != null)
+        if(m_floatingHealthBarText != null)
         {
-            floatingHealthBarText.GetComponent<UnityEngine.UI.Text>().text = 
+            m_floatingHealthBarText.GetComponent<UnityEngine.UI.Text>().text = 
                 gameObject.GetComponent<NetworkedPlayer>().PlayerName;
         }
 
-        if (healthLevel > healthMax)
+        if (m_healthLevel > m_healthMax)
         {
-            healthLevel = healthMax;
+            m_healthLevel = m_healthMax;
         }
 
-        if (healthLevel <= healthMin)
+        if (m_healthLevel <= m_healthMin)
         {
-            healthLevel = 0.0f;
-            isAlive = false;
+            m_healthLevel = 0.0f;
+            m_isAlive = false;
         }
 
         // If the object has a health bar scale it to show the health
-        if(HasHealthBar())
+        if(m_healthBar != null)
         {
             // Convert the value range from 0->100 to 0->maxBarScale
-            float barWidth = ((healthLevel-healthMin)*((maxBarWidth-
-                minBarWidth)/(healthMax-healthMin)))+minBarWidth;
+            float barWidth = ((m_healthLevel-m_healthMin)*((m_maxBarWidth-
+                m_minBarWidth)/(m_healthMax-m_healthMin)))+m_minBarWidth;
 
-            if(barWidth <= minBarWidth)
+            if(barWidth <= m_minBarWidth)
             {
-                healthBar.SetActive(false);
+                m_healthBar.SetActive(false);
             }
             else
             {
-                if(hasScreenSpaceBar)
+                if(m_hasScreenSpaceBar)
                 {
-                    healthBar.GetComponent<RectTransform>().sizeDelta =
-                        new Vector2(barWidth, barHeight);
+                    m_healthBar.GetComponent<RectTransform>().sizeDelta =
+                        new Vector2(barWidth, m_barHeight);
                 }
                 else
                 {
-                    healthBar.transform.localScale = new Vector3(
-                        barWidth, barHeight, 0.0f);
+                    m_healthBar.transform.localScale = new Vector3(
+                        barWidth, m_barHeight, 0.0f);
                 }
             }
         }
     }
 
+    /**
+    * Inflicts damage to the health
+    */
     public void InflictDamage(float damage)
     {
         if(controllable)
         {
-            healthLevel -= damage;
+            m_healthLevel -= damage;
         }
     }
 
+    /**
+    * Repairs damage to the health
+    */
     public void RepairDamage(float repairAmount)
     {
         if(controllable)
         {
-            healthLevel += repairAmount;
+            m_healthLevel += repairAmount;
         }
     }
 
+    /**
+    * Sets the health level
+    */
     public void SetHealthLevel(float level)
     {
-        healthLevel = level;
+        m_healthLevel = level;
     }
 
+    /**
+    * Gets the health level
+    */
     public float HealthLevel
     {
-        get { return healthLevel; }
+        get { return m_healthLevel; }
     }
 
+    /**
+    * Gets the maximum health
+    */
     public float HealthMax
     {
-        get { return healthMax; }
+        get { return m_healthMax; }
     }
 
+    /**
+    * Gets the minimum health
+    */
     public float HealthMin
     {
-        get { return healthMin; }
+        get { return m_healthMin; }
     }
 
+    /**
+    * Gets whether the health is alive
+    */
     public bool IsAlive
     {
-        get { return isAlive; }
+        get { return m_isAlive; }
     }
 }
