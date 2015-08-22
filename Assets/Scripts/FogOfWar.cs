@@ -232,7 +232,7 @@ public class FogOfWar : MonoBehaviour
             return;
         }
 
-        var player = GamePlayers.GetControllablePlayer();
+        var player = PlayerManager.GetControllablePlayer();
         if(player != null && IsInsideFog(player))
         {
             SolveSmoothFog(player);

@@ -119,7 +119,6 @@
      <Compile Include="Assets\Scripts\FogOfWar.cs" />
      <Compile Include="Assets\Scripts\GameInformation.cs" />
      <Compile Include="Assets\Scripts\GameOverScript.cs" />
-     <Compile Include="Assets\Scripts\GamePlayers.cs" />
      <Compile Include="Assets\Scripts\GetPlayerName.cs" />
      <Compile Include="Assets\Scripts\Health.cs" />
      <Compile Include="Assets\Scripts\IslandDiscoveryNode.cs" />
@@ -136,6 +135,7 @@
      <Compile Include="Assets\Scripts\NewObjectPooler.cs" />
      <Compile Include="Assets\Scripts\ParticleSpray.cs" />
      <Compile Include="Assets\Scripts\PlayerAiming.cs" />
+     <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\PlayerPlacer.cs" />
      <Compile Include="Assets\Scripts\PlayerScore.cs" />

@@ -11,6 +11,7 @@ using System.Collections;
 */
 public class FadeGame : MonoBehaviour 
 {
+    static FadeGame sm_fadeGame = null;                // Instance of the FadeGame script
 	static GameObject sm_fadeSprite = null;            // Image to fade in/out
 	static FadeState sm_fadeState = FadeState.NO_FADE; // State of fading
 	static float sm_alpha = 0.0f;                      // Alpha for the fade sprite
@@ -91,16 +92,19 @@ public class FadeGame : MonoBehaviour
 		}
 	}
 	
-	/**
+    /**
     * Gets the FadeGame from the scene
     */
-	public static FadeGame Get()
-	{
-		var obj = FindObjectOfType<FadeGame>();
-		if (!obj)
-		{
-			Debug.LogError("FadeGame could not be found in scene");
-		}
-		return obj;
-	}
+    public static FadeGame Get()
+    {
+        if(sm_fadeGame == null)
+        {
+            sm_fadeGame = FindObjectOfType<FadeGame>();
+            if(sm_fadeGame == null)
+            {
+                Debug.LogError("Could not find FadeGame");
+            }
+        }
+        return sm_fadeGame;
+    }
 }

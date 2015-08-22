@@ -9,129 +9,55 @@ using UnityEngine.UI;
 
 public class GameOverScript : MonoBehaviour 
 {    
-    private GameObject player = null;
     public GameObject gameLostImage;
     public GameObject gameWonImage;
-    public bool forceWinGame = false;
     public bool forceLoseGame = false;
-    private Health playerHealth;
-    private bool isGameOver = false;
-    private bool hasLostGame = false;
-    private List<GameObject> enemies = new List<GameObject> ();
-    private List<GameObject> islands = new List<GameObject>();
-    private SoundManager sharedSoundHandler;
-    private FadeGame fadeGameHandler;
-    private bool toMenuRequest = false;
-    private bool toPlayRequest = false;
 
-    void Start () 
-    {
-        sharedSoundHandler = FindObjectOfType<SoundManager> ();
-        if(sharedSoundHandler == null)
-        {
-            Debug.LogError("Could not find shared sound handler");
-        }
+    private Health m_playerHealth = null;    // Heath bar for the controllable player
+    private bool m_isGameOver = false;       // Whether game over is active for the player
+    private bool m_hasLostGame = false;      // whether the player has lost the game
+    private bool m_toMenuRequest = false;
+    private bool m_toPlayRequest = false;
 
-        fadeGameHandler = FindObjectOfType<FadeGame> ();
-        if(fadeGameHandler == null)
-        {
-            Debug.LogError("Could not find FadeGame");
-        }
-
-        GameObject[] allEnemies = GameObject.FindGameObjectsWithTag ("Enemy");
-        for(int i = 0; i < allEnemies.Length; ++i)
-        {
-            enemies.Add(allEnemies[i]);
-        }
-
-        GameObject[] allIslands = GameObject.FindGameObjectsWithTag ("IslandTrigger");
-        for(int i = 0; i < allIslands.Length; ++i)
-        {
-            islands.Add(allIslands[i]);
-        }
-
-        if (islands.Count == 0) 
-        {
-            Debug.LogError("Could not find any island triggers");
-        }
-    }
-
-    public void PlayGameButton()
-    {
-        if (isGameOver && !toPlayRequest)
-        {
-            sharedSoundHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-            sharedSoundHandler.StopMusic(SoundManager.MusicID.MENU_TRACK);
-            sharedSoundHandler.PlayMusic(SoundManager.MusicID.GAME_TRACK);
-            sharedSoundHandler.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
-            fadeGameHandler.FadeIn();
-            toPlayRequest = true;
-        }
-    }
-
-    public void GoToMenuButton()
-    {
-        if (isGameOver && !toMenuRequest)
-        {
-            FindObjectOfType<Crosshair>().ShowCursor();
-            sharedSoundHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-            sharedSoundHandler.PlayMusic(SoundManager.MusicID.MENU_TRACK);
-            fadeGameHandler.FadeIn();
-            toMenuRequest = true;
-        }
-    }
-
+    /**
+    * Updates the game over logic
+    */
     void Update () 
     {
-        if(player == null)
+        if(!PlayerHasHealth())
         {
-            player = GameObject.FindWithTag("Player");
-            if(player != null)
-            {
-                playerHealth = player.GetComponent<Health> ();
-                if(playerHealth == null)
-                {
-                    Debug.LogError("Player requires health bar");
-                }
-            }
             return;
         }
 
-        if(toMenuRequest || toPlayRequest)
+        if(m_toMenuRequest || m_toPlayRequest)
         {
-            if(fadeGameHandler.IsFadedIn())
+            var gameFader = FadeGame.Get();
+            if(gameFader.IsFadedIn())
             {
-                fadeGameHandler.FadeOut();
+                gameFader.FadeOut();
 
                 PhotonNetwork.Disconnect();
-                Application.LoadLevel (toMenuRequest ? (int)SceneID.MENU : (int)SceneID.GAME);
+                Application.LoadLevel(m_toMenuRequest ? (int)SceneID.MENU : (int)SceneID.GAME);
             }
         }
-        else if (!isGameOver) 
+        else if (!m_isGameOver) 
         {
-            if (Input.GetKeyDown (KeyCode.Escape) || forceLoseGame || !playerHealth.IsAlive) 
+            if (Input.GetKeyDown (KeyCode.Escape) || forceLoseGame || !m_playerHealth.IsAlive) 
             {
-                isGameOver = true;
-                hasLostGame = true;
+                m_isGameOver = true;
+                m_hasLostGame = true;
             }
 
-            // Currently no way to win PVP!
-            //if(forceWinGame || (enemies.TrueForAll(enemy => enemy == null) &&
-            //   islands.TrueForAll(island => island.GetComponent<IslandDiscoveryTrigger>().IsDiscovered())))
-            //{
-            //    hasLostGame = false;
-            //    isGameOver = true;
-            //}
-        
-            if (isGameOver) 
+            if (m_isGameOver) 
             {
-                sharedSoundHandler.StopMusic(SoundManager.MusicID.GAME_TRACK);
-                sharedSoundHandler.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
-                sharedSoundHandler.PlayMusic(SoundManager.MusicID.MENU_TRACK);
+                var soundManager = SoundManager.Get();
+                soundManager.StopMusic(SoundManager.MusicID.GAME_TRACK);
+                soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
+                soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
-                player.GetComponent<Health>().SetHealthLevel(0.0f);
+                m_playerHealth.SetHealthLevel(0.0f);
 
-                if(hasLostGame)
+                if(m_hasLostGame)
                 {
                     gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = true;
                 }
@@ -140,6 +66,60 @@ public class GameOverScript : MonoBehaviour
                     gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = true;
                 }
             }
+        }
+    }
+
+    /**
+    * Returns if the player is found and has a health bar
+    */
+    bool PlayerHasHealth()
+    {
+        if(m_playerHealth == null)
+        {
+            var player = PlayerManager.GetControllablePlayer();
+            if(player != null)
+            {
+                m_playerHealth = player.GetComponent<Health>();
+                if(m_playerHealth == null)
+                {
+                    Debug.LogError("Player requires a health bar");
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+    * On Click replay Game when game over is active
+    */
+    public void PlayGameButton()
+    {
+        if (m_isGameOver && !m_toPlayRequest)
+        {
+            var soundManager = SoundManager.Get();
+            soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+            soundManager.StopMusic(SoundManager.MusicID.MENU_TRACK);
+            soundManager.PlayMusic(SoundManager.MusicID.GAME_TRACK);
+            soundManager.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
+            FadeGame.Get().FadeIn();
+            m_toPlayRequest = true;
+        }
+    }
+    
+    /**
+    * On Click Go To Menu when game over is active
+    */
+    public void GoToMenuButton()
+    {
+        if (m_isGameOver && !m_toMenuRequest)
+        {
+            var soundManager = SoundManager.Get();
+            soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+            soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
+            FadeGame.Get().FadeIn();
+            Crosshair.Get().ShowCursor();
+            m_toMenuRequest = true;
         }
     }
 }

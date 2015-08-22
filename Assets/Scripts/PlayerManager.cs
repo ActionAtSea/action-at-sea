@@ -5,7 +5,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GamePlayers : MonoBehaviour 
+public class PlayerManager : MonoBehaviour 
 {    
     static private GameObject[] sm_enemies = null; // enemies
     static private GameObject sm_player = null;    // Controlled player

@@ -44,4 +44,17 @@ public class Crosshair : MonoBehaviour
         Cursor.visible = true;
         hideCursor = false;
     }
+
+    /**
+    * Gets the Cursor from the scene
+    */
+    public static Crosshair Get()
+    {
+        var cursor = FindObjectOfType<Crosshair>();
+        if(cursor == null)
+        {
+            Debug.LogError("Could not find Cursor");
+        }
+        return cursor;
+    }
 }

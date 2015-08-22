@@ -16,12 +16,13 @@ public class FillScoreBoard : MonoBehaviour
     {
         List<GameObject> players = new List<GameObject>();
 
-        if(GamePlayers.GetControllablePlayer() != null)
+        var player = PlayerManager.GetControllablePlayer();
+        if(player != null)
         {
-            players.Add(GamePlayers.GetControllablePlayer());
+            players.Add(player);
         }
 
-        GameObject[] enemies = GamePlayers.GetEnemies();
+        GameObject[] enemies = PlayerManager.GetEnemies();
         if(enemies.Length > 0)
         {
             players.AddRange(enemies);
@@ -31,10 +32,11 @@ public class FillScoreBoard : MonoBehaviour
         var textUI = GetComponent<UnityEngine.UI.Text>();
         textUI.text = "";
 
-        foreach(GameObject player in players)
+        foreach(GameObject obj in players)
         {
-            textUI.text += player.GetComponent<NetworkedPlayer>().PlayerScore.ToString() + ": " 
-                + player.GetComponent<NetworkedPlayer>().PlayerName + "\n";
+            var networkedPlayer = obj.GetComponent<NetworkedPlayer>();
+            textUI.text += networkedPlayer.PlayerScore.ToString() + ": " +
+                networkedPlayer.PlayerName + "\n";
         }
     }
 }

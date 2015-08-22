@@ -35,7 +35,7 @@ public class BulletImpact : MonoBehaviour
 
                 if(bullet.Owner == "Player")
                 {
-                    var player = GamePlayers.GetControllablePlayer();
+                    var player = PlayerManager.GetControllablePlayer();
                     if(player)
                     {
                         player.GetComponent<PlayerScore>().AddScore(1.0f);

@@ -72,11 +72,12 @@ public class SoundManager : MonoBehaviour
         public List<AudioSource> instances = null;   /// Sound file
     };
     
-    private static GameObject sm_soundParent = null; /// Parent to hold all sound
-    private static List<SharedMusic> sm_sharedMusic; /// Shared music across scenes
-    private static List<SharedSound> sm_sharedSound; /// Shared sounds across scenes
-    private static bool sm_initialised = false;      /// Whether the manager is initialised
-    private float m_fadeSpeed = 0.75f;               /// Speed to fade the music
+    private static SoundManager sm_soundManager = null; /// Instance of the sound manager
+    private static GameObject sm_soundParent = null;    /// Parent to hold all sound
+    private static List<SharedMusic> sm_sharedMusic;    /// Shared music across scenes
+    private static List<SharedSound> sm_sharedSound;    /// Shared sounds across scenes
+    private static bool sm_initialised = false;         /// Whether the manager is initialised
+    private float m_fadeSpeed = 0.75f;                  /// Speed to fade the music
 
     /**
     * Initialises the manager if needed
@@ -252,11 +253,14 @@ public class SoundManager : MonoBehaviour
     */
     public static SoundManager Get()
     {
-        var obj = FindObjectOfType<SoundManager>();
-        if (!obj)
+        if(sm_soundManager == null)
         {
-            Debug.LogError("SoundManager could not be found in scene");
+            sm_soundManager = FindObjectOfType<SoundManager>();
+            if(sm_soundManager == null)
+            {
+                Debug.LogError("Could not find SoundManager");
+            }
         }
-        return obj;
+        return sm_soundManager;
     }
 }
