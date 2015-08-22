@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class RandomMatchmaker : Photon.PunBehaviour
 {
+    private bool m_joined = false;
+
     /**
     * Initialises the networking
     */
@@ -16,11 +18,19 @@ public class RandomMatchmaker : Photon.PunBehaviour
     }
 
     /**
-    * Updates the status of the connection
+    * Gets the status of the connection
     */
-    void OnGUI()
+    public string GetNetworkStatus()
     {
-        GUILayout.Label(PhotonNetwork.connectionStateDetailed.ToString());
+        return PhotonNetwork.connectionStateDetailed.ToString();
+    }
+
+    /**
+    * Gets whether the network is connected
+    */
+    public bool IsConnected()
+    {
+        return m_joined;
     }
 
     /**
@@ -56,5 +66,20 @@ public class RandomMatchmaker : Photon.PunBehaviour
 
         GameObject healthbar = playerPVP.transform.FindChild("FloatingHealthBar").gameObject;
         healthbar.SetActive(false);
+
+        m_joined = true;
+    }
+
+    /**
+    * Gets the Network from the scene
+    */
+    public static RandomMatchmaker Get()
+    {
+        var network = FindObjectOfType<RandomMatchmaker>();
+        if(network == null)
+        {
+            Debug.LogError("Could not find Random Matchmaker");
+        }
+        return network;
     }
 }

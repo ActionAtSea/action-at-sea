@@ -8,7 +8,6 @@ using System.Collections;
 public class PlayerPlacer : MonoBehaviour 
 {    
     public GameObject gameboard;
-    public GameObject terrain;
 
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
@@ -46,11 +45,17 @@ public class PlayerPlacer : MonoBehaviour
 
             position.y = Random.Range(-boardBounds.extents.y + m_gameboardOffset, 
                                       boardBounds.extents.y - m_gameboardOffset);
-            
-            var islands = terrain.GetComponentsInChildren<SpriteRenderer>();
-            for(int i = 0; i < islands.Length; ++i)
+
+
+            GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
+            if(terrain == null)
             {
-                var islandBounds = islands[i].bounds;
+                Debug.LogError("Could not find any terrain");
+            }
+
+            for(int i = 0; i < terrain.Length; ++i)
+            {
+                var islandBounds = terrain[i].GetComponent<SpriteRenderer>().bounds;
                 if(position.x > islandBounds.center.x - islandBounds.extents.x &&
                    position.x < islandBounds.center.x + islandBounds.extents.x &&
                    position.y > islandBounds.center.y - islandBounds.extents.y &&

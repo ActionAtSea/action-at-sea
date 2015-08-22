@@ -89,15 +89,15 @@ public class Minimap : MonoBehaviour
             AddItem(gameBoard.transform, gameBoard.GetComponent<SpriteRenderer>(), true);
 
             // Islands use same texture
-            var islandTransforms = terrain.GetComponentsInChildren<Transform>();
-            var islandRenderers = terrain.GetComponentsInChildren<SpriteRenderer>();
-            for(int i = 0, j = 0; i < islandTransforms.Length; ++i)
+            GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
+            if(terrain == null)
             {
-                if(!islandTransforms[i].Equals(terrain.transform))
-                {
-                    AddItem(islandTransforms[i], islandRenderers[j], true);
-                    ++j;
-                }
+                Debug.LogError("Could not find any terrain");
+            }
+
+            for(int i = 0; i < terrain.Length; ++i)
+            {
+                AddItem(terrain[i].transform, terrain[i].GetComponent<SpriteRenderer>(), true);
             }
 
             // Fog uses same texture, currently only working for smooth fog

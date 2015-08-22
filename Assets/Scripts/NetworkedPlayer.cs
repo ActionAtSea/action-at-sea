@@ -17,6 +17,7 @@ public class NetworkedPlayer : MonoBehaviour
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_healthLevel = -1.0f;
     private bool m_connected = false;
+    private GameObject m_player = null;
 
     /**
     * Initialises the networked player
@@ -35,6 +36,13 @@ public class NetworkedPlayer : MonoBehaviour
                 m_playerID = "Player";
             }
         }
+
+        var score = GetComponentInChildren<PlayerScore>();
+        if(score == null)
+        {
+            Debug.LogError("Could not find Player to network");
+        }
+        m_player = score.transform.gameObject;
     }
 
     /**
@@ -46,27 +54,30 @@ public class NetworkedPlayer : MonoBehaviour
         {
             if(m_connected)
             {
-                transform.position = Vector3.Lerp(transform.position, m_correctPlayerPos, Time.deltaTime * 5);
-                transform.rotation = Quaternion.Lerp(transform.rotation, m_correctPlayerRot, Time.deltaTime * 5);
+                m_player.transform.position = Vector3.Lerp(
+                    m_player.transform.position, m_correctPlayerPos, Time.deltaTime * 5);
+
+                m_player.transform.rotation = Quaternion.Lerp(
+                    m_player.transform.rotation, m_correctPlayerRot, Time.deltaTime * 5);
 
                 if(m_healthLevel >= 0)
                 {
-                    GetComponent<Health>().SetHealthLevel(m_healthLevel);
-                    if(!GetComponent<Health>().IsAlive)
+                    m_player.GetComponent<Health>().SetHealthLevel(m_healthLevel);
+                    if(!m_player.GetComponent<Health>().IsAlive)
                     {
                         AnimationGenerator.Get().PlayAnimation(
-                            transform.position, AnimationGenerator.ID.EXPLOSION);
+                            m_player.transform.position, AnimationGenerator.ID.EXPLOSION);
 
-                        Destroy(transform.parent.gameObject);
+                        Destroy(gameObject);
                     }
                 }
             }
         }
         else
         {
-            m_playerScore = (int)GetComponent<PlayerScore>().RoundedScore;
+            m_playerScore = (int)(m_player.GetComponent<PlayerScore>().RoundedScore);
             m_playerName = GameInformation.GetPlayerName();
-            m_healthLevel = GetComponent<Health>().HealthLevel;
+            m_healthLevel = m_player.GetComponent<Health>().HealthLevel;
         }
     }
 
@@ -77,11 +88,13 @@ public class NetworkedPlayer : MonoBehaviour
     {
         if (stream.isWriting)
         {
+            Debug.Log("Sending");
+
             // We own this player: send the others our data
             m_connected = true;
             stream.SendNext(m_connected);
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
+            stream.SendNext(m_player.transform.position);
+            stream.SendNext(m_player.transform.rotation);
             stream.SendNext(m_healthLevel);
             stream.SendNext(m_playerName);
             stream.SendNext(m_playerScore);
@@ -89,6 +102,8 @@ public class NetworkedPlayer : MonoBehaviour
         }
         else
         {
+            Debug.Log("Recieving");
+
             // Network player, receive data
             m_connected = (bool)stream.ReceiveNext();
             m_correctPlayerPos = (Vector3)stream.ReceiveNext();
