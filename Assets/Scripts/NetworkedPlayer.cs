@@ -8,34 +8,40 @@ using System.Collections;
 public class NetworkedPlayer : MonoBehaviour 
 {    
     public PhotonView photonView = null;
-    public string PlayerName = "unnamed";
-    public string PlayerID;
-    public int PlayerScore = 0;
 
-    static int sm_playerIDCounter = 0;
+    private static int sm_playerIDCounter = 0;
+    private string m_playerName = "unnamed";
+    private string m_playerID = "";
+    private int m_playerScore = 0;
     private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_healthLevel = -1.0f;
     private bool m_connected = false;
 
     /**
-    * Updates the player from the networked data
+    * Initialises the networked player
     */
-    void Update()
+    void Start()
     {
-        if(PlayerID == "")
+        if(m_playerID == "")
         {
             if(!photonView.isMine)
             {
                 sm_playerIDCounter++;
-                PlayerID = "Enemy" + sm_playerIDCounter.ToString();
+                m_playerID = "Enemy" + sm_playerIDCounter.ToString();
             }
             else
             {
-                PlayerID = "Player";
+                m_playerID = "Player";
             }
         }
+    }
 
+    /**
+    * Updates the player from the networked data
+    */
+    void Update()
+    {
         if (!photonView.isMine)
         {
             if(m_connected)
@@ -58,8 +64,8 @@ public class NetworkedPlayer : MonoBehaviour
         }
         else
         {
-            PlayerScore = (int)GetComponent<PlayerScore>().RoundedScore;
-            PlayerName = GameInformation.GetPlayerName();
+            m_playerScore = (int)GetComponent<PlayerScore>().RoundedScore;
+            m_playerName = GameInformation.GetPlayerName();
             m_healthLevel = GetComponent<Health>().HealthLevel;
         }
     }
@@ -77,8 +83,9 @@ public class NetworkedPlayer : MonoBehaviour
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(m_healthLevel);
-            stream.SendNext(PlayerName);
-            stream.SendNext(PlayerScore);
+            stream.SendNext(m_playerName);
+            stream.SendNext(m_playerScore);
+            stream.SendNext(m_playerID);
         }
         else
         {
@@ -87,8 +94,73 @@ public class NetworkedPlayer : MonoBehaviour
             m_correctPlayerPos = (Vector3)stream.ReceiveNext();
             m_correctPlayerRot = (Quaternion)stream.ReceiveNext();
             m_healthLevel = (float)stream.ReceiveNext();
-            PlayerName = (string)stream.ReceiveNext();
-            PlayerScore = (int)stream.ReceiveNext();
+            m_playerName = (string)stream.ReceiveNext();
+            m_playerScore = (int)stream.ReceiveNext();
+            m_playerID = (string)stream.ReceiveNext();
         }
+    }
+
+    /**
+    * Gets the player name
+    */
+    public string PlayerName
+    {
+        get { return m_playerName; }
+    }
+
+    /**
+    * Gets the player score
+    */
+    public float PlayerScore
+    {
+        get { return m_playerScore; }
+    }
+
+    /**
+    * Gets the player ID
+    */
+    public string PlayerID
+    {
+        get { return m_playerID; }
+    }
+
+    /**
+    * Returns the player Name
+    */
+    static public string GetPlayerName(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().PlayerName;
+    }
+
+    /**
+    * Returns the player Score
+    */
+    static public float GetPlayerScore(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().PlayerScore;
+    }
+
+    /**
+    * Returns the player ID
+    */
+    static public string GetPlayerID(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
+    }
+
+    /**
+    * Returns whether the player can control this
+    */
+    static public bool IsControllable(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().IsControllable();
+    }
+
+    /**
+    * Returns whether the player can control this
+    */
+    public bool IsControllable()
+    {
+        return photonView.isMine;
     }
 }

@@ -8,19 +8,10 @@ using System.Collections.Generic;
 
 public class BulletFireScript : MonoBehaviour
 {
-    public float fireTime = 0.05f;
-    public float bulletSpeed = 100.0f;
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);
-    private Vector2 m_firingDirection;
-    private SoundManager m_soundManager = null;
 
-    /**
-    * Initialises the script
-    */
-    void Start()
-    {
-        m_soundManager = SoundManager.Get();
-    }
+    private float m_bulletSpeed = 200.0f;
+    private Vector2 m_firingDirection;
 
     /**
     * Returns the position fired from
@@ -57,12 +48,12 @@ public class BulletFireScript : MonoBehaviour
         obj.SetActive(true);
         obj.GetComponent<Bullet>().Owner = owner;
 
-        Vector2 bulletVelocity = transform.right * bulletSpeed;
+        Vector2 bulletVelocity = transform.right * m_bulletSpeed;
         obj.GetComponent<Rigidbody2D>().AddForce(bulletVelocity);
 
         if(PlayerPlacer.IsCloseToPlayer(obj.transform.position))
         {
-            m_soundManager.PlaySound(SoundManager.SoundID.FIRE);
+            SoundManager.Get().PlaySound(SoundManager.SoundID.FIRE);
         }
     }
 }

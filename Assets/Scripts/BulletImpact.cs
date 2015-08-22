@@ -28,7 +28,7 @@ public class BulletImpact : MonoBehaviour
             var bullet = other.gameObject.GetComponent<Bullet>();
 
             // Ensure the owner is not colliding with their own bullet
-            if(bullet.Owner != transform.parent.GetComponent<NetworkedPlayer>().PlayerID)
+            if(bullet.Owner != NetworkedPlayer.GetPlayerID(gameObject))
             {
                 m_parentHealth.InflictDamage(bullet.Damage);
                 other.gameObject.GetComponent<Bullet>().DestroyOnImpact();

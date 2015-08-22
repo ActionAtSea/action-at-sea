@@ -138,7 +138,9 @@ public class SoundManager : MonoBehaviour
         
         for(int i = 0; i < instances; ++i)
         {
-            sm_sharedSound[index].instances.Add(Instantiate(source));
+            sm_sharedSound[index].instances.Add(
+                i == 0 ? source : Instantiate(source));
+
             sm_sharedSound[index].instances[i].transform.parent = sm_soundParent.transform;
             sm_sharedSound[index].instances[i].Stop();
             DontDestroyOnLoad(sm_sharedSound[index].instances[i]);

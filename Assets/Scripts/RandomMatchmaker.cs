@@ -51,13 +51,6 @@ public class RandomMatchmaker : Photon.PunBehaviour
 
         GameObject player = playerPVP.transform.FindChild("Player").gameObject;
         player.tag = "Player";
-        player.GetComponent<NetworkedPlayer>().PlayerID = "Player";
-
-        player.GetComponent<PlayerAiming>().controllable = true;
-        player.GetComponent<PlayerMovement>().controllable = true;
-        player.GetComponent<Health>().controllable = true;
-        player.transform.FindChild("Cannons").gameObject.GetComponent<CannonController>().controllable = true;
-
         player.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
         player.transform.position = FindObjectOfType<PlayerPlacer>().GetNewPosition();
 

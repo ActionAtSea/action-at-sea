@@ -8,6 +8,7 @@ using System.Collections;
 public class IslandDiscoveryNode : MonoBehaviour
 {
     public Sprite altSprite;
+
     private bool m_discovered = false;
 
     /**

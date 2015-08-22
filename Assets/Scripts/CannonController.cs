@@ -11,16 +11,12 @@ using System.Collections.Generic;
 */
 public class CannonController : MonoBehaviour
 {
-    public bool controllable = false;
     private float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
-
     private float m_swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
     private float m_aimingRangeDegrees = 90.0f;       //The range within which which side's cannons can be fired is determined.
-
     private float m_reloadTime = 2.0f;                //The time in seconds that it takes to reload.
     private float m_currentReloadTimeRight = 0.0f;
     private float m_currentReloadTimeLeft = 0.0f;
-
     private Vector3 m_startPosition;                  //Contains the parent's position for use in aiming calculations.
     private Vector3 m_mousePositionWorld;             //Contains the mousePosition in world space.
     private Cannon[] m_cannonList;                    //Array of all the cannons on the ship.
@@ -74,7 +70,7 @@ public class CannonController : MonoBehaviour
     */  
     void Update()
     {
-        if(controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             UpdateMouseCursorAngle();
             FireCannons();

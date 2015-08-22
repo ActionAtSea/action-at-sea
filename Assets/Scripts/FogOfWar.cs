@@ -24,30 +24,28 @@ class FogTile
 */
 public class FogOfWar : MonoBehaviour 
 {
-    public int tileAmountX = 20;                // Number of tiles along the X axis
-    public int tileAmountY = 20;                // Number of tiles along the Y axis
-    public float tileOffset = 1.0f;
-    public float tileSize = 1.0f;               // Size multiplier of the tiles
-    public float minRevealRadius = 5.0f;        // Distance the tiles are fully transparent from the player
-    public float maxRevealRadius = 10.0f;       // Distance the tiles are fully opaque from the player
+    public int tileAmountX = 9;                // Number of tiles along the X axis
+    public int tileAmountY = 9;                // Number of tiles along the Y axis
+    public float tileOffset = 0.75f;
+    public float tileSize = 20.0f;             // Size multiplier of the tiles
+    public float minRevealRadius = 5.0f;       // Distance the tiles are fully transparent from the player
+    public float maxRevealRadius = 9.0f;       // Distance the tiles are fully opaque from the player
     public GameObject generatedFogParent;        
     public GameObject minimapFogParent;
-    public float minimapScale = 1.0f;
-    public float minimapRevealRadius = 01.0f;
+    public float minimapScale = 120.0f;
+    public float minimapRevealRadius = 10.0f;
 
-    private int revealedCount = 0;
-    private FogTile minimapFog = new FogTile();
-    private bool initialised = false;           // Whether the fog was correctly initialised
-    private float worldScale;                    // Size of the texture in world space
-    private float minimapWorldScale;            // Size of the minimap in world space
-    private int textureSize;                    // Dimensions of the texture
-    private int minimapSize = 128;                // Dimensions of the minimap texture
-    private List<FogTile> tiles;                // List of all sprites 
-    private List<FogTile> borderTiles;           // Row of tiles that cannot be edited 
-    private Vector2 tileInside;                 // Tile the player is currently inside
-    private Vector2 playerPosition;                // Currently position of the player
-    private Vector3 previousPlayerPosition;     // Position the player was previously in
-    private float worldRadius;
+    private int m_revealedCount = 0;
+    private FogTile m_minimapFog = new FogTile();
+    private bool m_initialised = false;           // Whether the fog was correctly initialised
+    private float m_worldScale;                   // Size of the texture in world space
+    private float m_minimapWorldScale;            // Size of the minimap in world space
+    private int m_textureSize;                    // Dimensions of the texture
+    private int m_minimapSize = 128;              // Dimensions of the minimap texture
+    private List<FogTile> m_tiles;                // List of all sprites 
+    private List<FogTile> m_borderTiles;          // Row of tiles that cannot be edited 
+    private Vector2 m_tileInside;                 // Tile the player is currently inside
+    private float m_worldRadius;
 
     /**
     * Determines whether the fog is set up correctly
@@ -66,7 +64,7 @@ public class FogOfWar : MonoBehaviour
             Debug.LogError("Fog: Min reveal radius must be smaller than max");
             return false;
         }
-        if (maxRevealRadius >= worldScale) 
+        if (maxRevealRadius >= m_worldScale) 
         {
             Debug.LogError("Fog: Max reveal radius must be smaller than tile scale");
             return false;
@@ -81,18 +79,17 @@ public class FogOfWar : MonoBehaviour
     void Start ()
     {
         var renderer = this.GetComponent<SpriteRenderer>();
-        textureSize = renderer.sprite.texture.width;
-        worldScale = (float)textureSize / renderer.sprite.pixelsPerUnit;
-        worldScale *= tileSize;
-        worldRadius = Mathf.Sqrt((worldScale * worldScale) + (worldScale * worldScale)) * 0.5f;
+        m_textureSize = renderer.sprite.texture.width;
+        m_worldScale = (float)m_textureSize / renderer.sprite.pixelsPerUnit;
+        m_worldScale *= tileSize;
+        m_worldRadius = Mathf.Sqrt((m_worldScale * m_worldScale) + (m_worldScale * m_worldScale)) * 0.5f;
 
-        borderTiles = new List<FogTile> ();
-        tiles = new List<FogTile>();
-        previousPlayerPosition = new Vector3 ();
+        m_borderTiles = new List<FogTile> ();
+        m_tiles = new List<FogTile>();
         
-        tileInside = new Vector2 ();
-        tileInside.x = -1.0f;
-        tileInside.y = -1.0f;
+        m_tileInside = new Vector2 ();
+        m_tileInside.x = -1.0f;
+        m_tileInside.y = -1.0f;
 
         if (!CanBeInitialised ()) 
         {
@@ -114,8 +111,8 @@ public class FogOfWar : MonoBehaviour
         tileAmountY -= 2;
 
         // Create the minimap fog
-        Color[] pixels = new Color[minimapSize * minimapSize];
-        for(int i = 0; i < minimapSize * minimapSize; ++i)
+        Color[] pixels = new Color[m_minimapSize * m_minimapSize];
+        for(int i = 0; i < m_minimapSize * m_minimapSize; ++i)
         {
             pixels[i].r = 159.0f/255.0f;
             pixels[i].g = 138.0f/255.0f;
@@ -123,13 +120,13 @@ public class FogOfWar : MonoBehaviour
             pixels[i].a = 255.0f/255.0f;
         }
 
-        InitialiseTile (minimapFog, minimapSize, "Minimap", pixels, minimapFogParent.transform);
-        minimapFog.obj.transform.localScale = new Vector3 (minimapScale, minimapScale, 1.0f);
-        minimapFog.renderer.enabled = false;
-        minimapWorldScale = (float)minimapSize / renderer.sprite.pixelsPerUnit;
-        minimapWorldScale *= minimapScale;
+        InitialiseTile (m_minimapFog, m_minimapSize, "Minimap", pixels, minimapFogParent.transform);
+        m_minimapFog.obj.transform.localScale = new Vector3 (minimapScale, minimapScale, 1.0f);
+        m_minimapFog.renderer.enabled = false;
+        m_minimapWorldScale = (float)m_minimapSize / renderer.sprite.pixelsPerUnit;
+        m_minimapWorldScale *= minimapScale;
 
-        initialised = true;
+        m_initialised = true;
     }
 
     /**
@@ -137,15 +134,15 @@ public class FogOfWar : MonoBehaviour
     */
     void CreateNewTile(bool isBorder, int x, int y, int ID)
     {
-        List<FogTile> tileContainer = isBorder ? borderTiles : tiles;
+        List<FogTile> tileContainer = isBorder ? m_borderTiles : m_tiles;
         tileContainer.Add(new FogTile());
 
         int i = tileContainer.Count - 1;
-        InitialiseTile (tileContainer [i], textureSize, ID.ToString (),
+        InitialiseTile (tileContainer [i], m_textureSize, ID.ToString (),
                         this.GetComponent<SpriteRenderer> ().sprite.texture.GetPixels (),
                         generatedFogParent.transform);
 
-        var gridScale = worldScale * tileOffset;
+        var gridScale = m_worldScale * tileOffset;
         Vector2 initialPosition = new Vector2 (
             gridScale * ((tileAmountX - 1) * 0.5f),
             gridScale * ((tileAmountY - 1) * 0.5f));
@@ -198,8 +195,8 @@ public class FogOfWar : MonoBehaviour
     */
     bool IsInsideTile(Vector3 position, int x, int y)
     {
-        var spritePosition = tiles[GetIndex (x, y)].obj.transform.position;
-        return IsInsideBounds (position.x, position.y, spritePosition.x, spritePosition.y, worldScale);
+        var spritePosition = m_tiles[GetIndex (x, y)].obj.transform.position;
+        return IsInsideBounds (position.x, position.y, spritePosition.x, spritePosition.y, m_worldScale);
     }
 
     /**
@@ -227,7 +224,7 @@ public class FogOfWar : MonoBehaviour
     */
     void Update () 
     {
-        if (!initialised)
+        if (!m_initialised)
         {
             return;
         }
@@ -239,7 +236,7 @@ public class FogOfWar : MonoBehaviour
         }
 
         //Debug.Log (revealedCount);
-        revealedCount = 0;
+        m_revealedCount = 0;
     }
 
     /**
@@ -247,11 +244,11 @@ public class FogOfWar : MonoBehaviour
     */
     bool IsInsideFog(GameObject player)
     {
-        if (tileInside.x == -1.0f || tileInside.y == -1.0f || 
-            !IsInsideTile (player.transform.position, (int)tileInside.x, (int)tileInside.y))
+        if (m_tileInside.x == -1.0f || m_tileInside.y == -1.0f || 
+            !IsInsideTile (player.transform.position, (int)m_tileInside.x, (int)m_tileInside.y))
         {
-            tileInside.x = -1.0f;
-            tileInside.y = -1.0f;
+            m_tileInside.x = -1.0f;
+            m_tileInside.y = -1.0f;
 
             for(int x = 0; x < tileAmountX; ++x)
             {
@@ -259,8 +256,8 @@ public class FogOfWar : MonoBehaviour
                 {
                     if(IsInsideTile(player.transform.position, x, y))
                     {
-                        tileInside.x = (float)x;
-                        tileInside.y = (float)y;
+                        m_tileInside.x = (float)x;
+                        m_tileInside.y = (float)y;
                         break;
                     }
                 }
@@ -320,7 +317,12 @@ public class FogOfWar : MonoBehaviour
     */
     void RemoveMinimap(Vector2 playerPosition)
     {
-        RemoveFog (playerPosition, minimapFog, minimapWorldScale, minimapSize, minimapRevealRadius, minimapRevealRadius);
+        RemoveFog (playerPosition, 
+                   m_minimapFog, 
+                   m_minimapWorldScale,
+                   m_minimapSize, 
+                   minimapRevealRadius,
+                   minimapRevealRadius);
     }
 
     /**
@@ -329,16 +331,16 @@ public class FogOfWar : MonoBehaviour
     void RemoveFogSmoothly(Vector2 playerPosition, int x, int y)
     {
         var index = GetIndex (x, y);
-        if (index >= 0 && index < tiles.Count) 
+        if (index >= 0 && index < m_tiles.Count) 
         {
-            var tile = tiles[index];
+            var tile = m_tiles[index];
 
             // Sphere-sphere Bounds checking
             Vector2 position = new Vector2(tile.obj.transform.position.x, tile.obj.transform.position.y);
-            if(Vector2.Distance(position, playerPosition) <= worldRadius + maxRevealRadius)
+            if(Vector2.Distance(position, playerPosition) <= m_worldRadius + maxRevealRadius)
             {
-                RemoveFog(playerPosition, tile, worldScale, textureSize, minRevealRadius, maxRevealRadius);
-                revealedCount++;
+                RemoveFog(playerPosition, tile, m_worldScale, m_textureSize, minRevealRadius, maxRevealRadius);
+                m_revealedCount++;
             }
         }
     }
@@ -354,8 +356,8 @@ public class FogOfWar : MonoBehaviour
         Vector2 playerPosition = new Vector2(player.transform.position.x, 
                                              player.transform.position.y);
 
-        int x = (int)tileInside.x;
-        int y = (int)tileInside.y;
+        int x = (int)m_tileInside.x;
+        int y = (int)m_tileInside.y;
 
         RemoveFogSmoothly(playerPosition, x, y);
         RemoveFogSmoothly(playerPosition, x, y+1);
@@ -366,10 +368,6 @@ public class FogOfWar : MonoBehaviour
         RemoveFogSmoothly(playerPosition, x-1, y-1);
         RemoveFogSmoothly(playerPosition, x+1, y-1);
         RemoveFogSmoothly(playerPosition, x-1, y+1);
-        RemoveMinimap(playerPosition);
-
-        previousPlayerPosition.x = player.transform.position.x;
-        previousPlayerPosition.y = player.transform.position.y;
-        previousPlayerPosition.z = player.transform.position.z;
+        RemoveMinimap(playerPosition); 
     }
 }

@@ -34,7 +34,7 @@ public class Cannon : MonoBehaviour
     */
     void Update()
     {
-        if(m_controller.controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             m_firePosition = m_fireScript.FirePosition();
             m_fireRotation = m_fireScript.FireRotation();
@@ -106,8 +106,8 @@ public class Cannon : MonoBehaviour
     */
     public void FireGun()
     {
-        string ID = transform.parent.transform.parent.GetComponent<NetworkedPlayer>().PlayerID;
+        string ID = NetworkedPlayer.GetPlayerName(gameObject);
         m_fireScript.Fire(ID, m_firePosition, m_fireRotation);
-        m_hasFired = m_controller.controllable;
+        m_hasFired = NetworkedPlayer.IsControllable(gameObject);
     }
 }

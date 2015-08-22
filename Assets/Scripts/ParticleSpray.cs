@@ -9,6 +9,7 @@ public class ParticleSpray : MonoBehaviour
 {    
     public float minSpeedForEmission = 1.0f;
     public GameObject parent = null;
+
     private ParticleSystem m_particles;
 
     /**

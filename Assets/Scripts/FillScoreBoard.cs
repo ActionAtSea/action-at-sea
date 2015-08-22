@@ -28,15 +28,14 @@ public class FillScoreBoard : MonoBehaviour
             players.AddRange(enemies);
         }
 
-        players = players.OrderByDescending(x => x.GetComponent<NetworkedPlayer>().PlayerScore).ToList();
+        players = players.OrderByDescending(x => NetworkedPlayer.GetPlayerScore(x)).ToList();
         var textUI = GetComponent<UnityEngine.UI.Text>();
         textUI.text = "";
 
         foreach(GameObject obj in players)
         {
-            var networkedPlayer = obj.GetComponent<NetworkedPlayer>();
-            textUI.text += networkedPlayer.PlayerScore.ToString() + ": " +
-                networkedPlayer.PlayerName + "\n";
+            textUI.text += NetworkedPlayer.GetPlayerScore(obj).ToString() + ": " +
+                NetworkedPlayer.GetPlayerName(obj) + "\n";
         }
     }
 }

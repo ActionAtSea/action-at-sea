@@ -7,7 +7,6 @@ using System.Collections;
 
 public class Health : MonoBehaviour
 {
-    public bool controllable = false;
     private GameObject m_healthBar = null;
     private GameObject m_floatingHealthBarText = null;
     private float m_minBarWidth = 0.0f;
@@ -25,14 +24,8 @@ public class Health : MonoBehaviour
     void Start()
     {
         m_healthLevel = m_healthMax;
-    }
 
-    /**
-    * Initialises the health once the player has been created
-    */
-    void InitialiseBar()
-    {
-        if(controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             m_healthBar = GameObject.FindWithTag("PlayerHealth");
         }
@@ -42,37 +35,29 @@ public class Health : MonoBehaviour
             m_healthBar = floatingHealthBar.FindChild("HealthBar").gameObject;
             m_floatingHealthBarText = floatingHealthBar.FindChild("Canvas").FindChild("Text").gameObject;
         }
-        
-        if(m_healthBar)
+
+        if(m_healthBar.GetComponent<RectTransform>() != null)
         {
-            if(m_healthBar.GetComponent<RectTransform>() != null)
-            {
-                m_hasScreenSpaceBar = true;
-                m_maxBarWidth = m_healthBar.GetComponent<RectTransform>().rect.width;
-                m_barHeight = m_healthBar.GetComponent<RectTransform>().rect.height;
-            }
-            else
-            {
-                m_maxBarWidth = m_healthBar.transform.localScale.x;
-                m_barHeight = m_healthBar.transform.localScale.y;
-            }
+            m_hasScreenSpaceBar = true;
+            m_maxBarWidth = m_healthBar.GetComponent<RectTransform>().rect.width;
+            m_barHeight = m_healthBar.GetComponent<RectTransform>().rect.height;
+        }
+        else
+        {
+            m_maxBarWidth = m_healthBar.transform.localScale.x;
+            m_barHeight = m_healthBar.transform.localScale.y;
         }
     }
-    
+
     /**
     * Updates the health
     */
     void Update()
     {
-        if(m_isAlive && !m_healthBar)
-        {
-            InitialiseBar();
-        }
-
         if(m_floatingHealthBarText != null)
         {
             m_floatingHealthBarText.GetComponent<UnityEngine.UI.Text>().text = 
-                gameObject.GetComponent<NetworkedPlayer>().PlayerName;
+                NetworkedPlayer.GetPlayerName(gameObject);
         }
 
         if (m_healthLevel > m_healthMax)
@@ -118,7 +103,7 @@ public class Health : MonoBehaviour
     */
     public void InflictDamage(float damage)
     {
-        if(controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             m_healthLevel -= damage;
         }
@@ -129,7 +114,7 @@ public class Health : MonoBehaviour
     */
     public void RepairDamage(float repairAmount)
     {
-        if(controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             m_healthLevel += repairAmount;
         }

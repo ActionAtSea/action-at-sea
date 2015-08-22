@@ -11,11 +11,11 @@ using System.Collections;
 */
 public class FadeGame : MonoBehaviour 
 {
-    static FadeGame sm_fadeGame = null;                // Instance of the FadeGame script
-	static GameObject sm_fadeSprite = null;            // Image to fade in/out
-	static FadeState sm_fadeState = FadeState.NO_FADE; // State of fading
-	static float sm_alpha = 0.0f;                      // Alpha for the fade sprite
-	float m_fadeSpeed = 0.75f;                         // Speed for fading
+    static private FadeGame sm_fadeGame = null;                // Instance of the FadeGame script
+    static private GameObject sm_fadeSprite = null;            // Image to fade in/out
+    static private FadeState sm_fadeState = FadeState.NO_FADE; // State of fading
+    static private float sm_alpha = 0.0f;                      // Alpha for the fade sprite
+    private float m_fadeSpeed = 0.75f;                         // Speed for fading
 	
 	/**
     * Initialises the fader

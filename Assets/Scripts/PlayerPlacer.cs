@@ -9,6 +9,7 @@ public class PlayerPlacer : MonoBehaviour
 {    
     public GameObject gameboard;
     public GameObject terrain;
+
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
 

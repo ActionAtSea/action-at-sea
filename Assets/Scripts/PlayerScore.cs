@@ -11,6 +11,7 @@ using System.Collections;
 public class PlayerScore : MonoBehaviour
 {
     public float startingScore = 100.0f;
+
     private float m_score = 0.0f;
     private float m_roundedScore;
 

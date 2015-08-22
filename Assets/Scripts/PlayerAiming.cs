@@ -7,7 +7,6 @@ using System.Collections;
 
 public class PlayerAiming : MonoBehaviour
 {
-    public bool controllable = false;
     private Vector3 m_mousePos;
     private CannonController m_controller;
 
@@ -25,7 +24,7 @@ public class PlayerAiming : MonoBehaviour
     */
     void Update()
     {
-        if(controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             m_controller.AimWeapon(m_mousePos);

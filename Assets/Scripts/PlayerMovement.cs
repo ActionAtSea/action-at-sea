@@ -8,7 +8,6 @@ using System.Collections;
 [RequireComponent (typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour 
 {
-    public bool controllable = false;
     private float m_forwardSpeed = 8.0f;
     private float m_rotationSpeed = 1.0f;
     private Vector3 m_forwardForce = new Vector3();
@@ -18,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     */
     void FixedUpdate() 
     {
-        if(controllable)
+        if(NetworkedPlayer.IsControllable(gameObject))
         {
             var rb = GetComponent<Rigidbody2D>();
 

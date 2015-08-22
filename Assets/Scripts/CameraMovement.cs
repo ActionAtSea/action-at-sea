@@ -7,8 +7,8 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour 
 {
-    public float dragAmount = 0.15f;
-    public bool useCameraDrag = true;
+    private float m_dragAmount = 1.0f;
+    private bool m_useCameraDrag = true;
     private Vector3 m_velocity = Vector3.zero;
     private Vector3 m_fixedPosition;
     private Vector3 m_viewportPosition;
@@ -33,14 +33,14 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
-        if(useCameraDrag)
+        if(m_useCameraDrag)
         {
             // Reference: http://answers.unity3d.com/questions/29183/2d-camera-smooth-follow.html
             var camera = GetComponent<Camera> ();
             m_viewportPosition.z = camera.WorldToViewportPoint(player.transform.position).z;
             Vector3 delta = player.transform.position - camera.ViewportToWorldPoint(m_viewportPosition);
             Vector3 destination = transform.position + delta;
-            transform.position = Vector3.SmoothDamp(transform.position, destination, ref m_velocity, dragAmount);
+            transform.position = Vector3.SmoothDamp(transform.position, destination, ref m_velocity, m_dragAmount);
         }
         else
         {

@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 public class NewObjectPooler : MonoBehaviour
 {
-    private static NewObjectPooler sm_objPooler = null;
     public GameObject pooledObject = null;
+
+    private static NewObjectPooler sm_objPooler = null;
     private int m_pooledAmount = 20;
     private bool m_willGrow = true; // Determines if more objects can be added to the poolwhen needed.
-    List<GameObject> m_pooledObjects = null;
+    private List<GameObject> m_pooledObjects = null;
 
     /**
     * Initialises the object pooler
