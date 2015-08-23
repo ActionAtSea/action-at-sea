@@ -41,6 +41,13 @@ public class NetworkedPlayer : MonoBehaviour
             Debug.LogError("Could not find Player to network");
         }
         m_player = score.transform.gameObject;
+
+        var minimap = GameObject.FindObjectOfType<Minimap>();
+        if(minimap == null)
+        {
+            Debug.LogError("Could not find minimap");
+        }
+        minimap.AddPlayer(gameObject, photonView.isMine);
     }
 
     /**

@@ -17,13 +17,10 @@ class MapItem
 
 public class Minimap : MonoBehaviour 
 {
-    public GameObject fog;
-    public GameObject playerMarker;
-    public GameObject enemyMarker;
+    public GameObject marker = null;
 
-    private float m_shipMarkerSize = 40.0f;
+    private float m_shipMarkerSize = 2.0f;
     private bool m_isInitialised = false;
-    private bool m_hasPlayer = false;
     private List<MapItem> m_staticItems = new List<MapItem>();
     private List<MapItem> m_dynamicItems = new List<MapItem>();
     private GameObject m_gameBoard = null;
@@ -39,22 +36,27 @@ public class Minimap : MonoBehaviour
             Debug.LogError("Could not find game board");
         }
 
-        var boardBounds = m_gameBoard.GetComponent<SpriteRenderer>().bounds;
-        var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
-        var boardLength = Mathf.Abs(boardBounds.max.y - boardBounds.min.y);
+        var boardRenderer = m_gameBoard.GetComponent<SpriteRenderer>();
 
-        var mapBounds = GetComponent<SpriteRenderer>().bounds;
-        var mapWidth = Mathf.Abs(mapBounds.max.x - mapBounds.min.x);
-        var mapLength = Mathf.Abs(mapBounds.max.y - mapBounds.min.y);
+        var boardWidth = ((float)boardRenderer.sprite.texture.width / 
+            boardRenderer.sprite.pixelsPerUnit) * m_gameBoard.transform.localScale.x;
 
-        Debug.Log(mapWidth);
-        Debug.Log(mapLength);
+        var boardLength = ((float)boardRenderer.sprite.texture.height /
+            boardRenderer.sprite.pixelsPerUnit) * m_gameBoard.transform.localScale.y;
+
+        var mapRenderer = GetComponent<SpriteRenderer>();
+
+        var mapWidth = ((float)mapRenderer.sprite.texture.width / 
+            mapRenderer.sprite.pixelsPerUnit) * transform.localScale.x;
+        
+        var mapLength = ((float)mapRenderer.sprite.texture.height /
+            mapRenderer.sprite.pixelsPerUnit) * transform.localScale.y;
 
         var scaleX = mapWidth / boardWidth;
         var scaleY = mapLength / boardLength;
-
-        GetComponent<SpriteRenderer>().enabled = false;
         transform.localScale = new Vector3(scaleX, scaleY, 0.0f);
+
+        mapRenderer.enabled = false;
     }
 
     /**
@@ -62,6 +64,7 @@ public class Minimap : MonoBehaviour
     */
     void AddItem(Transform itemTransform, 
                  SpriteRenderer itemRenderer, 
+                 Color colour,
                  bool isStatic, 
                  float scale = 1.0f)
     {
@@ -98,8 +101,7 @@ public class Minimap : MonoBehaviour
         item.renderer.sprite = Sprite.Create(itemRenderer.sprite.texture, rect, 
                                              pivot, itemRenderer.sprite.pixelsPerUnit);
 
-        var colour = itemRenderer.color;
-        item.renderer.color = new Color(colour.r, colour.g, colour.b, 1.0f);
+        item.renderer.color = new Color(colour.r, colour.g, colour.b, colour.a);
 
         if(isStatic)
         {
@@ -117,7 +119,10 @@ public class Minimap : MonoBehaviour
     {
         if(!m_isInitialised)
         {
-            AddItem(m_gameBoard.transform, m_gameBoard.GetComponent<SpriteRenderer>(), true);
+            AddItem(m_gameBoard.transform, 
+                    m_gameBoard.GetComponent<SpriteRenderer>(), 
+                    m_gameBoard.GetComponent<SpriteRenderer>().color,
+                    true);
 
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
             if(terrain == null)
@@ -129,13 +134,26 @@ public class Minimap : MonoBehaviour
             {
                 AddItem(terrain[i].transform, 
                         terrain[i].GetComponent<SpriteRenderer>(), 
+                        terrain[i].GetComponent<SpriteRenderer>().color,
                         true);
             }
 
+            GameObject fog = GameObject.FindGameObjectWithTag("MinimapFog");
+            if(fog == null)
+            {
+                Debug.LogError("Could not find minimap fog");
+            }
+            else
+            {
+                AddItem(fog.transform, 
+                        fog.GetComponent<SpriteRenderer>(),
+                        GetComponent<SpriteRenderer>().color,
+                        true);
+            }
+            
             m_isInitialised = true;
         }
 
-        AddPlayer();
         UpdateMap();
     }
 
@@ -157,22 +175,18 @@ public class Minimap : MonoBehaviour
 
     /**
     * Adds the player to the minimap
-    * The player can be created any time so continue to check until found
     */
-    void AddPlayer()
+    public void AddPlayer(GameObject player, bool controlled)
     {
-        if(!m_hasPlayer)
-        {
-            var player = PlayerManager.GetControllablePlayer();
-            if(player != null)
-            {
-                m_hasPlayer = true;
-                AddItem(player.transform, 
-                        playerMarker.GetComponent<SpriteRenderer>(), 
-                        false, 
-                        m_shipMarkerSize);
-            }
-        }
+        var maxMapScale = Mathf.Max(transform.localScale.x, transform.localScale.y);
+
+        var colour = controlled ?
+            new Color(0.0f, 1.0f, 0.0f, 1.0f) :
+            new Color(1.0f, 0.0f, 0.0f, 1.0f);
+
+        AddItem(player.transform, 
+                marker.GetComponent<SpriteRenderer>(), 
+                colour, false, m_shipMarkerSize / maxMapScale);
     }
 
     /**

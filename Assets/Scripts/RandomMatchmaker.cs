@@ -57,15 +57,15 @@ public class RandomMatchmaker : Photon.PunBehaviour
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room");
-        GameObject playerPVP = PhotonNetwork.Instantiate("PlayerPVP", Vector3.zero, Quaternion.identity, 0);
+        GameObject playerPrefab = PhotonNetwork.Instantiate("PlayerPVP", Vector3.zero, Quaternion.identity, 0);
 
-        GameObject player = playerPVP.transform.FindChild("Player").gameObject;
+        GameObject player = playerPrefab.transform.FindChild("Player").gameObject;
         player.tag = "Player";
         player.name = player.GetComponent<NetworkedPlayer>().PlayerID;
         player.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
         player.transform.position = FindObjectOfType<PlayerPlacer>().GetNewPosition();
 
-        GameObject healthbar = playerPVP.transform.FindChild("FloatingHealthBar").gameObject;
+        GameObject healthbar = playerPrefab.transform.FindChild("FloatingHealthBar").gameObject;
         healthbar.SetActive(false);
 
         m_joined = true;

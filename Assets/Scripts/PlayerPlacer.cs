@@ -38,9 +38,26 @@ public class PlayerPlacer : MonoBehaviour
     }
 
     /**
-    * Retrieves a new position on the map that doesn't collide
+    * Retrieves a new position on the map
     */
     public Vector2 GetNewPosition()
+    {
+        GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("Spawn");
+        if(spawnPoints == null || spawnPoints.Length == 0)
+        {
+            return GetRandomPosition();
+        }
+        else
+        {
+            // TO DO: Add spawn points
+            return new Vector2();
+        }
+    }
+
+    /**
+    * Retrieves a new position on the map that doesn't collide
+    */
+    public Vector2 GetRandomPosition()
     {
         GameObject[] players = PlayerManager.GetEnemies();
 
