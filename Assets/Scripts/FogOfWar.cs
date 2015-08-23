@@ -24,8 +24,6 @@ class FogTile
 */
 public class FogOfWar : MonoBehaviour 
 {
-    public int tileAmountX = 9;                // Number of tiles along the X axis
-    public int tileAmountY = 9;                // Number of tiles along the Y axis
     public float tileOffset = 0.75f;
     public float tileSize = 20.0f;             // Size multiplier of the tiles
     public float minRevealRadius = 5.0f;       // Distance the tiles are fully transparent from the player
@@ -35,6 +33,7 @@ public class FogOfWar : MonoBehaviour
     public float minimapScale = 120.0f;
     public float minimapRevealRadius = 10.0f;
 
+    private GameObject m_gameBoard = null;
     private int m_revealedCount = 0;
     private FogTile m_minimapFog = new FogTile();
     private bool m_initialised = false;           // Whether the fog was correctly initialised
@@ -46,6 +45,8 @@ public class FogOfWar : MonoBehaviour
     private List<FogTile> m_borderTiles;          // Row of tiles that cannot be edited 
     private Vector2 m_tileInside;                 // Tile the player is currently inside
     private float m_worldRadius;
+    private int m_tileAmountX = 0;                // Number of tiles along the X axis
+    private int m_tileAmountY = 0;                // Number of tiles along the Y axis
 
     /**
     * Determines whether the fog is set up correctly
@@ -78,15 +79,19 @@ public class FogOfWar : MonoBehaviour
     */
     void Start ()
     {
+        m_gameBoard = GameObject.FindGameObjectWithTag("GameBoard");
+        if(m_gameBoard == null)
+        {
+            Debug.LogError("Could not find game board");
+        }
+
         var renderer = this.GetComponent<SpriteRenderer>();
         m_textureSize = renderer.sprite.texture.width;
         m_worldScale = (float)m_textureSize / renderer.sprite.pixelsPerUnit;
         m_worldScale *= tileSize;
         m_worldRadius = Mathf.Sqrt((m_worldScale * m_worldScale) + (m_worldScale * m_worldScale)) * 0.5f;
-
         m_borderTiles = new List<FogTile> ();
         m_tiles = new List<FogTile>();
-        
         m_tileInside = new Vector2 ();
         m_tileInside.x = -1.0f;
         m_tileInside.y = -1.0f;
@@ -96,19 +101,27 @@ public class FogOfWar : MonoBehaviour
             return;
         }
 
+        const int borderTiles = 2;
+        const int extraTiles = 1 + borderTiles;
+        var boardBounds = m_gameBoard.GetComponent<SpriteRenderer>().bounds;
+        var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
+        var boardLength = Mathf.Abs(boardBounds.max.y - boardBounds.min.y);
+        m_tileAmountX = (int)Mathf.Ceil(boardWidth / m_worldScale) + extraTiles;
+        m_tileAmountY = (int)Mathf.Ceil(boardLength / m_worldScale) + extraTiles;
+
         int ID = 0;
-        for(int x = 0; x < tileAmountX; ++x)
+        for(int x = 0; x < m_tileAmountX; ++x)
         {
-            for(int y = 0; y < tileAmountY; ++y)
+            for(int y = 0; y < m_tileAmountY; ++y)
             {
-                CreateNewTile(x == 0 || y == 0 || x == tileAmountX-1 || y == tileAmountY-1, x, y, ID);
+                CreateNewTile(x == 0 || y == 0 || x == m_tileAmountX-1 || y == m_tileAmountY-1, x, y, ID);
                 ++ID;
             }
         }
 
         // Actual removable fog amount
-        tileAmountX -= 2;
-        tileAmountY -= 2;
+        m_tileAmountX -= borderTiles;
+        m_tileAmountY -= borderTiles;
 
         // Create the minimap fog
         Color[] pixels = new Color[m_minimapSize * m_minimapSize];
@@ -144,8 +157,8 @@ public class FogOfWar : MonoBehaviour
 
         var gridScale = m_worldScale * tileOffset;
         Vector2 initialPosition = new Vector2 (
-            gridScale * ((tileAmountX - 1) * 0.5f),
-            gridScale * ((tileAmountY - 1) * 0.5f));
+            gridScale * ((m_tileAmountX - 1) * 0.5f),
+            gridScale * ((m_tileAmountY - 1) * 0.5f));
 
         tileContainer[i].obj.transform.position = new Vector3(
             initialPosition.x - (x * gridScale),
@@ -187,7 +200,7 @@ public class FogOfWar : MonoBehaviour
     */
     int GetIndex(int x, int y)
     {
-        return x * tileAmountX + y;
+        return x * m_tileAmountX + y;
     }
 
     /**
@@ -250,9 +263,9 @@ public class FogOfWar : MonoBehaviour
             m_tileInside.x = -1.0f;
             m_tileInside.y = -1.0f;
 
-            for(int x = 0; x < tileAmountX; ++x)
+            for(int x = 0; x < m_tileAmountX; ++x)
             {
-                for(int y = 0; y < tileAmountY; ++y)
+                for(int y = 0; y < m_tileAmountY; ++y)
                 {
                     if(IsInsideTile(player.transform.position, x, y))
                     {

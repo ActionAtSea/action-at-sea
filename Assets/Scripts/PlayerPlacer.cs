@@ -7,10 +7,21 @@ using System.Collections;
 
 public class PlayerPlacer : MonoBehaviour 
 {    
-    public GameObject gameboard;
-
+    private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
+
+    /**
+    * Initialises the script
+    */
+    void Start()
+    {
+        m_gameboard = GameObject.FindGameObjectWithTag("GameBoard");
+        if(m_gameboard == null)
+        {
+            Debug.LogError("Could not find game board");
+        }
+    }
 
     /**
     * Utility function to determine if the given position is roughly visible to the player
@@ -36,15 +47,18 @@ public class PlayerPlacer : MonoBehaviour
         bool foundPosition = false;
         Vector2 position = new Vector3(0, 0);
         
-        var boardBounds = gameboard.GetComponent<SpriteRenderer> ().bounds;
+        var boardBounds = m_gameboard.GetComponent<SpriteRenderer>().bounds;
+        var halfBoardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x) / 2.0f;
+        var halfBoardLength = Mathf.Abs(boardBounds.max.y - boardBounds.min.y) / 2.0f;
+
         while (!foundPosition) 
         {
             foundPosition = true;
-            position.x = Random.Range(-boardBounds.extents.x + m_gameboardOffset, 
-                                      boardBounds.extents.x - m_gameboardOffset);
+            position.x = Random.Range(-halfBoardWidth + m_gameboardOffset, 
+                                      halfBoardWidth - m_gameboardOffset);
 
-            position.y = Random.Range(-boardBounds.extents.y + m_gameboardOffset, 
-                                      boardBounds.extents.y - m_gameboardOffset);
+            position.y = Random.Range(-halfBoardLength + m_gameboardOffset, 
+                                      halfBoardLength - m_gameboardOffset);
 
 
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");

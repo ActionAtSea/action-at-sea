@@ -7,7 +7,19 @@ using System.Collections;
 
 public class GameInformation : MonoBehaviour 
 {
+    public string playerName = "";
     static string sm_playerName = GetDefaultName();
+
+    /**
+    * Sets the player name if specified
+    */
+    void Start()
+    {
+        if(playerName != "" && sm_playerName == GetDefaultName())
+        {
+            sm_playerName = playerName;
+        }
+    }
 
     /**
     * Sets the player name

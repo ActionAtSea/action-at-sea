@@ -112,6 +112,7 @@
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Cannon.cs" />
      <Compile Include="Assets\Scripts\CannonController.cs" />
+     <Compile Include="Assets\Scripts\CreateBackground.cs" />
      <Compile Include="Assets\Scripts\Crosshair.cs" />
      <Compile Include="Assets\Scripts\FadeGame.cs" />
      <Compile Include="Assets\Scripts\FillScoreBoard.cs" />

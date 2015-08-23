@@ -61,6 +61,7 @@ public class RandomMatchmaker : Photon.PunBehaviour
 
         GameObject player = playerPVP.transform.FindChild("Player").gameObject;
         player.tag = "Player";
+        player.name = player.GetComponent<NetworkedPlayer>().PlayerID;
         player.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
         player.transform.position = FindObjectOfType<PlayerPlacer>().GetNewPosition();
 

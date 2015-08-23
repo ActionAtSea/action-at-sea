@@ -17,9 +17,7 @@ class MapItem
 
 public class Minimap : MonoBehaviour 
 {
-    public GameObject gameBoard;
     public GameObject fog;
-    public GameObject terrain;
     public GameObject playerMarker;
     public GameObject enemyMarker;
 
@@ -28,12 +26,42 @@ public class Minimap : MonoBehaviour
     private bool m_hasPlayer = false;
     private List<MapItem> m_staticItems = new List<MapItem>();
     private List<MapItem> m_dynamicItems = new List<MapItem>();
+    private GameObject m_gameBoard = null;
+
+    /**
+    * Initialises the script
+    */
+    void Start()
+    {
+        m_gameBoard = GameObject.FindGameObjectWithTag("GameBoard");
+        if(m_gameBoard == null)
+        {
+            Debug.LogError("Could not find game board");
+        }
+
+        var boardBounds = m_gameBoard.GetComponent<SpriteRenderer>().bounds;
+        var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
+        var boardLength = Mathf.Abs(boardBounds.max.y - boardBounds.min.y);
+
+        var mapBounds = GetComponent<SpriteRenderer>().bounds;
+        var mapWidth = Mathf.Abs(mapBounds.max.x - mapBounds.min.x);
+        var mapLength = Mathf.Abs(mapBounds.max.y - mapBounds.min.y);
+
+        Debug.Log(mapWidth);
+        Debug.Log(mapLength);
+
+        var scaleX = mapWidth / boardWidth;
+        var scaleY = mapLength / boardLength;
+
+        GetComponent<SpriteRenderer>().enabled = false;
+        transform.localScale = new Vector3(scaleX, scaleY, 0.0f);
+    }
 
     /**
     * Adds a new item to the minimap
     */
-    void AddItem(Transform parentTransform, 
-                 SpriteRenderer parentRenderer, 
+    void AddItem(Transform itemTransform, 
+                 SpriteRenderer itemRenderer, 
                  bool isStatic, 
                  float scale = 1.0f)
     {
@@ -50,25 +78,28 @@ public class Minimap : MonoBehaviour
             item = m_dynamicItems [m_dynamicItems.Count - 1];
         }
 
-        item.parentTransform = parentTransform;
-        item.parentRenderer = parentRenderer;
+        item.parentTransform = itemTransform;
+        item.parentRenderer = itemRenderer;
         item.scale = scale;
 
         item.item = new GameObject();
         item.item.AddComponent<SpriteRenderer>();
         item.item.transform.parent = this.transform;
-        item.item.name = parentRenderer.sprite.name + "_mapitem";
+        item.item.name = itemRenderer.sprite.name + "_mapitem";
 
-        var width = parentRenderer.sprite.texture.width;
-        var height = parentRenderer.sprite.texture.height;
+        var width = itemRenderer.sprite.texture.width;
+        var height = itemRenderer.sprite.texture.height;
         Vector2 pivot = new Vector2 (0.5f, 0.5f);
         var rect = new Rect (0, 0, width, height);
 
         item.renderer = item.item.GetComponent<SpriteRenderer>();
-        item.renderer.sortingLayerName = parentRenderer.sortingLayerName;
-        item.renderer.sortingOrder = parentRenderer.sortingOrder + 100;
-        item.renderer.sprite = Sprite.Create(parentRenderer.sprite.texture, rect, 
-                                             pivot, parentRenderer.sprite.pixelsPerUnit);
+        item.renderer.sortingLayerName = itemRenderer.sortingLayerName;
+        item.renderer.sortingOrder = itemRenderer.sortingOrder + 100;
+        item.renderer.sprite = Sprite.Create(itemRenderer.sprite.texture, rect, 
+                                             pivot, itemRenderer.sprite.pixelsPerUnit);
+
+        var colour = itemRenderer.color;
+        item.renderer.color = new Color(colour.r, colour.g, colour.b, 1.0f);
 
         if(isStatic)
         {
@@ -86,9 +117,8 @@ public class Minimap : MonoBehaviour
     {
         if(!m_isInitialised)
         {
-            AddItem(gameBoard.transform, gameBoard.GetComponent<SpriteRenderer>(), true);
+            AddItem(m_gameBoard.transform, m_gameBoard.GetComponent<SpriteRenderer>(), true);
 
-            // Islands use same texture
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
             if(terrain == null)
             {
@@ -97,21 +127,9 @@ public class Minimap : MonoBehaviour
 
             for(int i = 0; i < terrain.Length; ++i)
             {
-                AddItem(terrain[i].transform, terrain[i].GetComponent<SpriteRenderer>(), true);
-            }
-
-            // Fog uses same texture, currently only working for smooth fog
-            // Note to get tiled fog working with the minimap it needs to become
-            // a dynamic item and item.renderer.color.a needs to be set in Update()
-            var fogTransforms = fog.GetComponentsInChildren<Transform>();
-            var fogRenderers = fog.GetComponentsInChildren<SpriteRenderer>();
-            for(int i = 0, j = 0; i < fogTransforms.Length; ++i)
-            {
-                if(!fogTransforms[i].Equals(fog.transform))
-                {
-                    AddItem(fogTransforms[i], fogRenderers[j], true);
-                    ++j;
-                }
+                AddItem(terrain[i].transform, 
+                        terrain[i].GetComponent<SpriteRenderer>(), 
+                        true);
             }
 
             m_isInitialised = true;
@@ -172,8 +190,8 @@ public class Minimap : MonoBehaviour
         }
 
         item.item.transform.localPosition = new Vector3 (
-            item.parentTransform.localPosition.x,
-            item.parentTransform.localPosition.y,
+            item.parentTransform.position.x,
+            item.parentTransform.position.y,
             item.parentTransform.position.z);
         
         item.item.transform.localRotation = new Quaternion(

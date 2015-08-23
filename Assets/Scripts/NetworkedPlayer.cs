@@ -23,19 +23,17 @@ public class NetworkedPlayer : MonoBehaviour
     * Initialises the networked player
     */
     void Start()
-    {
-        if(m_playerID == "")
+{
+        if(!photonView.isMine)
         {
-            if(!photonView.isMine)
-            {
-                sm_playerIDCounter++;
-                m_playerID = "Enemy" + sm_playerIDCounter.ToString();
-            }
-            else
-            {
-                m_playerID = "Player";
-            }
+            sm_playerIDCounter++;
+            m_playerID = "Enemy" + sm_playerIDCounter.ToString();
         }
+        else
+        {
+            m_playerID = "Player";
+        }
+        Debug.Log("Created player: " + m_playerID);
 
         var score = GetComponentInChildren<PlayerScore>();
         if(score == null)

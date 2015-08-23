@@ -78,6 +78,8 @@ public class SoundManager : MonoBehaviour
     private static List<SharedSound> sm_sharedSound;    /// Shared sounds across scenes
     private static bool sm_initialised = false;         /// Whether the manager is initialised
     private float m_fadeSpeed = 0.75f;                  /// Speed to fade the music
+    private float m_overallMusicMultiplier = 0.75f;
+    private float m_overallSoundMultiplier = 0.65f;
 
     /**
     * Initialises the manager if needed
@@ -134,6 +136,7 @@ public class SoundManager : MonoBehaviour
     void CreateSound(SoundID ID, AudioSource source, int instances)
     {
         int index = (int)ID;
+        float volume = source.volume * m_overallSoundMultiplier;
         sm_sharedSound[index].instances = new List<AudioSource>();
         
         for(int i = 0; i < instances; ++i)
@@ -143,6 +146,7 @@ public class SoundManager : MonoBehaviour
 
             sm_sharedSound[index].instances[i].transform.parent = sm_soundParent.transform;
             sm_sharedSound[index].instances[i].Stop();
+            sm_sharedSound[index].instances[i].volume = volume;
             DontDestroyOnLoad(sm_sharedSound[index].instances[i]);
         }
     }
@@ -154,7 +158,7 @@ public class SoundManager : MonoBehaviour
     {
         int index = (int)ID;
         sm_sharedMusic[index].sound = Instantiate(source);
-        sm_sharedMusic[index].maxVolume = sm_sharedMusic[index].sound.volume;
+        sm_sharedMusic[index].maxVolume = sm_sharedMusic[index].sound.volume * m_overallMusicMultiplier;
         sm_sharedMusic[index].sound.volume = 0.0f;
         sm_sharedMusic[index].sound.transform.parent = sm_soundParent.transform;
         sm_sharedMusic[index].sound.Stop();
@@ -176,9 +180,9 @@ public class SoundManager : MonoBehaviour
                     (fadeIn ? m_fadeSpeed : -m_fadeSpeed);
                 
                 music.sound.volume = Mathf.Min(Mathf.Max(
-                    0.0f, music.sound.volume), 1.0f);
+                    0.0f, music.sound.volume), music.maxVolume);
                 
-                if(fadeIn && music.sound.volume >= 1.0f)
+                if(fadeIn && music.sound.volume >= music.maxVolume)
                 {
                     music.fadeState = FadeState.NO_FADE;
                 }
