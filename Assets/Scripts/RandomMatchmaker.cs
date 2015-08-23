@@ -59,9 +59,10 @@ public class RandomMatchmaker : Photon.PunBehaviour
         Debug.Log("Joined room");
         GameObject playerPrefab = PhotonNetwork.Instantiate("PlayerPVP", Vector3.zero, Quaternion.identity, 0);
 
-        GameObject player = playerPrefab.transform.FindChild("Player").gameObject;
+        var networkedPlayer = playerPrefab.transform.GetComponentInChildren<NetworkedPlayer>();
+        var player = networkedPlayer.gameObject;
+
         player.tag = "Player";
-        player.name = player.GetComponent<NetworkedPlayer>().PlayerID;
         player.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
         player.transform.position = FindObjectOfType<PlayerPlacer>().GetNewPosition();
 

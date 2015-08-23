@@ -101,12 +101,15 @@ public class PlayerPlacer : MonoBehaviour
             {
                 foreach(GameObject player in players)
                 {
-                    Vector2 playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
-                    Vector2 difference = position - playerPosition;
-                    if(difference.magnitude <= m_playerRadious)
+                    if(player != null)
                     {
-                        foundPosition = false;
-                        break;
+                        Vector2 playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
+                        Vector2 difference = position - playerPosition;
+                        if(difference.magnitude <= m_playerRadious)
+                        {
+                            foundPosition = false;
+                            break;
+                        }
                     }
                 }
             }

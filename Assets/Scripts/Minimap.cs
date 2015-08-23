@@ -62,11 +62,22 @@ public class Minimap : MonoBehaviour
     /**
     * Adds a new item to the minimap
     */
+    void AddStaticItem(Transform itemTransform, 
+                       SpriteRenderer itemRenderer, 
+                       Color colour)
+    {
+        AddItem(itemTransform, itemRenderer, colour, true, 0, 1.0f);
+    }
+
+    /**
+    * Adds a new item to the minimap
+    */
     void AddItem(Transform itemTransform, 
                  SpriteRenderer itemRenderer, 
                  Color colour,
-                 bool isStatic, 
-                 float scale = 1.0f)
+                 bool isStatic,
+                 int orderOffset,
+                 float scale)
     {
         MapItem item = null;
 
@@ -97,7 +108,9 @@ public class Minimap : MonoBehaviour
 
         item.renderer = item.item.GetComponent<SpriteRenderer>();
         item.renderer.sortingLayerName = itemRenderer.sortingLayerName;
-        item.renderer.sortingOrder = itemRenderer.sortingOrder + 100;
+        item.renderer.sortingOrder = itemRenderer.sortingOrder + 
+            GetComponent<SpriteRenderer>().sortingOrder + orderOffset;
+
         item.renderer.sprite = Sprite.Create(itemRenderer.sprite.texture, rect, 
                                              pivot, itemRenderer.sprite.pixelsPerUnit);
 
@@ -119,10 +132,9 @@ public class Minimap : MonoBehaviour
     {
         if(!m_isInitialised)
         {
-            AddItem(m_gameBoard.transform, 
+            AddStaticItem(m_gameBoard.transform, 
                     m_gameBoard.GetComponent<SpriteRenderer>(), 
-                    m_gameBoard.GetComponent<SpriteRenderer>().color,
-                    true);
+                    m_gameBoard.GetComponent<SpriteRenderer>().color);
 
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
             if(terrain == null)
@@ -132,10 +144,9 @@ public class Minimap : MonoBehaviour
 
             for(int i = 0; i < terrain.Length; ++i)
             {
-                AddItem(terrain[i].transform, 
+                AddStaticItem(terrain[i].transform, 
                         terrain[i].GetComponent<SpriteRenderer>(), 
-                        terrain[i].GetComponent<SpriteRenderer>().color,
-                        true);
+                        terrain[i].GetComponent<SpriteRenderer>().color);
             }
 
             GameObject fog = GameObject.FindGameObjectWithTag("MinimapFog");
@@ -145,10 +156,9 @@ public class Minimap : MonoBehaviour
             }
             else
             {
-                AddItem(fog.transform, 
+                AddStaticItem(fog.transform, 
                         fog.GetComponent<SpriteRenderer>(),
-                        GetComponent<SpriteRenderer>().color,
-                        true);
+                        GetComponent<SpriteRenderer>().color);
             }
             
             m_isInitialised = true;
@@ -186,7 +196,8 @@ public class Minimap : MonoBehaviour
 
         AddItem(player.transform, 
                 marker.GetComponent<SpriteRenderer>(), 
-                colour, false, m_shipMarkerSize / maxMapScale);
+                colour, false, controlled ? 1 : 0,
+                m_shipMarkerSize / maxMapScale);
     }
 
     /**

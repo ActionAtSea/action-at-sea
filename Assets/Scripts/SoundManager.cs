@@ -70,6 +70,7 @@ public class SoundManager : MonoBehaviour
     {
         public bool shouldPlaySound = false;         /// Whether the sound should play this tick
         public List<AudioSource> instances = null;   /// Sound file
+        public string name;
     };
     
     private static SoundManager sm_soundManager = null; /// Instance of the sound manager
@@ -106,14 +107,14 @@ public class SoundManager : MonoBehaviour
                 sm_sharedSound.Add(new SharedSound());;
             }
 
-            CreateSound(SoundID.EXPLODE, explodeSound, 5);
-            CreateSound(SoundID.FIRE, fireSound, 20);
-            CreateSound(SoundID.HIT, hitSound, 10);
-            CreateSound(SoundID.ISLAND_FIND, islandFind, 2);
-            CreateSound(SoundID.ISLAND_NODE, islandNode, 2);
-            CreateSound(SoundID.RAM, ramSound, 1);
-            CreateSound(SoundID.SPLASH, splashSound, 10);
-            CreateSound(SoundID.BUTTON_CLICK, buttonClick, 1);
+            CreateSound(SoundID.EXPLODE, explodeSound, 5, "Explode");
+            CreateSound(SoundID.FIRE, fireSound, 20, "Fire");
+            CreateSound(SoundID.HIT, hitSound, 20, "Hit");
+            CreateSound(SoundID.ISLAND_FIND, islandFind, 2, "IslandFind");
+            CreateSound(SoundID.ISLAND_NODE, islandNode, 2, "IslandNode");
+            CreateSound(SoundID.RAM, ramSound, 5, "Ram");
+            CreateSound(SoundID.SPLASH, splashSound, 20, "Splash");
+            CreateSound(SoundID.BUTTON_CLICK, buttonClick, 1, "Button");
             CreateMusic(MusicID.GAME_TRACK, gameMusic);
             CreateMusic(MusicID.GAME_AMBIENCE, gameAmbience);
             CreateMusic(MusicID.MENU_TRACK, menuMusic);
@@ -133,11 +134,12 @@ public class SoundManager : MonoBehaviour
     /**
     * Creates and adds a new sound effect
     */
-    void CreateSound(SoundID ID, AudioSource source, int instances)
+    void CreateSound(SoundID ID, AudioSource source, int instances, string name)
     {
         int index = (int)ID;
         float volume = source.volume * m_overallSoundMultiplier;
         sm_sharedSound[index].instances = new List<AudioSource>();
+        sm_sharedSound[index].name = name;
         
         for(int i = 0; i < instances; ++i)
         {
@@ -220,7 +222,7 @@ public class SoundManager : MonoBehaviour
                 
                 if(!foundInstance)
                 {
-                    Debug.LogError("Could not find instance for sound");
+                    Debug.LogError("Could not find instance for sound " + sound.name);
                 }
             }
         }

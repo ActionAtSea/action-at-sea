@@ -34,8 +34,11 @@ public class FillScoreBoard : MonoBehaviour
 
         foreach(GameObject obj in players)
         {
-            textUI.text += NetworkedPlayer.GetPlayerScore(obj).ToString() + ": " +
-                NetworkedPlayer.GetPlayerName(obj) + "\n";
+            if(obj != null)
+            {
+                textUI.text += NetworkedPlayer.GetPlayerScore(obj).ToString() + ": " +
+                    NetworkedPlayer.GetPlayerName(obj) + "\n";
+            }
         }
     }
 }
