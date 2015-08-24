@@ -11,6 +11,7 @@ public class GameOverScript : MonoBehaviour
 {    
     public GameObject gameLostImage;
     public GameObject gameWonImage;
+    public GameObject gameOverText;
     public bool forceLoseGame = false;
 
     private Health m_playerHealth = null;    // Heath bar for the controllable player
@@ -56,6 +57,8 @@ public class GameOverScript : MonoBehaviour
                 soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
                 m_playerHealth.SetHealthLevel(0.0f);
+
+                gameOverText.SetActive(true);
 
                 if(m_hasLostGame)
                 {
