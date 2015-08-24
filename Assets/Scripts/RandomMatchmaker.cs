@@ -64,7 +64,10 @@ public class RandomMatchmaker : Photon.PunBehaviour
 
         player.tag = "Player";
         player.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
-        player.transform.position = FindObjectOfType<PlayerPlacer>().GetNewPosition();
+         
+        PlayerPlacer.Placement place = FindObjectOfType<PlayerPlacer>().GetNewPosition(player);
+        player.transform.position = place.position;
+        player.transform.localEulerAngles = place.rotation;
 
         GameObject healthbar = playerPrefab.transform.FindChild("FloatingHealthBar").gameObject;
         healthbar.SetActive(false);

@@ -10,6 +10,16 @@ public class PlayerPlacer : MonoBehaviour
     private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
+    private GameObject[] m_spawns = null;
+
+    /** 
+    * Position/rotation information
+    */
+    public class Placement
+    {
+        public Vector3 position = new Vector3();
+        public Vector3 rotation = new Vector3();
+    }
 
     /**
     * Initialises the script
@@ -21,6 +31,8 @@ public class PlayerPlacer : MonoBehaviour
         {
             Debug.LogError("Could not find game board");
         }
+
+        m_spawns = GameObject.FindGameObjectsWithTag("Spawn");
     }
 
     /**
@@ -40,29 +52,51 @@ public class PlayerPlacer : MonoBehaviour
     /**
     * Retrieves a new position on the map
     */
-    public Vector2 GetNewPosition()
+    public Placement GetNewPosition(GameObject player)
     {
-        GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("Spawn");
-        if(spawnPoints == null || spawnPoints.Length == 0)
+        if(m_spawns != null)
         {
-            return GetRandomPosition();
+            PlayerSpawn chosenSpawn = null;
+
+            foreach (GameObject obj in m_spawns)
+            {
+                var spawn = obj.GetComponent<PlayerSpawn>();
+                if(!spawn.Owner)
+                {
+                    chosenSpawn = spawn;
+                }
+                else if(spawn.Owner == player)
+                {
+                    chosenSpawn = spawn;
+                    break;
+                }
+            }
+
+            if(chosenSpawn != null)
+            {
+                chosenSpawn.Owner = player;
+                Placement place = new Placement();
+                place.position.x = chosenSpawn.transform.position.x;
+                place.position.y = chosenSpawn.transform.position.y;
+                place.rotation.x = chosenSpawn.transform.localEulerAngles.x;
+                place.rotation.y = chosenSpawn.transform.localEulerAngles.y;
+                place.rotation.z = chosenSpawn.transform.localEulerAngles.z;
+                return place;
+            }
         }
-        else
-        {
-            // TO DO: Add spawn points
-            return new Vector2();
-        }
+
+        return GetRandomPosition();
     }
 
     /**
     * Retrieves a new position on the map that doesn't collide
     */
-    public Vector2 GetRandomPosition()
+    public Placement GetRandomPosition()
     {
         GameObject[] players = PlayerManager.GetEnemies();
 
+        Vector2 position = new Vector2();
         bool foundPosition = false;
-        Vector2 position = new Vector3(0, 0);
         
         var boardBounds = m_gameboard.GetComponent<SpriteRenderer>().bounds;
         var halfBoardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x) / 2.0f;
@@ -115,6 +149,9 @@ public class PlayerPlacer : MonoBehaviour
             }
         }
 
-        return position;
+        Placement place = new Placement();
+        place.position.x = position.x;
+        place.position.y = position.y;
+        return place;
     }
 }
