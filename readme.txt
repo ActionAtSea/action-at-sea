@@ -2,8 +2,8 @@
 TO DO LIST:
 =====================================================================================
 
-- Support for game board having non-uniform dimensions
-- Add multiple level selection
-- Look at warning: PhotonView on persistent object being fixed (id and prefix must be 0)
+
 - Add selecting player colour and tinting ship
-- Add game room lobby with support for a fixed number of players in a single room
+- Support for game board having non-uniform dimensions
+- Look at warning: PhotonView on persistent object being fixed (id and prefix must be 0)
+- Add check for ready players when trying to play a level
