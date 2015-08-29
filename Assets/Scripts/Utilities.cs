@@ -26,5 +26,19 @@ enum SceneID
     UPGRADING_DOCKS = 3,
     ENEMIES = 4,
     TREASURE = 5,
-    GAME = 6
+    LEVEL1 = 6,
+    LOBBY = 7,
+    LEVEL2 = 8
+}
+
+class Utilities
+{
+    /**
+    * Returns whether a level is currently loaded
+    */
+    static public bool IsLevelLoaded()
+    {
+        return Application.loadedLevel == (int)SceneID.LEVEL1 ||
+               Application.loadedLevel == (int)SceneID.LEVEL2;
+    }
 }

@@ -129,8 +129,9 @@
      <Compile Include="Assets\Scripts\IslandDiscoveryTrigger.cs" />
      <Compile Include="Assets\Scripts\Menu\EnemyScript.cs" />
      <Compile Include="Assets\Scripts\Menu\IslandScript.cs" />
+     <Compile Include="Assets\Scripts\Menu\LobbyScript.cs" />
+     <Compile Include="Assets\Scripts\Menu\MainMenuScript.cs" />
      <Compile Include="Assets\Scripts\Menu\MoveScript.cs" />
-     <Compile Include="Assets\Scripts\Menu\PlayGame.cs" />
      <Compile Include="Assets\Scripts\Menu\TreasureScript.cs" />
      <Compile Include="Assets\Scripts\Menu\UpgradingDock.cs" />
      <Compile Include="Assets\Scripts\Minimap.cs" />

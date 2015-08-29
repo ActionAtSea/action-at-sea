@@ -120,7 +120,7 @@ public class SoundManager : MonoBehaviour
             CreateMusic(MusicID.MENU_TRACK, menuMusic);
         }
 
-        if(Application.loadedLevel == (int)SceneID.GAME)
+        if(Utilities.IsLevelLoaded())
         {
             PlayMusic(MusicID.GAME_TRACK);
             PlayMusic(MusicID.GAME_AMBIENCE);

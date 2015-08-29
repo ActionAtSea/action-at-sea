@@ -7,7 +7,6 @@ using System.Collections;
 
 public class MoveScript : MonoBehaviour 
 {
-
 	private SoundManager menuMusicHandler;
     
     void Start () 

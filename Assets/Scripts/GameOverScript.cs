@@ -38,7 +38,7 @@ public class GameOverScript : MonoBehaviour
                 gameFader.FadeOut();
 
                 PhotonNetwork.Disconnect();
-                Application.LoadLevel(m_toMenuRequest ? (int)SceneID.MENU : (int)SceneID.GAME);
+                Application.LoadLevel(m_toMenuRequest ? (int)SceneID.LOBBY : Application.loadedLevel);
             }
         }
         else if (!m_isGameOver) 
