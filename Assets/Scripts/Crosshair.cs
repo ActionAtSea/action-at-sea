@@ -9,9 +9,9 @@ public class Crosshair : MonoBehaviour
 {
     public bool hideCursor = false;
 
-    /**
-    * Updates the cursor
-    */
+    /// <summary>
+    /// Updates the cursor
+    /// </summary>
     void Update()
     {
         HideCursor();
@@ -25,9 +25,9 @@ public class Crosshair : MonoBehaviour
         gameObject.transform.position = mousePos;
     }
 
-    /**
-    * Hides the cursor
-    */
+    /// <summary>
+    /// Hides the cursor
+    /// </summary>
     private void HideCursor()
     {
         if (hideCursor)
@@ -36,18 +36,18 @@ public class Crosshair : MonoBehaviour
         }
     }
 
-    /**
-    * Shows the cursor
-    */
+    /// <summary>
+    /// Shows the cursor
+    /// </summary>
     public void ShowCursor()
     {
         Cursor.visible = true;
         hideCursor = false;
     }
 
-    /**
-    * Gets the Cursor from the scene
-    */
+    /// <summary>
+    /// Gets the Cursor from the scene
+    /// </summary>
     public static Crosshair Get()
     {
         var cursor = FindObjectOfType<Crosshair>();

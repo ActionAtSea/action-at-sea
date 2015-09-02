@@ -2,28 +2,36 @@
 // Action At Sea - LobbyScript.cs
 ////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using UnityEngine;
 using System.Collections;
 
 public class LobbyScript : MonoBehaviour 
 {
+    public UnityEngine.UI.Text lobbyStatus = null;
     public UnityEngine.UI.Toggle isReady = null;
     public UnityEngine.UI.Text playerNameText = null;
     public GameObject selectedLevel = null;
     private bool m_playGameRequest = false;
     private int m_selectedLevel = 0;
+    private NetworkMatchmaker m_network = null;
+    private float m_timer = 0.0f;
+    private int m_dots = 0;
+    private int m_maxDots = 4;
+    private float m_dotSpeed = 0.25f;
 
-    /**
-    * Initialises the lobby
-    */
+    /// <summary>
+    /// Initialises the lobby
+    /// </summary>
     void Start () 
     {
+        m_network = NetworkMatchmaker.Get();
         SelectNewLevel(selectedLevel);
     }
 
-    /**
-    * Selects the level
-    */
+    /// <summary>
+    /// Selects the level
+    /// </summary>
     public void SelectLevel(GameObject level)
     {
         if(level != selectedLevel)
@@ -40,9 +48,9 @@ public class LobbyScript : MonoBehaviour
         }
     }
 
-    /**
-    * Selects the level
-    */
+    /// <summary>
+    /// Selects the level
+    /// </summary>
     private void SelectNewLevel(GameObject level)
     {
         m_selectedLevel = int.Parse(level.name);
@@ -53,53 +61,77 @@ public class LobbyScript : MonoBehaviour
             new Color(1.0f, 0.96f, 0.43f, 0.88f);
     }
 
-    /**
-    * Starts the selected game
-    */
-    public void PlayGameButton ()
+    /// <summary>
+    /// Starts the game
+    /// </summary>
+    void StartGame()
     {
-        if(!m_playGameRequest)
-        {
-            GameInformation.SetPlayerName(playerNameText.text);
-
-            var soundManager = SoundManager.Get();
-            soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-            soundManager.StopMusic(SoundManager.MusicID.MENU_TRACK);
-            soundManager.PlayMusic(SoundManager.MusicID.GAME_TRACK);
-            soundManager.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
-
-            FadeGame.Get().FadeIn();
-            m_playGameRequest = true;
-        }
+        GameInformation.SetPlayerName(playerNameText.text);
+        
+        var soundManager = SoundManager.Get();
+        soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        soundManager.StopMusic(SoundManager.MusicID.MENU_TRACK);
+        soundManager.PlayMusic(SoundManager.MusicID.GAME_TRACK);
+        soundManager.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
+        
+        FadeGame.Get().FadeIn();
+        m_playGameRequest = true;
     }
 
-    /**
-    * Goes back to the menu
-    */
+    /// <summary>
+    /// Goes back to the menu
+    /// </summary>
     public void BackToMenuButton()
     {
 		SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
 		Application.LoadLevel((int)SceneID.MENU);
     }
 
-    /**
-    * Updates the play game request
-    */
+    /// <summary>
+    /// Updates the play game request
+    /// </summary>
     void Update()
     {
-        if(m_playGameRequest && FadeGame.Get().IsFadedIn())
+        if(!m_network.IsConnected())
         {
-            m_playGameRequest = false;
-            FadeGame.Get().FadeOut();
-
-            switch(m_selectedLevel)
+            m_timer += Time.deltaTime;
+            if(m_timer >= m_dotSpeed)
             {
-            case 1:
-			    Application.LoadLevel((int)SceneID.LEVEL1);
-                break;
-            case 2:
-                Application.LoadLevel((int)SceneID.LEVEL2);
-                break;
+                m_timer = 0.0f;
+                m_dots++;
+                if(m_dots >= m_maxDots)
+                {
+                    m_dots = 0;
+                }
+            }
+
+            lobbyStatus.text = "Connecting";
+            for(int i = 0; i < m_dots; ++i)
+            {
+                lobbyStatus.text += ".";
+            }
+
+            return;
+        }
+
+        lobbyStatus.text = "Connected";
+
+        if(!m_playGameRequest)
+        {
+            if(isReady.isOn)
+            {
+                m_network.JoinGameRoom(m_selectedLevel);
+                StartGame();
+            }
+        }
+        else
+        {
+            lobbyStatus.text = "Entering Game";
+
+            if(FadeGame.Get().IsFadedIn())
+            {
+                FadeGame.Get().FadeOut();
+                Application.LoadLevel((int)Utilities.GetSceneIDFromLevel(m_selectedLevel));
             }
         }
     }

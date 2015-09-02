@@ -10,9 +10,9 @@ public class RepairDock : MonoBehaviour
     public float repairAmountPerSecond = 15.0f;
     public float scoreCostRate = 5.0f;
 
-    /**
-    * On collision with the repair dock
-    */
+    /// <summary>
+    /// On collision with the repair dock
+    /// </summary>
     void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")

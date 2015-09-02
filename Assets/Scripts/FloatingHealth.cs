@@ -11,9 +11,9 @@ public class FloatingHealth : MonoBehaviour
     public float yOffset = 1.0f;
     public GameObject enemyShip;
 
-    /**
-    * Moves a floating health bar alongside the game object
-    */
+    /// <summary>
+    /// Moves a floating health bar alongside the game object
+    /// </summary>
     void Update () 
     {
         if(enemyShip != null)

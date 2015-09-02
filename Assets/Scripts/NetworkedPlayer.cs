@@ -20,9 +20,9 @@ public class NetworkedPlayer : MonoBehaviour
     private bool m_connected = false;
     private GameObject m_playerPrefab = null;
 
-    /**
-    * Updates the player from the networked data
-    */
+    /// <summary>
+    /// Updates the player from the networked data
+    /// </summary>
     void Update()
     {
         if(!m_initialised)
@@ -82,9 +82,9 @@ public class NetworkedPlayer : MonoBehaviour
         }
     }
 
-    /**
-    * Serialises player data to each player
-    */
+    /// <summary>
+    /// Serialises player data to each player
+    /// </summary>
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
@@ -110,65 +110,65 @@ public class NetworkedPlayer : MonoBehaviour
         }
     }
 
-    /**
-    * Gets the player name
-    */
+    /// <summary>
+    /// Gets the player name
+    /// </summary>
     public string PlayerName
     {
         get { return m_playerName; }
     }
 
-    /**
-    * Gets the player score
-    */
+    /// <summary>
+    /// Gets the player score
+    /// </summary>
     public float PlayerScore
     {
         get { return m_playerScore; }
     }
 
-    /**
-    * Gets the player ID
-    */
+    /// <summary>
+    /// Gets the player ID
+    /// </summary>
     public string PlayerID
     {
         get { return m_playerID; }
     }
 
-    /**
-    * Returns the player Name
-    */
+    /// <summary>
+    /// Returns the player Name
+    /// </summary>
     static public string GetPlayerName(GameObject obj)
     {
         return obj.GetComponentInParent<NetworkedPlayer>().PlayerName;
     }
 
-    /**
-    * Returns the player Score
-    */
+    /// <summary>
+    /// Returns the player Score
+    /// </summary>
     static public float GetPlayerScore(GameObject obj)
     {
         return obj.GetComponentInParent<NetworkedPlayer>().PlayerScore;
     }
 
-    /**
-    * Returns the player ID
-    */
+    /// <summary>
+    /// Returns the player ID
+    /// </summary>
     static public string GetPlayerID(GameObject obj)
     {
         return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
     }
 
-    /**
-    * Returns whether the player can control this
-    */
+    /// <summary>
+    /// Returns whether the player can control this
+    /// </summary>
     static public bool IsControllable(GameObject obj)
     {
         return obj.GetComponentInParent<NetworkedPlayer>().IsControllable();
     }
 
-    /**
-    * Returns whether the player can control this
-    */
+    /// <summary>
+    /// Returns whether the player can control this
+    /// </summary>
     public bool IsControllable()
     {
         return photonView.isMine;

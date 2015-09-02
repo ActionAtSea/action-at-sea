@@ -6,14 +6,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-/**
-* Cross-scene management of sound and music 
-*/
 public class SoundManager : MonoBehaviour 
 {
-    /**
-    * References to be added to the manager
-    */
+    /// <summary>
+    /// References to be added to the manager
+    /// </summary>
     public AudioSource menuMusic = null;
     public AudioSource gameMusic = null;
     public AudioSource gameAmbience = null;
@@ -26,9 +23,9 @@ public class SoundManager : MonoBehaviour
     public AudioSource ramSound = null;
     public AudioSource splashSound = null;
     
-    /**
-    * Avaliable music IDs
-    */
+    /// <summary>
+    /// Avaliable music IDs
+    /// </summary>
     public enum MusicID
     {
         GAME_TRACK,
@@ -37,9 +34,9 @@ public class SoundManager : MonoBehaviour
         MAX_MUSIC
     };
     
-    /**
-    * Avaliable sound effect IDs
-    */
+    /// <summary>
+    /// Avaliable sound effect IDs
+    /// </summary>
     public enum SoundID
     {
         BUTTON_CLICK,
@@ -53,9 +50,9 @@ public class SoundManager : MonoBehaviour
         MAX_SOUNDS
     };
     
-    /**
-    * Information for music shared across scenes
-    */
+    /// <summary>
+    /// Information for music shared across scenes
+    /// </summary>
     class SharedMusic
     {
         public AudioSource sound = null;                 /// Sound file
@@ -63,9 +60,9 @@ public class SoundManager : MonoBehaviour
         public FadeState fadeState = FadeState.NO_FADE;  /// State for fading in/ou
     };
     
-    /**
-    * Information for a sound shared across scenes
-    */
+    /// <summary>
+    /// Information for a sound shared across scenes
+    /// </summary>
     class SharedSound
     {
         public bool shouldPlaySound = false;         /// Whether the sound should play this tick
@@ -82,9 +79,9 @@ public class SoundManager : MonoBehaviour
     private float m_overallMusicMultiplier = 0.75f;
     private float m_overallSoundMultiplier = 0.65f;
 
-    /**
-    * Initialises the manager if needed
-    */
+    /// <summary>
+    /// Initialises the manager if needed
+    /// </summary>
     void Start () 
     {
         if(!sm_initialised)
@@ -131,9 +128,9 @@ public class SoundManager : MonoBehaviour
         }
     }
     
-    /**
-    * Creates and adds a new sound effect
-    */
+    /// <summary>
+    /// Creates and adds a new sound effect
+    /// </summary>
     void CreateSound(SoundID ID, AudioSource source, int instances, string name)
     {
         int index = (int)ID;
@@ -153,9 +150,9 @@ public class SoundManager : MonoBehaviour
         }
     }
     
-    /**
-    * Creates and adds a new music track
-    */
+    /// <summary>
+    /// Creates and adds a new music track
+    /// </summary>
     void CreateMusic(MusicID ID, AudioSource source)
     {
         int index = (int)ID;
@@ -167,9 +164,9 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(sm_sharedMusic[index].sound);
     }
     
-    /**
-    * Fades the music in/out
-    */
+    /// <summary>
+    /// Fades the music in/out
+    /// </summary>
     void Update () 
     {
         foreach(var music in sm_sharedMusic)
@@ -197,10 +194,10 @@ public class SoundManager : MonoBehaviour
         }
     }
     
-    /**
-    * Plays sound effects
-    * Post tick required as effect can be requested in any order
-    */
+    /// <summary>
+    /// Plays sound effects
+    /// Post tick required as effect can be requested in any order
+    /// </summary>
     void LateUpdate()
     {
         foreach(var sound in sm_sharedSound)
@@ -228,9 +225,9 @@ public class SoundManager : MonoBehaviour
         }
     }
     
-    /**
-    * Plays a music track
-    */
+    /// <summary>
+    /// Plays a music track
+    /// </summary>
     public void PlayMusic(MusicID ID)
     {
         if(!sm_sharedMusic[(int)ID].sound.isPlaying)
@@ -240,25 +237,25 @@ public class SoundManager : MonoBehaviour
         }
     }
     
-    /**
-    * Stops a music track
-    */
+    /// <summary>
+    /// Stops a music track
+    /// </summary>
     public void StopMusic(MusicID ID)
     {
         sm_sharedMusic[(int)ID].fadeState = FadeState.FADE_OUT;
     }
     
-    /**
-    * Plays a sound effect
-    */
+    /// <summary>
+    /// Plays a sound effect
+    /// </summary>
     public void PlaySound(SoundID ID)
     {
         sm_sharedSound[(int)ID].shouldPlaySound = true;
     }
     
-    /**
-    * Gets the SoundManager from the scene
-    */
+    /// <summary>
+    /// Gets the SoundManager from the scene
+    /// </summary>
     public static SoundManager Get()
     {
         if(sm_soundManager == null)

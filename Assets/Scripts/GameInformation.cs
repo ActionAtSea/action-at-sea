@@ -10,9 +10,9 @@ public class GameInformation : MonoBehaviour
     public string playerName = "";
     static string sm_playerName = GetDefaultName();
 
-    /**
-    * Sets the player name if specified
-    */
+    /// <summary>
+    /// Sets the player name if specified
+    /// </summary>
     void Start()
     {
         if(playerName != "" && sm_playerName == GetDefaultName())
@@ -21,9 +21,9 @@ public class GameInformation : MonoBehaviour
         }
     }
 
-    /**
-    * Sets the player name
-    */
+    /// <summary>
+    /// Sets the player name
+    /// </summary>
     static public void SetPlayerName(string name)
     {
         if(name != "")
@@ -32,17 +32,17 @@ public class GameInformation : MonoBehaviour
         }
     }
 
-    /**
-    * Gets the player name
-    */
+    /// <summary>
+    /// Gets the player name
+    /// </summary>
     static public string GetPlayerName()
     {
         return sm_playerName;
     }
 
-    /**
-    * Gets the default name
-    */
+    /// <summary>
+    /// Gets the default name
+    /// </summary>
     static public string GetDefaultName()
     {
         return "Unnamed";

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class GameOverScript : MonoBehaviour 
-{    
+{   
     public GameObject gameLostImage;
     public GameObject gameWonImage;
     public GameObject gameOverText;
@@ -20,9 +20,9 @@ public class GameOverScript : MonoBehaviour
     private bool m_toMenuRequest = false;
     private bool m_toPlayRequest = false;
 
-    /**
-    * Updates the game over logic
-    */
+    /// <summary>
+    /// Updates the game over logic
+    /// </summary>
     void Update () 
     {
         if(!PlayerHasHealth())
@@ -72,9 +72,9 @@ public class GameOverScript : MonoBehaviour
         }
     }
 
-    /**
-    * Returns if the player is found and has a health bar
-    */
+    /// <summary>
+    /// Returns if the player is found and has a health bar
+    /// </summary>
     bool PlayerHasHealth()
     {
         if(m_playerHealth == null)
@@ -93,9 +93,9 @@ public class GameOverScript : MonoBehaviour
         return true;
     }
 
-    /**
-    * On Click replay Game when game over is active
-    */
+    /// <summary>
+    /// On Click replay Game when game over is active
+    /// </summary>
     public void PlayGameButton()
     {
         if (m_isGameOver && !m_toPlayRequest)
@@ -110,9 +110,9 @@ public class GameOverScript : MonoBehaviour
         }
     }
     
-    /**
-    * On Click Go To Menu when game over is active
-    */
+    /// <summary>
+    /// On Click Go To Menu when game over is active
+    /// </summary>
     public void GoToMenuButton()
     {
         if (m_isGameOver && !m_toMenuRequest)

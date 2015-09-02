@@ -19,9 +19,9 @@ public class Cannon : MonoBehaviour
     private BulletFireScript m_fireScript = null;
     private CannonController m_controller = null;
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start()
     {
         m_fireScript = GetComponent<BulletFireScript>();
@@ -29,9 +29,9 @@ public class Cannon : MonoBehaviour
         m_swivelRangeDegrees = m_controller.SwivelRangeDegrees;
     }
 
-    /**
-    * Updates the cannon
-    */
+    /// <summary>
+    /// Updates the cannon
+    /// </summary>
     void Update()
     {
         if(NetworkedPlayer.IsControllable(gameObject))
@@ -48,12 +48,12 @@ public class Cannon : MonoBehaviour
         }
     }
 
-    /*
-    * TODO:
-    * Set the cannon's firing angle to their limits closest to the mouse cursor
-    * angle when the mouse cursor move from the one side of the ship to the other
-    * and is outside of the cannon tracking range.
-    */
+    /// <summary>
+    /// TODO:
+    /// Set the cannon's firing angle to their limits closest to the mouse cursor
+    /// angle when the mouse cursor move from the one side of the ship to the other
+    /// and is outside of the cannon tracking range.
+    /// </summary>
     private void UpdateRotation()
     {
         m_cursorAngle = m_controller.MouseCursorAngle;
@@ -78,9 +78,9 @@ public class Cannon : MonoBehaviour
         }
     }
 
-    /**
-    * Serialises the cannon across the network
-    */
+    /// <summary>
+    /// Serialises the cannon across the network
+    /// </summary>
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
@@ -101,9 +101,9 @@ public class Cannon : MonoBehaviour
         }
     }
 
-    /**
-    * Fires the cannon
-    */
+    /// <summary>
+    /// Fires the cannon
+    /// </summary>
     public void FireGun()
     {
         string ID = NetworkedPlayer.GetPlayerID(gameObject);

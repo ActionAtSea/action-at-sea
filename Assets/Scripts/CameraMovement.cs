@@ -13,18 +13,18 @@ public class CameraMovement : MonoBehaviour
     private Vector3 m_fixedPosition;
     private Vector3 m_viewportPosition;
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start ()
     {
         m_viewportPosition = new Vector3 (0.5f, 0.5f, 0.0f);
         m_fixedPosition = new Vector3 (0.0f, 0.0f, transform.position.z);
     }
 
-    /**
-    * Updates the dragged camera once a player has been found
-    */
+    /// <summary>
+    /// Updates the dragged camera once a player has been found
+    /// </summary>
     void FixedUpdate ()
     {
         var player = PlayerManager.GetControllablePlayer();

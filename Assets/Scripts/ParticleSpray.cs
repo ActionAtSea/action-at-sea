@@ -12,9 +12,9 @@ public class ParticleSpray : MonoBehaviour
 
     private ParticleSystem m_particles;
 
-    /**
-    * Initialises the particle spray effect
-    */
+    /// <summary>
+    /// Initialises the particle spray effect
+    /// </summary>
     void Start () 
     {
         m_particles = GetComponent<ParticleSystem> ();
@@ -22,9 +22,9 @@ public class ParticleSpray : MonoBehaviour
         m_particles.GetComponent<Renderer>().sortingOrder = parent.GetComponent<SpriteRenderer>().sortingOrder - 1;
     }
 
-    /**
-    * Updates the particle spray effect
-    */
+    /// <summary>
+    /// Updates the particle spray effect
+    /// </summary>
     void Update () 
     {
         m_particles.enableEmission = parent.GetComponent<Rigidbody2D>().velocity.magnitude >= minSpeedForEmission;

@@ -12,58 +12,58 @@ public class Bullet : MonoBehaviour
     private string m_owner = "";            // Player that shot the bullet
     private float m_damage = 10.0f;         // Percentage of health removed when damage is inflicted.
 
-    /**
-    * Initialises the bullet
-    */
+    /// <summary>
+    /// Initialises the bullet
+    /// </summary>
     void Start () 
     {
         GetComponent<Rigidbody2D>().velocity = transform.forward * m_initialVelocity; 
     }
 
-    /**
-    * Adds movement to the bullet
-    */
+    /// <summary>
+    /// Adds movement to the bullet
+    /// </summary>
     void Update() 
     {
         GetComponent<Rigidbody2D>().AddForce(transform.forward * m_initialVelocity);
     }
 
-    /**
-    * Returns the amount of damange this bullet does
-    */
+    /// <summary>
+    /// Returns the amount of damange this bullet does
+    /// </summary>
     public float Damage
     {
         get { return m_damage; }
     }
 
-    /**
-    * Get/Set the player that shot the bullet
-    */
+    /// <summary>
+    /// Get/Set the player that shot the bullet
+    /// </summary>
     public string Owner
     {
         get { return m_owner; }
         set { m_owner = value; }
     }
 
-    /**
-    * Called on bullet enable
-    */
+    /// <summary>
+    /// Called on bullet enable
+    /// </summary>
     void OnEnable()
     {
         Invoke("DestroyOnSplash", 2f);
     }
 
-    /**
-    * Called on bullet disable
-    */
+    /// <summary>
+    /// Called on bullet disable
+    /// </summary>
     void OnDisable()
     {
         CancelInvoke();
     }
 
-    /**
-    * Destroys the bullet on impact
-    */
+    /// <summary>
+    /// Destroys the bullet on impact
+    /// </summary>
     public void DestroyOnImpact()
     {
         if(gameObject.activeSelf)
@@ -75,9 +75,9 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    /**
-    * Destroys the bullet on splash
-    */
+    /// <summary>
+    /// Destroys the bullet on splash
+    /// </summary>
     public void DestroyOnSplash()
     {
         if(gameObject.activeSelf)

@@ -9,17 +9,17 @@ public class PlayerSpawn : MonoBehaviour
 {
     private GameObject m_owner = null;
 
-    /** 
-    * Initialises the spawn point
-    */
+    /// <summary> 
+    /// Initialises the spawn point
+    /// </summary>
     void Start()
     {
         GetComponent<SpriteRenderer>().enabled = false;
     }
    
-    /**
-    * Gets/Sets the owner of the spawn
-    */
+    /// <summary>
+    /// Gets/Sets the owner of the spawn
+    /// </summary>
     public GameObject Owner
     {
         get { return m_owner; }

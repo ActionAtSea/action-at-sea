@@ -11,9 +11,9 @@ public class IslandDiscoveryNode : MonoBehaviour
 
     private bool m_discovered = false;
 
-    /**
-    * On collision with a player
-    */
+    /// <summary>
+    /// On collision with a player
+    /// </summary>
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.transform.tag == "Player")
@@ -28,9 +28,9 @@ public class IslandDiscoveryNode : MonoBehaviour
         }
     }
 
-    /**
-    * Gets whether this node has been discovered
-    */
+    /// <summary>
+    /// Gets whether this node has been discovered
+    /// </summary>
     public bool Discovered
     {
         get { return m_discovered; }

@@ -18,9 +18,9 @@ public class Health : MonoBehaviour
     private float m_healthLevel;
     private bool m_isAlive = true;
 
-    /**
-    * Initialises the health
-    */
+    /// <summary>
+    /// Initialises the health
+    /// </summary>
     void Start()
     {
         m_healthLevel = m_healthMax;
@@ -49,9 +49,9 @@ public class Health : MonoBehaviour
         }
     }
 
-    /**
-    * Updates the health
-    */
+    /// <summary>
+    /// Updates the health
+    /// </summary>
     void Update()
     {
         if(m_floatingHealthBarText != null)
@@ -98,9 +98,9 @@ public class Health : MonoBehaviour
         }
     }
 
-    /**
-    * Inflicts damage to the health
-    */
+    /// <summary>
+    /// Inflicts damage to the health
+    /// </summary>
     public void InflictDamage(float damage)
     {
         if(NetworkedPlayer.IsControllable(gameObject))
@@ -109,9 +109,9 @@ public class Health : MonoBehaviour
         }
     }
 
-    /**
-    * Repairs damage to the health
-    */
+    /// <summary>
+    /// Repairs damage to the health
+    /// </summary>
     public void RepairDamage(float repairAmount)
     {
         if(NetworkedPlayer.IsControllable(gameObject))
@@ -120,41 +120,41 @@ public class Health : MonoBehaviour
         }
     }
 
-    /**
-    * Sets the health level
-    */
+    /// <summary>
+    /// Sets the health level
+    /// </summary>
     public void SetHealthLevel(float level)
     {
         m_healthLevel = level;
     }
 
-    /**
-    * Gets the health level
-    */
+    /// <summary>
+    /// Gets the health level
+    /// </summary>
     public float HealthLevel
     {
         get { return m_healthLevel; }
     }
 
-    /**
-    * Gets the maximum health
-    */
+    /// <summary>
+    /// Gets the maximum health
+    /// </summary>
     public float HealthMax
     {
         get { return m_healthMax; }
     }
 
-    /**
-    * Gets the minimum health
-    */
+    /// <summary>
+    /// Gets the minimum health
+    /// </summary>
     public float HealthMin
     {
         get { return m_healthMin; }
     }
 
-    /**
-    * Gets whether the health is alive
-    */
+    /// <summary>
+    /// Gets whether the health is alive
+    /// </summary>
     public bool IsAlive
     {
         get { return m_isAlive; }

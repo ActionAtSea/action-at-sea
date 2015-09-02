@@ -12,18 +12,18 @@ public class PlayerPlacer : MonoBehaviour
     private float m_playerRadious = 5.0f;
     private GameObject[] m_spawns = null;
 
-    /** 
-    * Position/rotation information
-    */
+    /// <summary> 
+    /// Position/rotation information
+    /// </summary>
     public class Placement
     {
         public Vector3 position = new Vector3();
         public Vector3 rotation = new Vector3();
     }
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start()
     {
         m_gameboard = GameObject.FindGameObjectWithTag("GameBoard");
@@ -35,9 +35,9 @@ public class PlayerPlacer : MonoBehaviour
         m_spawns = GameObject.FindGameObjectsWithTag("Spawn");
     }
 
-    /**
-    * Utility function to determine if the given position is roughly visible to the player
-    */
+    /// <summary>
+    /// Utility function to determine if the given position is roughly visible to the player
+    /// </summary>
     static public bool IsCloseToPlayer(Vector3 position)
     {
         var player = PlayerManager.GetControllablePlayer();
@@ -49,9 +49,9 @@ public class PlayerPlacer : MonoBehaviour
         return false;
     }
 
-    /**
-    * Retrieves a new position on the map
-    */
+    /// <summary>
+    /// Retrieves a new position on the map
+    /// </summary>
     public Placement GetNewPosition(GameObject player)
     {
         if(m_spawns != null)
@@ -88,9 +88,9 @@ public class PlayerPlacer : MonoBehaviour
         return GetRandomPosition();
     }
 
-    /**
-    * Retrieves a new position on the map that doesn't collide
-    */
+    /// <summary>
+    /// Retrieves a new position on the map that doesn't collide
+    /// </summary>
     public Placement GetRandomPosition()
     {
         GameObject[] players = PlayerManager.GetEnemies();

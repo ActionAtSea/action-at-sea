@@ -10,18 +10,18 @@ public class PlayerAiming : MonoBehaviour
     private Vector3 m_mousePos;
     private CannonController m_controller;
 
-    /**
-    * Initialises the aiming script
-    */
+    /// <summary>
+    /// Initialises the aiming script
+    /// </summary>
     void Start()
     {
         m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         m_controller = GetComponentInChildren<CannonController>();
     }
 
-    /**
-    * Updates the player aiming
-    */
+    /// <summary>
+    /// Updates the player aiming
+    /// </summary>
     void Update()
     {
         if(NetworkedPlayer.IsControllable(gameObject))

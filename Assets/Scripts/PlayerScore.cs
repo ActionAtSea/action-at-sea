@@ -15,9 +15,9 @@ public class PlayerScore : MonoBehaviour
     private float m_score = 0.0f;
     private float m_roundedScore;
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start()
     {
         m_score = startingScore;
@@ -25,9 +25,9 @@ public class PlayerScore : MonoBehaviour
         m_roundedScore = Mathf.Round(m_score);
     }
 
-    /**
-    * Removes from the score
-    */
+    /// <summary>
+    /// Removes from the score
+    /// </summary>
     public void MinusScore(float scoreToMinus)
     {
         m_score -= scoreToMinus;
@@ -35,35 +35,35 @@ public class PlayerScore : MonoBehaviour
         m_roundedScore = Mathf.Round(m_score);
     }
 
-    /**
-    * Adds to the score
-    */
+    /// <summary>
+    /// Adds to the score
+    /// </summary>
     public void AddScore(float scoreValue)
     {
         m_score += scoreValue;
         m_roundedScore = Mathf.Round(m_score);
     }
 
-    /**
-    * Resets the score
-    */
+    /// <summary>
+    /// Resets the score
+    /// </summary>
     public void ResetScore()
     {
         m_score = 0.0f;
         m_roundedScore = 0.0f;
     }
 
-    /**
-    * Gets the score
-    */
+    /// <summary>
+    /// Gets the score
+    /// </summary>
     public float Score
     {
         get { return m_score; }
     }
 
-    /**
-    * Gets the rounded score
-    */
+    /// <summary>
+    /// Gets the rounded score
+    /// </summary>
     public float RoundedScore
     {
         get { return m_roundedScore; }

@@ -135,6 +135,7 @@
      <Compile Include="Assets\Scripts\Menu\TreasureScript.cs" />
      <Compile Include="Assets\Scripts\Menu\UpgradingDock.cs" />
      <Compile Include="Assets\Scripts\Minimap.cs" />
+     <Compile Include="Assets\Scripts\NetworkMatchmaker.cs" />
      <Compile Include="Assets\Scripts\NetworkedPlayer.cs" />
      <Compile Include="Assets\Scripts\NewObjectPooler.cs" />
      <Compile Include="Assets\Scripts\ParticleSpray.cs" />
@@ -144,7 +145,6 @@
      <Compile Include="Assets\Scripts\PlayerPlacer.cs" />
      <Compile Include="Assets\Scripts\PlayerScore.cs" />
      <Compile Include="Assets\Scripts\PlayerSpawn.cs" />
-     <Compile Include="Assets\Scripts\RandomMatchmaker.cs" />
      <Compile Include="Assets\Scripts\RepairDock.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\TileCaustics.cs" />

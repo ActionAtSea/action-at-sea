@@ -10,17 +10,17 @@ public class BulletImpact : MonoBehaviour
 {
     private Health m_parentHealth = null; // Health bar for the parent of this script
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start () 
     {
         m_parentHealth = GetComponentInParent<Health>();
     }
 
-    /**
-    * Collision detection between the bullet and player
-    */
+    /// <summary>
+    /// Collision detection between the bullet and player
+    /// </summary>
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Bullet")

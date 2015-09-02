@@ -7,9 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-/**
-* Holds information about an instances of the fog sprite 
-*/
+/// <summary>
+/// Holds information about an instances of the fog sprite 
+/// </summary>
 class FogTile
 {
     public Texture2D texture;
@@ -19,9 +19,9 @@ class FogTile
     public Color32[] pixels;
 }
 
-/**
-* Main script class
-*/
+/// <summary>
+/// Creates a series of editable tiles that the player can interact with
+/// </summary>
 public class FogOfWar : MonoBehaviour 
 {
     public float tileOffset = 0.75f;
@@ -47,9 +47,9 @@ public class FogOfWar : MonoBehaviour
     private float m_minimapMinReveal = 0.0f;
     private float m_minimapMaxReveal = 0.0f;
 
-    /**
-    * Determines whether the fog is set up correctly
-    */
+    /// <summary>
+    /// Determines whether the fog is set up correctly
+    /// </summary>
     bool CanBeInitialised()
     {
         var renderer = this.GetComponent<SpriteRenderer>();
@@ -73,9 +73,9 @@ public class FogOfWar : MonoBehaviour
         return true;
     }
 
-    /**
-    * Initialises the fog sprites
-    */
+    /// <summary>
+    /// Initialises the fog sprites
+    /// </summary>
     void Start ()
     {
         m_gameBoard = GameObject.FindGameObjectWithTag("GameBoard");
@@ -149,9 +149,9 @@ public class FogOfWar : MonoBehaviour
         m_initialised = true;
     }
 
-    /**
-    * Creates a new editable fog tile
-    */
+    /// <summary>
+    /// Creates a new editable fog tile
+    /// </summary>
     void CreateNewTile(bool isBorder, int x, int y, int ID)
     {
         List<FogTile> tileContainer = isBorder ? m_borderTiles : m_tiles;
@@ -172,9 +172,9 @@ public class FogOfWar : MonoBehaviour
             transform.position.z);
     }
 
-    /**
-    * Initialises a new editable fog tile
-    */
+    /// <summary>
+    /// Initialises a new editable fog tile
+    /// </summary>
     void InitialiseTile(FogTile tile, int size, string name, Color[] pixels)
     {
         var renderer = this.GetComponent<SpriteRenderer> ();
@@ -201,26 +201,26 @@ public class FogOfWar : MonoBehaviour
         tile.renderer.sortingLayerName = renderer.sortingLayerName;
     }
 
-    /**
-    * Retrieves an idex for the sprites list from the rows/column of the grid
-    */
+    /// <summary>
+    /// Retrieves an idex for the sprites list from the rows/column of the grid
+    /// </summary>
     int GetIndex(int x, int y)
     {
         return x * m_tileAmountX + y;
     }
 
-    /**
-    * Determines whether the position is inside the tile at x,y in the grid
-    */
+    /// <summary>
+    /// Determines whether the position is inside the tile at x,y in the grid
+    /// </summary>
     bool IsInsideTile(Vector3 position, int x, int y)
     {
         var spritePosition = m_tiles[GetIndex (x, y)].obj.transform.position;
         return IsInsideBounds (position.x, position.y, spritePosition.x, spritePosition.y, m_worldScale);
     }
 
-    /**
-    * Determines if the position is inside the bounds
-    */
+    /// <summary>
+    /// Determines if the position is inside the bounds
+    /// </summary>
     bool IsInsideBounds(float x, float y, float boundsX, float boundsY, float boundsScale)
     {
         float halfScale = boundsScale * 0.5f;
@@ -230,17 +230,17 @@ public class FogOfWar : MonoBehaviour
                y >= boundsY - halfScale;
     }
 
-    /**
-    * Change the range a value is between
-    */
+    /// <summary>
+    /// Change the range a value is between
+    /// </summary>
     float ConvertRange(float value, float currentInner, float currentOuter, float newInner, float newOuter)
     {
         return ((value-currentInner)*((newOuter-newInner)/(currentOuter-currentInner)))+newInner;
     }
 
-    /**
-    * Updates the fog of war
-    */
+    /// <summary>
+    /// Updates the fog of war
+    /// </summary>
     void Update () 
     {
         if (!m_initialised)
@@ -258,9 +258,9 @@ public class FogOfWar : MonoBehaviour
         m_revealedCount = 0;
     }
 
-    /**
-    * Detemines which of the tiles the player is inside
-    */
+    /// <summary>
+    /// Detemines which of the tiles the player is inside
+    /// </summary>
     bool IsInsideFog(GameObject player)
     {
         if (m_tileInside.x == -1.0f || m_tileInside.y == -1.0f || 
@@ -286,9 +286,9 @@ public class FogOfWar : MonoBehaviour
         return true;
     }
 
-    /**
-    * Removes pixels from a tile
-    */
+    /// <summary>
+    /// Removes pixels from a tile
+    /// </summary>
     void RemoveFog(Vector2 playerPosition, FogTile tile, float scaleX, float scaleY, int dimensions, float minReveal, float maxReveal)
     {
         if (tile.pixels == null) 
@@ -333,9 +333,9 @@ public class FogOfWar : MonoBehaviour
         tile.texture.Apply();
     }
 
-    /**
-    * Bounds checks the tile before removing fog
-    */
+    /// <summary>
+    /// Bounds checks the tile before removing fog
+    /// </summary>
     void RemoveFogSmoothly(Vector2 playerPosition, int x, int y)
     {
         var index = GetIndex (x, y);
@@ -353,9 +353,9 @@ public class FogOfWar : MonoBehaviour
         }
     }
 
-    /**
-    * Solves for a smooth fog effect
-    */
+    /// <summary>
+    /// Solves for a smooth fog effect
+    /// </summary>
     void SolveSmoothFog(GameObject player) 
     {
         // Assumes tile scale is less than max reveal radius from initialisation check

@@ -20,9 +20,9 @@ public class TileCaustics : MonoBehaviour
     private List<Sprite> m_frames = new List<Sprite>();
     private int m_currentTexture = 0;
 
-    /**
-    * Initialises the caustics
-    */
+    /// <summary>
+    /// Initialises the caustics
+    /// </summary>
     void Start ()
     {
         m_gameBoard = GameObject.FindGameObjectWithTag("GameBoard");
@@ -82,9 +82,9 @@ public class TileCaustics : MonoBehaviour
         }
     }
 
-    /**
-    * Updates the caustic animation
-    */
+    /// <summary>
+    /// Updates the caustic animation
+    /// </summary>
     void Update()
     {
         m_timePassed += Time.deltaTime;

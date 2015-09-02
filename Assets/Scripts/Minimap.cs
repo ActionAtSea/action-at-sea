@@ -25,9 +25,9 @@ public class Minimap : MonoBehaviour
     private List<MapItem> m_dynamicItems = new List<MapItem>();
     private GameObject m_gameBoard = null;
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start()
     {
         m_gameBoard = GameObject.FindGameObjectWithTag("GameBoard");
@@ -59,9 +59,9 @@ public class Minimap : MonoBehaviour
         mapRenderer.enabled = false;
     }
 
-    /**
-    * Adds a new item to the minimap
-    */
+    /// <summary>
+    /// Adds a new item to the minimap
+    /// </summary>
     void AddStaticItem(Transform itemTransform, 
                        SpriteRenderer itemRenderer, 
                        Color colour)
@@ -69,9 +69,9 @@ public class Minimap : MonoBehaviour
         AddItem(itemTransform, itemRenderer, colour, true, 0, 1.0f);
     }
 
-    /**
-    * Adds a new item to the minimap
-    */
+    /// <summary>
+    /// Adds a new item to the minimap
+    /// </summary>
     void AddItem(Transform itemTransform, 
                  SpriteRenderer itemRenderer, 
                  Color colour,
@@ -125,9 +125,9 @@ public class Minimap : MonoBehaviour
         }
     }
 
-    /**
-    * Updates the minimap. Note initialisation needs to be done here as fog is generated in Start()
-    */
+    /// <summary>
+    /// Updates the minimap. Note initialisation needs to be done here as fog is generated in Start()
+    /// </summary>
     void Update () 
     {
         if(!m_isInitialised)
@@ -167,9 +167,9 @@ public class Minimap : MonoBehaviour
         UpdateMap();
     }
 
-    /**
-    * Updates the minimap
-    */
+    /// <summary>
+    /// Updates the minimap
+    /// </summary>
     void UpdateMap()
     {
         for(int i = 0; i < m_dynamicItems.Count; ++i)
@@ -183,9 +183,9 @@ public class Minimap : MonoBehaviour
         }
     }
 
-    /**
-    * Adds the player to the minimap
-    */
+    /// <summary>
+    /// Adds the player to the minimap
+    /// </summary>
     public void AddPlayer(GameObject player, bool controlled)
     {
         var maxMapScale = Mathf.Max(transform.localScale.x, transform.localScale.y);
@@ -200,9 +200,9 @@ public class Minimap : MonoBehaviour
                 m_shipMarkerSize / maxMapScale);
     }
 
-    /**
-    * Updates a map item positions
-    */
+    /// <summary>
+    /// Updates a map item positions
+    /// </summary>
     bool UpdateMapItem(MapItem item)
     {
         if(item.parentTransform == null)

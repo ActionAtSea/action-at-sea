@@ -9,9 +9,9 @@ using System.Linq;
 
 public class FillScoreBoard : MonoBehaviour 
 {
-    /**
-    * Compiles a score board from all game players
-    */
+    /// <summary>
+    /// Compiles a score board from all game players
+    /// </summary>
     void Update () 
     {
         List<GameObject> players = new List<GameObject>();

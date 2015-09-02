@@ -12,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
     private float m_rotationSpeed = 1.0f;
     private Vector3 m_forwardForce = new Vector3();
 
-    /**
-    * Updates the player movement
-    */
+    /// <summary>
+    /// Updates the player movement
+    /// </summary>
     void FixedUpdate() 
     {
         if(NetworkedPlayer.IsControllable(gameObject))
@@ -40,9 +40,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    /**
-    * On collision with another player
-    */
+    /// <summary>
+    /// On collision with another player
+    /// </summary>
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")

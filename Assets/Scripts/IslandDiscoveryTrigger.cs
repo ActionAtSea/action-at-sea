@@ -13,18 +13,18 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     private bool m_islandDiscovered = false;
     private bool m_scoreAwarded = false;
 
-    /**
-    * Initialises the script
-    */
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
     void Start()
     {
         m_nodes = GetComponentsInChildren<IslandDiscoveryNode>();
         GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    /**
-    * Checks whether the island has been discovered
-    */
+    /// <summary>
+    /// Checks whether the island has been discovered
+    /// </summary>
     void Update()
     {
         if (!m_islandDiscovered)
@@ -55,9 +55,9 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         }
     }
 
-    /**
-    * Returns whether this island has been discovered
-    */
+    /// <summary>
+    /// Returns whether this island has been discovered
+    /// </summary>
     public bool IsDiscovered()
     {
         return GetComponent<SpriteRenderer>().enabled;

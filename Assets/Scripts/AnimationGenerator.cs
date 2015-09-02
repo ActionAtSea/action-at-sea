@@ -8,16 +8,16 @@ using System.Collections.Generic;
 
 public class AnimationGenerator : MonoBehaviour 
 {
-    /**
-    * Game objects passed in
-    */
+    /// <summary>
+    /// Game objects passed in
+    /// </summary>
     public GameObject explosionAnimation;
     public GameObject hitAnimation;
     public GameObject splashAnimation;
 
-    /**
-    * Available animations to play 
-    */
+    /// <summary>
+    /// Available animations to play 
+    /// </summary>
     public enum ID
     {
         EXPLOSION,
@@ -26,9 +26,9 @@ public class AnimationGenerator : MonoBehaviour
         MAX_ANIMATIONS
     };
     
-    /**
-    * Information for an animation
-    */
+    /// <summary>
+    /// Information for an animation
+    /// </summary>
     class AnimationData
     {
         public SoundManager.SoundID effect;   // Sound effect to play when it starts
@@ -38,9 +38,9 @@ public class AnimationGenerator : MonoBehaviour
     private List<AnimationData> m_animations; // Container of all animations
     private SoundManager m_soundManager;      // Allows playing of sound effects
 
-    /**
-    * Initialises the animation manager
-    */
+    /// <summary>
+    /// Initialises the animation manager
+    /// </summary>
     void Start () 
     {
         m_animations = new List<AnimationData>();
@@ -55,9 +55,9 @@ public class AnimationGenerator : MonoBehaviour
         CreateAnimations(20, ID.SPLASH, SoundManager.SoundID.SPLASH, splashAnimation, "Splash");
     }
 
-    /**
-    * Creates the instances for an animation
-    */
+    /// <summary>
+    /// Creates the instances for an animation
+    /// </summary>
     void CreateAnimations(int count, 
                           ID id,
                           SoundManager.SoundID effectID,
@@ -80,9 +80,9 @@ public class AnimationGenerator : MonoBehaviour
         }
     }
 
-    /**
-    * Updates the animations that are playing
-    */
+    /// <summary>
+    /// Updates the animations that are playing
+    /// </summary>
     void UpdateAnimations(List<GameObject> animations)
     {
         for(int i = 0; i < animations.Count; ++i)
@@ -100,9 +100,9 @@ public class AnimationGenerator : MonoBehaviour
         }    
     }
 
-    /**
-    * Updates the animations that are playing
-    */
+    /// <summary>
+    /// Updates the animations that are playing
+    /// </summary>
     void Update () 
     {
         foreach(var animation in m_animations)
@@ -111,10 +111,10 @@ public class AnimationGenerator : MonoBehaviour
         }
     }
 
-    /**
-    * Plays an animation at the given position
-    * @note y position not used
-    */    
+    /// <summary>
+    /// Plays an animation at the given position
+    /// @note y position not used
+    /// </summary>    
     public void PlayAnimation(Vector3 position, ID id)
     {
         if(PlayerPlacer.IsCloseToPlayer(position) && StartAnimation(position, id))
@@ -123,10 +123,10 @@ public class AnimationGenerator : MonoBehaviour
         }
     }
 
-    /**
-    * Starts an animation playing if possible
-    * * @note y position not used
-    */   
+    /// <summary>
+    /// Starts an animation playing if possible
+    /// * @note y position not used
+    /// </summary>   
     bool StartAnimation(Vector3 position, ID id)
     {
         int index = (int)id;
@@ -145,9 +145,9 @@ public class AnimationGenerator : MonoBehaviour
         return false;
     }
 
-    /**
-    * Gets the AnimationGenerator from the scene
-    */
+    /// <summary>
+    /// Gets the AnimationGenerator from the scene
+    /// </summary>
     public static AnimationGenerator Get()
     {
         var obj = FindObjectOfType<AnimationGenerator>();

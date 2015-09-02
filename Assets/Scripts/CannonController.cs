@@ -6,9 +6,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-/**
-* Handles logic for the ship's cannons.
-*/
 public class CannonController : MonoBehaviour
 {
     private float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
@@ -24,9 +21,9 @@ public class CannonController : MonoBehaviour
     private List<Cannon> m_leftSideCannons;
     private bool m_fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
 
-    /**
-    * Initialises the script
-    */    
+    /// <summary>
+    /// Initialises the script
+    /// </summary>    
     void Start()
     {
         m_currentReloadTimeRight = m_reloadTime;
@@ -49,25 +46,25 @@ public class CannonController : MonoBehaviour
         }
     }
 
-    /**
-    * Aims the cannons at the direction
-    */  
+    /// <summary>
+    /// Aims the cannons at the direction
+    /// </summary>  
     public void AimWeapon(Vector3 fireDirection)
     {
         m_mousePositionWorld = fireDirection;
     }
 
-    /**
-    * Fires the cannons
-    */  
+    /// <summary>
+    /// Fires the cannons
+    /// </summary>  
     public void FireWeapon()
     {
         m_fireGuns = true;
     }
 
-    /**
-    * Updates the cannones
-    */  
+    /// <summary>
+    /// Updates the cannones
+    /// </summary>  
     void Update()
     {
         if(NetworkedPlayer.IsControllable(gameObject))
@@ -77,9 +74,9 @@ public class CannonController : MonoBehaviour
         }
     }
 
-    /**
-    * Updates the cannons according to the mouse position
-    */  
+    /// <summary>
+    /// Updates the cannons according to the mouse position
+    /// </summary>  
     private void UpdateMouseCursorAngle()
     {
         m_startPosition = transform.parent.position;
@@ -106,9 +103,9 @@ public class CannonController : MonoBehaviour
         m_mouseCursorAngle = angle;
     }
 
-    /**
-    * Fires the cannones
-    */  
+    /// <summary>
+    /// Fires the cannones
+    /// </summary>  
     private void FireCannons()
     {
         m_currentReloadTimeRight += Time.deltaTime;
@@ -155,33 +152,33 @@ public class CannonController : MonoBehaviour
         }
     }
 
-    /**
-    * Returns the mouse cursor angle
-    */  
+    /// <summary>
+    /// Returns the mouse cursor angle
+    /// </summary>  
     public float MouseCursorAngle
     {
         get { return m_mouseCursorAngle; }
     }
 
-    /**
-    * Returns the range for swivel
-    */  
+    /// <summary>
+    /// Returns the range for swivel
+    /// </summary>  
     public float SwivelRangeDegrees
     {
         get { return m_swivelRangeDegrees; }
     }
 
-    /**
-    * Returns the range for aiming
-    */  
+    /// <summary>
+    /// Returns the range for aiming
+    /// </summary>  
     public float AimingRangeDegrees
     {
         get { return m_aimingRangeDegrees; }
     }
 
-    /**
-    * Returns the cannon reload time
-    */  
+    /// <summary>
+    /// Returns the cannon reload time
+    /// </summary>  
     public float ReloadTime
     {
         get { return m_reloadTime; }

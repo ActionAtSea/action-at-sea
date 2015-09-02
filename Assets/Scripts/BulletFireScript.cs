@@ -13,25 +13,25 @@ public class BulletFireScript : MonoBehaviour
     private float m_bulletSpeed = 200.0f;
     private Vector2 m_firingDirection;
 
-    /**
-    * Returns the position fired from
-    */
+    /// <summary>
+    /// Returns the position fired from
+    /// </summary>
     public Vector3 FirePosition()
     {
         return transform.position;
     }
 
-    /**
-    * Returns the rotation fired from
-    */
+    /// <summary>
+    /// Returns the rotation fired from
+    /// </summary>
     public Quaternion FireRotation()
     {
         return transform.rotation;
     }
 
-    /**
-    * Fires a bullet
-    */
+    /// <summary>
+    /// Fires a bullet
+    /// </summary>
     public void Fire(string owner, Vector3 firePosition, Quaternion fireRotation)
     {
         GameObject obj = NewObjectPooler.Get().GetPooledObject();

@@ -17,7 +17,7 @@ public class GUIJoiningGame : MonoBehaviour
     {
         if(!m_joined)
         {
-            m_joined = RandomMatchmaker.Get().IsConnected();
+            m_joined = NetworkMatchmaker.Get().IsConnectedToRoom();
 
             if(m_joined)
             {
