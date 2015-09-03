@@ -9,7 +9,7 @@ using System.Collections;
 /// <summary>
 /// State of fading
 /// </summary>
-enum FadeState
+public enum FadeState
 {
     FADE_IN,
     FADE_OUT,
@@ -18,8 +18,9 @@ enum FadeState
 
 /// <summary>
 /// IDs for each application scene
+/// Note, adding a new level requires updating the methods below
 /// </summary>
-enum SceneID
+public enum SceneID
 {
     MENU = 0,
     MOVE_AND_FIRE = 1,
@@ -32,6 +33,17 @@ enum SceneID
     LEVEL2 = 8
 }
 
+/// <summary>
+/// IDs for each level
+/// </summary>
+public enum LevelID
+{
+    NO_LEVEL = -1,
+    LEVEL1 = 0,
+    LEVEL2,
+    MAX_LEVELS
+}
+
 class Utilities
 {
     /// <summary>
@@ -39,7 +51,15 @@ class Utilities
     /// </summary>
     static public string GameVersion()
     {
-        return "0.2";
+        return "0.1";
+    }
+
+    /// <summary>
+    /// Returns the currently loaded level
+    /// </summary>
+    static public LevelID GetLoadedLevel()
+    {
+        return GetLevelFromSceneID(Application.loadedLevel);
     }
 
     /// <summary>
@@ -52,23 +72,23 @@ class Utilities
     }
 
     /// <summary>
-    /// Returns the currently loaded level
+    /// Returns the current number of levels supported
     /// </summary>
-    static public int GetLoadedLevel()
+    static public int GetMaxLevels()
     {
-        return GetLevelFromSceneID(Application.loadedLevel);
+        return (int)LevelID.MAX_LEVELS;
     }
 
     /// <summary>
     /// Returns the screen ID for the level
     /// </summary>
-    static public SceneID GetSceneIDFromLevel(int level)
+    static public SceneID GetSceneIDFromLevel(LevelID level)
     {
         switch(level)
         {
-        case 1:
+        case LevelID.LEVEL1:
             return SceneID.LEVEL1;
-        case 2:
+        case LevelID.LEVEL2:
             return SceneID.LEVEL2;
         default:
             throw new ArgumentException("Unknown level ID");
@@ -78,14 +98,14 @@ class Utilities
     /// <summary>
     /// Returns the current level
     /// </summary>
-    static public int GetLevelFromSceneID(int sceneID)
+    static public LevelID GetLevelFromSceneID(int sceneID)
     {
         switch(sceneID)
         {
         case (int)SceneID.LEVEL1:
-            return 1;
+            return LevelID.LEVEL1;
         case (int)SceneID.LEVEL2:
-            return 2;
+            return LevelID.LEVEL2;
         default:
             throw new ArgumentException("loaded scene not a level");
         }
@@ -94,13 +114,13 @@ class Utilities
     /// <summary>
     /// Returns how many players are allowed in each level
     /// </summary>
-    static public int GetAcceptedPlayersForLevel(int level)
+    static public int GetAcceptedPlayersForLevel(LevelID level)
     {
         switch(level)
         {
-        case 1:
+        case LevelID.LEVEL1:
             return 0; //Unlimited
-        case 2:
+        case LevelID.LEVEL2:
             return 2;
         default:
              throw new ArgumentException("Unknown level ID");

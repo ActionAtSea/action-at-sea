@@ -131,7 +131,7 @@ public class PlayerPlacer : MonoBehaviour
                 }
             }
 
-            if(foundPosition)
+            if(foundPosition && players != null)
             {
                 foreach(GameObject player in players)
                 {

@@ -13,7 +13,8 @@ public class LobbyScript : MonoBehaviour
     public UnityEngine.UI.Text playerNameText = null;
     public GameObject selectedLevel = null;
     private bool m_playGameRequest = false;
-    private int m_selectedLevel = 0;
+    private bool m_joinGameRequest = false;
+    private LevelID m_selectedLevel = LevelID.LEVEL1;
     private NetworkMatchmaker m_network = null;
     private float m_timer = 0.0f;
     private int m_dots = 0;
@@ -53,7 +54,7 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     private void SelectNewLevel(GameObject level)
     {
-        m_selectedLevel = int.Parse(level.name);
+        m_selectedLevel = (LevelID)(int.Parse(level.name) - 1); // Levels start at 0
         selectedLevel = level;
         
         var newBackground = selectedLevel.transform.FindChild("Background");
@@ -75,7 +76,6 @@ public class LobbyScript : MonoBehaviour
         soundManager.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
         
         FadeGame.Get().FadeIn();
-        m_playGameRequest = true;
     }
 
     /// <summary>
@@ -88,46 +88,81 @@ public class LobbyScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Get string dots
+    /// </summary>
+    private string GetDots()
+    {
+        m_timer += Time.deltaTime;
+        if(m_timer >= m_dotSpeed)
+        {
+            m_timer = 0.0f;
+            m_dots++;
+            if(m_dots >= m_maxDots)
+            {
+                m_dots = 0;
+            }
+        }
+
+        string dots = "";
+        for(int i = 0; i < m_dots; ++i)
+        {
+            dots += ".";
+        }
+        return dots;
+    }
+
+    /// <summary>
     /// Updates the play game request
     /// </summary>
     void Update()
     {
-        if(!m_network.IsConnected())
-        {
-            m_timer += Time.deltaTime;
-            if(m_timer >= m_dotSpeed)
-            {
-                m_timer = 0.0f;
-                m_dots++;
-                if(m_dots >= m_maxDots)
-                {
-                    m_dots = 0;
-                }
-            }
-
-            lobbyStatus.text = "Connecting";
-            for(int i = 0; i < m_dots; ++i)
-            {
-                lobbyStatus.text += ".";
-            }
-
-            return;
-        }
-
-        lobbyStatus.text = "Connected";
-
         if(!m_playGameRequest)
         {
-            if(isReady.isOn)
+            if(!m_network.IsConnected())
             {
-                m_network.JoinGameRoom(m_selectedLevel);
-                StartGame();
+                // Wait until connected before entering a room
+                m_joinGameRequest = false;
+                lobbyStatus.text = "Connecting" + GetDots();
+            }
+            else
+            {
+                lobbyStatus.text = "Connected";
+                if(isReady.isOn)
+                {
+                    if(!m_joinGameRequest)
+                    {
+                        m_joinGameRequest = true;
+                        m_network.JoinGameLevel(m_selectedLevel);
+                    }
+                    else if(m_network.IsRoomReady())
+                    {
+                        StartGame();
+                        m_playGameRequest = true;
+                    }
+
+                    int maxSlots = Utilities.GetAcceptedPlayersForLevel(m_selectedLevel);
+                    if(maxSlots == 0 || !m_network.IsInRoom())
+                    {
+                        lobbyStatus.text = "Joining Level" + GetDots();
+                    }
+                    else
+                    {
+                        int players = m_network.GetRoomPlayerCount();
+                        lobbyStatus.text = "Waiting for: " + 
+                            (maxSlots - players).ToString() + " / " + maxSlots.ToString();
+                    }
+                }
+                else
+                {
+                    m_network.LeaveGameLevel();
+                    m_joinGameRequest = false;
+                }
             }
         }
         else
         {
+            // At this point if a disconnect happens let the level deal with it
             lobbyStatus.text = "Entering Game";
-
             if(FadeGame.Get().IsFadedIn())
             {
                 FadeGame.Get().FadeOut();

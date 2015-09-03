@@ -14,7 +14,7 @@ public class GUINetworkStatus : MonoBehaviour
         if(!m_joined)
         {
             var network = NetworkMatchmaker.Get();
-            m_joined = network.IsConnectedToRoom();
+            m_joined = network.IsInRoom();
 
             GetComponent<UnityEngine.UI.Text>().text = 
                 network.GetNetworkStatus();

@@ -21,6 +21,22 @@ public class NetworkedPlayer : MonoBehaviour
     private GameObject m_playerPrefab = null;
 
     /// <summary>
+    /// Initialises the player on the client side
+    /// </summary>
+    public void InitialiseAsClient()
+    {
+        gameObject.tag = "Player";
+        gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
+        
+        PlayerPlacer.Placement place = FindObjectOfType<PlayerPlacer>().GetNewPosition(gameObject);
+        gameObject.transform.position = place.position;
+        gameObject.transform.localEulerAngles = place.rotation;
+        
+        GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
+        healthbar.SetActive(false);
+    }
+
+    /// <summary>
     /// Updates the player from the networked data
     /// </summary>
     void Update()
