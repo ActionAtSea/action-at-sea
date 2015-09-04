@@ -1,19 +1,20 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkMatchmaker.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkedPlayer.cs">
     <Files>
+      <File FileName="Assets\Scripts\GameOverScript.cs" Line="67" Column="43" />
       <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="145" Column="22" />
-      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="135" Column="6" />
-      <File FileName="Assets\Scripts\Utilities.cs" Line="113" Column="1" />
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="25" Column="19" />
+      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="237" Column="56" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="60" Column="19" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="44" Column="96" />
       <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GUI\GUIJoiningGame.cs" Line="20" Column="56" />
+      <File FileName="Assets\Scripts\GUI\GUIJoiningGame.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GUI\GUINetworkStatus.cs" Line="1" Column="1" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonNetwork.cs" Line="1797" Column="77" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonClasses.cs" Line="612" Column="1" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\NetworkingPeer.cs" Line="1104" Column="1" />
+      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonNetwork.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonClasses.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\NetworkingPeer.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Health.cs" Line="32" Column="13" />
-      <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="138" Column="39" />
+      <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

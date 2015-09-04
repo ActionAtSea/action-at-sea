@@ -225,16 +225,37 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
+    /// Destroys the player
+    /// </summary>
+    public void DestroyPlayer()
+    {
+        m_player.GetComponentInChildren<NetworkedPlayer>().UnInitialiseClient();
+        m_player = null;
+    }
+
+    /// <summary>
     /// Creates a new player once the level has started
+    /// </summary>
+    void CreatePlayer()
+    {
+        m_player = PhotonNetwork.Instantiate(
+            "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
+        
+        m_player.GetComponentInChildren<NetworkedPlayer>().InitialiseClient();
+    }
+
+    /// <summary>
+    /// Updates the network matchmaker
     /// </summary>
     void Update()
     {
-        if(m_player == null && Utilities.IsLevelLoaded() && IsInRoom())
+        // Creates a new player when the level has fully initialised
+        if(m_player == null && 
+           Utilities.IsLevelLoaded() && 
+           !Utilities.IsGameOver() && 
+           IsInRoom())
         {
-            m_player = PhotonNetwork.Instantiate(
-                "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
-
-            m_player.GetComponentInChildren<NetworkedPlayer>().InitialiseAsClient();
+            CreatePlayer();
         }
     }
 

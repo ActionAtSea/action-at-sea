@@ -37,8 +37,15 @@ public class GameOverScript : MonoBehaviour
             {
                 gameFader.FadeOut();
 
-                PhotonNetwork.Disconnect();
-                Application.LoadLevel(m_toMenuRequest ? (int)SceneID.LOBBY : Application.loadedLevel);
+                if(m_toMenuRequest)
+                {
+                    NetworkMatchmaker.Get().LeaveGameLevel();
+                    Application.LoadLevel((int)SceneID.LOBBY);
+                }
+                else
+                {
+                    Application.LoadLevel(Application.loadedLevel);
+                }
             }
         }
         else if (!m_isGameOver) 
@@ -57,6 +64,7 @@ public class GameOverScript : MonoBehaviour
                 soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
                 m_playerHealth.SetHealthLevel(0.0f);
+                NetworkMatchmaker.Get().DestroyPlayer();
 
                 gameOverText.SetActive(true);
 
@@ -124,5 +132,26 @@ public class GameOverScript : MonoBehaviour
             Crosshair.Get().ShowCursor();
             m_toMenuRequest = true;
         }
+    }
+
+    /// <summary>
+    /// Gets whether the game is over
+    /// </summary>
+    public bool IsGameOver()
+    {
+        return m_isGameOver;
+    }
+
+    /// <summary>
+    /// Gets the game over script instance from the scene
+    /// </summary>
+    public static GameOverScript Get()
+    {
+        var gameover = FindObjectOfType<GameOverScript>();
+        if(gameover == null)
+        {
+            Debug.LogError("Could not find Game Over Script in scene");
+        }
+        return gameover;
     }
 }

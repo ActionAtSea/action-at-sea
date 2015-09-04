@@ -55,6 +55,14 @@ class Utilities
     }
 
     /// <summary>
+    /// Returns whether currently game over
+    /// </summary>
+    static public bool IsGameOver()
+    {
+        return GameOverScript.Get().IsGameOver();
+    }
+
+    /// <summary>
     /// Returns the currently loaded level
     /// </summary>
     static public LevelID GetLoadedLevel()

@@ -23,7 +23,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// <summary>
     /// Initialises the player on the client side
     /// </summary>
-    public void InitialiseAsClient()
+    public void InitialiseClient()
     {
         gameObject.tag = "Player";
         gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
@@ -34,6 +34,22 @@ public class NetworkedPlayer : MonoBehaviour
         
         GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
         healthbar.SetActive(false);
+    }
+
+    /// <summary>
+    /// UnInitialises the player on the client side
+    /// </summary>
+    public void UnInitialiseClient()
+    {
+        // Need to keep the Networked player script active to serialise that the player is dead
+        SpriteRenderer[] sprites = GetComponentsInChildren<SpriteRenderer>();
+        foreach(var sprite in sprites)
+        {
+            sprite.enabled = false;
+        }
+        GetComponent<PlayerMovement>().enabled = false;
+        GetComponent<PlayerAiming>().enabled = false;
+        transform.FindChild("Cannons").gameObject.SetActive(false);
     }
 
     /// <summary>
