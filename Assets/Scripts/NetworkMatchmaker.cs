@@ -15,6 +15,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     List<TypedLobby> m_lobbys = null;          /// Holds one lobby per game type
     LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Level the player has joined
     GameObject m_player = null;                /// Main client player generated
+    float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnecting
 
     /// <summary>
     /// Initialises the Photon Networking Matchmaker
@@ -37,7 +38,6 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     private void ConnectToMatchmaker()
     {
-        m_disconnectCause = null;
         PhotonNetwork.ConnectUsingSettings(Utilities.GameVersion());
     }
 
@@ -56,8 +56,6 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if(PhotonNetwork.inRoom)
         {
-            Debug.Log("Max Players: " + PhotonNetwork.room.maxPlayers);
-            Debug.Log("Player Count: " + PhotonNetwork.room.playerCount);
             return PhotonNetwork.room.playerCount >= PhotonNetwork.room.maxPlayers;
         }
         return false;
@@ -157,22 +155,37 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         m_disconnectCause = cause;
     }
-    
+
+    /// <summary>
+    /// Called when something causes the connection to fail (after it was established)
+    /// </summary>
+    /// <param name="cause">Reason why client failed to connect</param>
+    public override void OnConnectionFail(DisconnectCause cause)
+    {
+        m_disconnectCause = cause;
+    }
+
     /// <summary>
     /// Called after disconnecting from the Photon server
     /// </summary>
     public override void OnDisconnectedFromPhoton()
     {
-        Debug.Log(m_disconnectCause != null ? 
-            m_disconnectCause.ToString() : "Disconnected");
-
-        ConnectToMatchmaker();
-
-        if(Utilities.IsLevelLoaded())
+        if(m_disconnectCause == null)
         {
-            //TODO: Show disconnect message and go to the lobby
-            Application.LoadLevel((int)SceneID.LOBBY);
+            m_disconnectCause = DisconnectCause.Exception;
         }
+
+        Debug.Log("OnDisconnectedFromPhoton: " + m_disconnectCause.ToString());
+        Debug.Log("Attempting to reconnect");
+        m_reconnectTimer = 1.0f;
+    }
+
+    /// <summary>
+    /// Returns the cause of the player disconnecting
+    /// </summary>
+    public string GetDisconnectCause()
+    {
+        return m_disconnectCause.ToString();
     }
    
     /// <summary>
@@ -229,8 +242,11 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public void DestroyPlayer()
     {
-        m_player.GetComponentInChildren<NetworkedPlayer>().UnInitialiseClient();
-        m_player = null;
+        if(m_player != null)
+        {
+            m_player.GetComponentInChildren<NetworkedPlayer>().UnInitialiseClient();
+            m_player = null;
+        }
     }
 
     /// <summary>
@@ -249,10 +265,22 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void Update()
     {
+        // Attempt to reconnect when disconnected
+        if(m_reconnectTimer != 0.0f)
+        {
+            m_reconnectTimer -= Time.deltaTime;
+            if(m_reconnectTimer <= 0.0f)
+            {
+                m_reconnectTimer = 0.0f;
+                ConnectToMatchmaker();
+            }
+        }
+
         // Creates a new player when the level has fully initialised
         if(m_player == null && 
            Utilities.IsLevelLoaded() && 
            !Utilities.IsGameOver() && 
+           IsConnected() && 
            IsInRoom())
         {
             CreatePlayer();

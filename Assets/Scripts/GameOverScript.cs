@@ -12,22 +12,53 @@ public class GameOverScript : MonoBehaviour
     public GameObject gameLostImage;
     public GameObject gameWonImage;
     public GameObject gameOverText;
+    public GameObject disconnected;
     public bool forceLoseGame = false;
 
+    private NetworkMatchmaker m_network = null;
     private Health m_playerHealth = null;    // Heath bar for the controllable player
     private bool m_isGameOver = false;       // Whether game over is active for the player
     private bool m_hasLostGame = false;      // whether the player has lost the game
     private bool m_toMenuRequest = false;
     private bool m_toPlayRequest = false;
+    private bool m_hasFoundPlayer = false;
+
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
+    void Start()
+    {
+        m_network = NetworkMatchmaker.Get();
+    }
 
     /// <summary>
     /// Updates the game over logic
     /// </summary>
     void Update () 
     {
-        if(!PlayerHasHealth())
+        // Only update once the player has been created
+        if(!m_hasFoundPlayer)
         {
+            var player = PlayerManager.GetControllablePlayer();
+            if(player != null)
+            {
+                m_playerHealth = player.GetComponent<Health>();
+                m_hasFoundPlayer = true;
+            }
             return;
+        }
+
+        // Check whether disconnected from the game
+        if(!m_network.IsConnected() || !m_network.IsInRoom())
+        {
+            disconnected.SetActive(true);
+            disconnected.GetComponentInChildren<UnityEngine.UI.Text>().text =
+                "Disconnected from game:\n" + m_network.GetDisconnectCause() + 
+                    "\nAttempting to reconnect...";
+        }
+        else
+        {
+            disconnected.SetActive(false);
         }
 
         if(m_toMenuRequest || m_toPlayRequest)
@@ -48,9 +79,12 @@ public class GameOverScript : MonoBehaviour
                 }
             }
         }
-        else if (!m_isGameOver) 
+        else if (!m_isGameOver)
         {
-            if (Input.GetKeyDown (KeyCode.Escape) || forceLoseGame || !m_playerHealth.IsAlive) 
+            if(Input.GetKeyDown (KeyCode.Escape) || 
+               forceLoseGame || 
+               m_playerHealth == null || 
+               !m_playerHealth.IsAlive)
             {
                 m_isGameOver = true;
                 m_hasLostGame = true;
@@ -63,7 +97,10 @@ public class GameOverScript : MonoBehaviour
                 soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
                 soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
-                m_playerHealth.SetHealthLevel(0.0f);
+                if(m_playerHealth != null)
+                {
+                    m_playerHealth.SetHealthLevel(0.0f);
+                }
                 NetworkMatchmaker.Get().DestroyPlayer();
 
                 gameOverText.SetActive(true);
@@ -78,27 +115,6 @@ public class GameOverScript : MonoBehaviour
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Returns if the player is found and has a health bar
-    /// </summary>
-    bool PlayerHasHealth()
-    {
-        if(m_playerHealth == null)
-        {
-            var player = PlayerManager.GetControllablePlayer();
-            if(player != null)
-            {
-                m_playerHealth = player.GetComponent<Health>();
-                if(m_playerHealth == null)
-                {
-                    Debug.LogError("Player requires a health bar");
-                }
-            }
-            return false;
-        }
-        return true;
     }
 
     /// <summary>

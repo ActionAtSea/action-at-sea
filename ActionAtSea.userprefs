@@ -1,20 +1,23 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkedPlayer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameOverScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\GameOverScript.cs" Line="67" Column="43" />
+      <File FileName="Assets\Scripts\GameInformation.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameOverScript.cs" Line="57" Column="47" />
       <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="145" Column="22" />
-      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="237" Column="56" />
-      <File FileName="Assets\Scripts\Utilities.cs" Line="60" Column="19" />
+      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="181" Column="6" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="44" Column="96" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" Line="634" Column="14" />
       <File FileName="Assets\Scripts\GUI\GUIJoiningGame.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GUI\GUINetworkStatus.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonNetwork.cs" Line="1" Column="1" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonClasses.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonClasses.cs" Line="172" Column="1" />
       <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\NetworkingPeer.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Health.cs" Line="32" Column="13" />
+      <File FileName="Assets\Scripts\Health.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\AnimationGenerator.cs" Line="90" Column="23" />
+      <File FileName="Assets\Scripts\TileCaustics.cs" Line="84" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
