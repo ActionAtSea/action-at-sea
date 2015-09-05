@@ -12,7 +12,6 @@ public class GameOverScript : MonoBehaviour
     public GameObject gameLostImage;
     public GameObject gameWonImage;
     public GameObject gameOverText;
-    public GameObject disconnected;
     public bool forceLoseGame = false;
 
     private NetworkMatchmaker m_network = null;
@@ -21,7 +20,6 @@ public class GameOverScript : MonoBehaviour
     private bool m_hasLostGame = false;      // whether the player has lost the game
     private bool m_toMenuRequest = false;
     private bool m_toPlayRequest = false;
-    private bool m_hasFoundPlayer = false;
 
     /// <summary>
     /// Initialises the script
@@ -36,31 +34,6 @@ public class GameOverScript : MonoBehaviour
     /// </summary>
     void Update () 
     {
-        // Only update once the player has been created
-        if(!m_hasFoundPlayer)
-        {
-            var player = PlayerManager.GetControllablePlayer();
-            if(player != null)
-            {
-                m_playerHealth = player.GetComponent<Health>();
-                m_hasFoundPlayer = true;
-            }
-            return;
-        }
-
-        // Check whether disconnected from the game
-        if(!m_network.IsConnected() || !m_network.IsInRoom())
-        {
-            disconnected.SetActive(true);
-            disconnected.GetComponentInChildren<UnityEngine.UI.Text>().text =
-                "Disconnected from game:\n" + m_network.GetDisconnectCause() + 
-                    "\nAttempting to reconnect...";
-        }
-        else
-        {
-            disconnected.SetActive(false);
-        }
-
         if(m_toMenuRequest || m_toPlayRequest)
         {
             var gameFader = FadeGame.Get();
@@ -79,11 +52,18 @@ public class GameOverScript : MonoBehaviour
                 }
             }
         }
-        else if (!m_isGameOver)
+        else if(m_playerHealth == null)
+        {
+            var player = PlayerManager.GetControllablePlayer();
+            if(player != null)
+            {
+                m_playerHealth = player.GetComponent<Health>();
+            }
+        }
+        else if (m_network.IsConnected() && !m_isGameOver)
         {
             if(Input.GetKeyDown (KeyCode.Escape) || 
                forceLoseGame || 
-               m_playerHealth == null || 
                !m_playerHealth.IsAlive)
             {
                 m_isGameOver = true;

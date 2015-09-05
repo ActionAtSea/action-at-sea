@@ -7,22 +7,29 @@ using System.Collections;
 
 public class GUINetworkStatus : MonoBehaviour
 {
-    private bool m_joined = false;
+    private NetworkMatchmaker m_network = null;
 
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
+    void Start()
+    {
+        m_network = NetworkMatchmaker.Get();
+    }
+
+    /// <summary>
+    /// Updates the script
+    /// </summary>
     void Update() 
     {
-        if(!m_joined)
+        if(!m_network.IsInRoom())
         {
-            var network = NetworkMatchmaker.Get();
-            m_joined = network.IsInRoom();
-
-            GetComponent<UnityEngine.UI.Text>().text = 
-                network.GetNetworkStatus();
-
-            if(m_joined)
-            {
-                GetComponent<UnityEngine.UI.Text>().enabled = false;
-            }
+            GetComponent<UnityEngine.UI.Text>().enabled = true;
+            GetComponent<UnityEngine.UI.Text>().text = m_network.GetNetworkStatus();
+        }
+        else
+        {
+            GetComponent<UnityEngine.UI.Text>().enabled = false;
         }
     }
 }
