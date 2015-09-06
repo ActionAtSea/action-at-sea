@@ -9,7 +9,7 @@ using System.Collections;
 public class Bullet : MonoBehaviour 
 {
     private float m_initialVelocity = 30.0f;
-    private string m_owner = "";            // Player that shot the bullet
+    private int m_owner = -1;               // Player that shot the bullet
     private float m_damage = 10.0f;         // Percentage of health removed when damage is inflicted.
 
     /// <summary>
@@ -39,7 +39,7 @@ public class Bullet : MonoBehaviour
     /// <summary>
     /// Get/Set the player that shot the bullet
     /// </summary>
-    public string Owner
+    public int Owner
     {
         get { return m_owner; }
         set { m_owner = value; }

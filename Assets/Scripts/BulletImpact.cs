@@ -33,13 +33,10 @@ public class BulletImpact : MonoBehaviour
                 m_parentHealth.InflictDamage(bullet.Damage);
                 other.gameObject.GetComponent<Bullet>().DestroyOnImpact();
 
-                if(bullet.Owner == "Player")
+                var player = PlayerManager.GetControllablePlayer();
+                if(player != null && bullet.Owner == NetworkedPlayer.GetPlayerID(player))
                 {
-                    var player = PlayerManager.GetControllablePlayer();
-                    if(player)
-                    {
-                        player.GetComponent<PlayerScore>().AddScore(1.0f);
-                    }
+                    player.GetComponent<PlayerScore>().AddScore(1.0f);
                 }
             }
         }

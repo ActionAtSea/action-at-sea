@@ -10,9 +10,8 @@ public class NetworkedPlayer : MonoBehaviour
     public PhotonView photonView = null;
 
     private bool m_addedToMap = false;
-    private static int sm_playerIDCounter = 0;
     private string m_playerName = "unnamed";
-    private string m_playerID = "";
+    private int m_playerID = -1;
     private int m_playerScore = 0;
     private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
@@ -24,27 +23,29 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Start()
     {
-        if(!photonView.isMine)
+        if(photonView.isMine)
         {
-            sm_playerIDCounter++;
-            m_playerID = "Enemy" + sm_playerIDCounter.ToString();
-        }
-        else
-        {
-            m_playerID = "Player";
-            gameObject.tag = "Player";
-            gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
-            
-            PlayerPlacer.Placement place = FindObjectOfType<PlayerPlacer>().GetNewPosition(gameObject);
+            int index = NetworkMatchmaker.Get().GetPlayerIndex();
+            m_playerID = NetworkMatchmaker.Get().GetPlayerID();
+            m_playerName = GameInformation.GetPlayerName();
+            Debug.Log("Created Player Ship: [" + m_playerID + "] [" + index + "]");
+
+            var placer = FindObjectOfType<PlayerPlacer>();
+            PlayerPlacer.Placement place = placer.GetNewPosition(index, gameObject);
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
-            
+            gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
+            gameObject.tag = "Player";
+            gameObject.name = m_playerID.ToString() + "(Player)";
+
             GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
             healthbar.SetActive(false);
         }
+        else
+        {
+            Debug.Log("Created Enemy Ship");
+        }
 
-        name = m_playerID;
-        Debug.Log("Created ship: " + name);
         DontDestroyOnLoad(gameObject.transform.parent);
     }
 
@@ -99,7 +100,6 @@ public class NetworkedPlayer : MonoBehaviour
         else
         {
             m_playerScore = (int)(GetComponent<PlayerScore>().RoundedScore);
-            m_playerName = GameInformation.GetPlayerName();
             m_healthLevel = GetComponent<Health>().HealthLevel;
         }
     }
@@ -118,6 +118,7 @@ public class NetworkedPlayer : MonoBehaviour
             stream.SendNext(transform.rotation);
             stream.SendNext(m_healthLevel);
             stream.SendNext(m_playerName);
+            stream.SendNext(m_playerID);
             stream.SendNext(m_playerScore);
         }
         else
@@ -128,7 +129,9 @@ public class NetworkedPlayer : MonoBehaviour
             m_correctPlayerRot = (Quaternion)stream.ReceiveNext();
             m_healthLevel = (float)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
+            m_playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
+            name = m_playerID.ToString();
         }
     }
 
@@ -151,9 +154,17 @@ public class NetworkedPlayer : MonoBehaviour
     /// <summary>
     /// Gets the player ID
     /// </summary>
-    public string PlayerID
+    public int PlayerID
     {
         get { return m_playerID; }
+    }
+
+    /// <summary>
+    /// Returns whether the player can control this
+    /// </summary>
+    public bool IsControllable()
+    {
+        return photonView.isMine;
     }
 
     /// <summary>
@@ -175,7 +186,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// <summary>
     /// Returns the player ID
     /// </summary>
-    static public string GetPlayerID(GameObject obj)
+    static public int GetPlayerID(GameObject obj)
     {
         return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
     }
@@ -186,13 +197,5 @@ public class NetworkedPlayer : MonoBehaviour
     static public bool IsControllable(GameObject obj)
     {
         return obj.GetComponentInParent<NetworkedPlayer>().IsControllable();
-    }
-
-    /// <summary>
-    /// Returns whether the player can control this
-    /// </summary>
-    public bool IsControllable()
-    {
-        return photonView.isMine;
     }
 }

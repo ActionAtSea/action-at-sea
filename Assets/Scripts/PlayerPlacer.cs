@@ -52,37 +52,23 @@ public class PlayerPlacer : MonoBehaviour
     /// <summary>
     /// Retrieves a new position on the map
     /// </summary>
-    public Placement GetNewPosition(GameObject player)
+    public Placement GetNewPosition(int index, GameObject player)
     {
-        if(m_spawns != null)
+        if(m_spawns != null && m_spawns.Length > 0)
         {
-            PlayerSpawn chosenSpawn = null;
-
-            foreach (GameObject obj in m_spawns)
+            int playersAllowed = Utilities.GetAcceptedPlayersForLevel(Utilities.GetLoadedLevel());
+            if(m_spawns.Length != playersAllowed)
             {
-                var spawn = obj.GetComponent<PlayerSpawn>();
-                if(!spawn.Owner)
-                {
-                    chosenSpawn = spawn;
-                }
-                else if(spawn.Owner == player)
-                {
-                    chosenSpawn = spawn;
-                    break;
-                }
+                Debug.LogError("Spawn amount does not equal number of accepted players for level");
             }
 
-            if(chosenSpawn != null)
-            {
-                chosenSpawn.Owner = player;
-                Placement place = new Placement();
-                place.position.x = chosenSpawn.transform.position.x;
-                place.position.y = chosenSpawn.transform.position.y;
-                place.rotation.x = chosenSpawn.transform.localEulerAngles.x;
-                place.rotation.y = chosenSpawn.transform.localEulerAngles.y;
-                place.rotation.z = chosenSpawn.transform.localEulerAngles.z;
-                return place;
-            }
+            Placement place = new Placement();
+            place.position.x = m_spawns[index].transform.position.x;
+            place.position.y = m_spawns[index].transform.position.y;
+            place.rotation.x = m_spawns[index].transform.localEulerAngles.x;
+            place.rotation.y = m_spawns[index].transform.localEulerAngles.y;
+            place.rotation.z = m_spawns[index].transform.localEulerAngles.z;
+            return place;
         }
 
         return GetRandomPosition();

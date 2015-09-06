@@ -106,7 +106,7 @@ public class Cannon : MonoBehaviour
     /// </summary>
     public void FireGun()
     {
-        string ID = NetworkedPlayer.GetPlayerID(gameObject);
+        int ID = NetworkedPlayer.GetPlayerID(gameObject);
         m_fireScript.Fire(ID, m_firePosition, m_fireRotation);
         m_hasFired = NetworkedPlayer.IsControllable(gameObject);
     }

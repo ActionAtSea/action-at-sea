@@ -32,7 +32,7 @@ public class BulletFireScript : MonoBehaviour
     /// <summary>
     /// Fires a bullet
     /// </summary>
-    public void Fire(string owner, Vector3 firePosition, Quaternion fireRotation)
+    public void Fire(int owner, Vector3 firePosition, Quaternion fireRotation)
     {
         GameObject obj = NewObjectPooler.Get().GetPooledObject();
 

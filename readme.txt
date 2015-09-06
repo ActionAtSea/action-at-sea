@@ -4,6 +4,5 @@ TO DO LIST:
 
 
 - Convert game to 3D
-- Network spawn positions
-- Add selecting player colour and tinting ship
+- Add colour/player list/friend selection to lobby
 - Support for game board having non-uniform dimension

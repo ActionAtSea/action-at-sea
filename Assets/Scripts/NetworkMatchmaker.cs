@@ -80,6 +80,28 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
+    /// Gets the unique player number assigned on connection
+    /// </summary>
+    public int GetPlayerID()
+    {
+        return PhotonNetwork.player.ID;
+    }
+
+    /// <summary>
+    /// Gets the ID of the player as a zero-based index
+    /// in comparison to other players in the list
+    /// </summary>
+    public int GetPlayerIndex()
+    {
+        PhotonPlayer[] players = PhotonNetwork.playerList;
+        var playerIDs = (from player in players 
+                         orderby player.ID ascending
+                         select player.ID).ToList();
+
+        return playerIDs.FindIndex(ID => ID == GetPlayerID());
+    }
+
+    /// <summary>
     /// Gets whether the client is in a room
     /// </summary>
     public bool IsInRoom()
