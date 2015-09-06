@@ -15,7 +15,6 @@ public class GameOverScript : MonoBehaviour
     public bool forceLoseGame = false;
 
     private NetworkMatchmaker m_network = null;
-    private Health m_playerHealth = null;    // Heath bar for the controllable player
     private bool m_isGameOver = false;       // Whether game over is active for the player
     private bool m_hasLostGame = false;      // whether the player has lost the game
     private bool m_toMenuRequest = false;
@@ -48,55 +47,65 @@ public class GameOverScript : MonoBehaviour
                 }
                 else
                 {
-                    Application.LoadLevel(Application.loadedLevel);
+                    SetGameOver(false);
                 }
             }
         }
-        else if(m_playerHealth == null)
+        else if (m_network.IsConnectedToLevel() && !m_isGameOver)
         {
             var player = PlayerManager.GetControllablePlayer();
-            if(player != null)
+            bool isGameOver = false;
+
+            if(Input.GetKeyDown (KeyCode.Escape) || forceLoseGame || 
+               (player != null && !player.GetComponent<Health>().IsAlive))
             {
-                m_playerHealth = player.GetComponent<Health>();
-            }
-        }
-        else if (m_network.IsConnected() && !m_isGameOver)
-        {
-            if(Input.GetKeyDown (KeyCode.Escape) || 
-               forceLoseGame || 
-               !m_playerHealth.IsAlive)
-            {
-                m_isGameOver = true;
                 m_hasLostGame = true;
+                isGameOver = true;
             }
 
-            if (m_isGameOver) 
+            if (isGameOver) 
             {
                 var soundManager = SoundManager.Get();
                 soundManager.StopMusic(SoundManager.MusicID.GAME_TRACK);
                 soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
                 soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
-                if(m_playerHealth != null)
+                if(player != null)
                 {
-                    m_playerHealth.SetHealthLevel(0.0f);
+                    player.GetComponent<Health>().SetHealthLevel(0.0f);
                 }
+
                 NetworkMatchmaker.Get().DestroyPlayer();
-
-                gameOverText.SetActive(true);
-
-                if(m_hasLostGame)
-                {
-                    gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = true;
-                }
-                else
-                {
-                    gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = true;
-                }
+                SetGameOver(true);
             }
         }
     }
 
+    /// <summary>
+    /// Sets whether game over or not
+    /// </summary>
+    void SetGameOver(bool gameover)
+    {
+        m_toMenuRequest = false;
+        m_toPlayRequest = false;
+        
+        if(!gameover)
+        {
+            m_isGameOver = false;
+            m_hasLostGame = false;
+            gameOverText.SetActive(false);
+            gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = false;
+        }
+        else
+        {
+            m_isGameOver = true;
+            gameOverText.SetActive(true);
+            gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = m_hasLostGame;
+            gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = !m_hasLostGame;
+        }
+    }
+    
     /// <summary>
     /// On Click replay Game when game over is active
     /// </summary>

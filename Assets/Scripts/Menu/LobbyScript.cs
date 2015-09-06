@@ -152,7 +152,7 @@ public class LobbyScript : MonoBehaviour
                             (maxSlots - players).ToString() + " / " + maxSlots.ToString();
                     }
                 }
-                else
+                else if(m_joinGameRequest)
                 {
                     m_network.LeaveGameLevel();
                     m_joinGameRequest = false;

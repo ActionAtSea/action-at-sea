@@ -104,6 +104,14 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
    
     /// <summary>
+    /// Gets whether the client is connected to a game level
+    /// </summary>
+    public bool IsConnectedToLevel()
+    {
+        return IsConnected() && IsInRoom();
+    }
+
+    /// <summary>
     /// Called when the client left a room
     /// </summary>
     public override void OnLeftRoom()
@@ -214,6 +222,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public void LeaveGameLevel()
     {
+        DestroyPlayer();
+
         if(IsInRoom())
         {
             PhotonNetwork.LeaveRoom();
@@ -233,7 +243,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         SetStatus("Connected to server");
 
         // Allows joining a game without using the lobby
-        if(Utilities.IsLevelLoaded() && !IsInRoom() && 
+        if(Utilities.IsLevelLoaded() && 
+           !IsConnectedToLevel() && 
            m_levelJoined == LevelID.NO_LEVEL)
         {
             JoinGameLevel(Utilities.GetLoadedLevel());
@@ -247,7 +258,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if(m_player != null)
         {
-            m_player.GetComponentInChildren<NetworkedPlayer>().UnInitialiseClient();
+            SetStatus("Destroying player");
+            PhotonNetwork.Destroy(m_player);
             m_player = null;
         }
     }
@@ -257,10 +269,10 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void CreatePlayer()
     {
+        SetStatus("Creating player");
+
         m_player = PhotonNetwork.Instantiate(
             "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
-        
-        m_player.GetComponentInChildren<NetworkedPlayer>().InitialiseClient();
     }
 
     /// <summary>
@@ -292,7 +304,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         if(m_player == null && 
            Utilities.IsLevelLoaded() && 
            !Utilities.IsGameOver() && 
-           IsConnected() && IsInRoom())
+           IsConnectedToLevel())
         {
             CreatePlayer();
         }

@@ -7,19 +7,20 @@ using System.Collections;
 
 public class Health : MonoBehaviour
 {
-    private GameObject m_healthBar = null;
+    private GameObject m_guiHealthBar = null;
+    private GameObject m_floatingHealthBar = null;
     private GameObject m_floatingHealthBarText = null;
     private float m_minBarWidth = 0.0f;
     private float m_maxBarWidth = 0.0f;
     private float m_barHeight = 0.0f;
-    private bool m_hasScreenSpaceBar = false;
     private float m_healthMax = 100.0f;
     private float m_healthMin = 0.0f;
-    private float m_healthLevel;
+    private float m_healthLevel = 100.0f;
     private bool m_isAlive = true;
 
     /// <summary>
     /// Initialises the health
+    /// Health bar can be either a floating or GUI bar
     /// </summary>
     void Start()
     {
@@ -27,25 +28,37 @@ public class Health : MonoBehaviour
 
         if(NetworkedPlayer.IsControllable(gameObject))
         {
-            m_healthBar = GameObject.FindWithTag("PlayerHealth");
+            m_guiHealthBar = GameObject.FindWithTag("PlayerHealth");
+            m_guiHealthBar.GetComponent<UnityEngine.UI.Image>().enabled = true;
         }
         else
         {
             var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
-            m_healthBar = floatingHealthBar.FindChild("HealthBar").gameObject;
+            m_floatingHealthBar = floatingHealthBar.FindChild("HealthBar").gameObject;
             m_floatingHealthBarText = floatingHealthBar.FindChild("Canvas").FindChild("Text").gameObject;
         }
 
-        if(m_healthBar.GetComponent<RectTransform>() != null)
+        if(m_guiHealthBar != null)
         {
-            m_hasScreenSpaceBar = true;
-            m_maxBarWidth = m_healthBar.GetComponent<RectTransform>().rect.width;
-            m_barHeight = m_healthBar.GetComponent<RectTransform>().rect.height;
+            m_maxBarWidth = m_guiHealthBar.GetComponent<RectTransform>().rect.width;
+            m_barHeight = m_guiHealthBar.GetComponent<RectTransform>().rect.height;
         }
         else
         {
-            m_maxBarWidth = m_healthBar.transform.localScale.x;
-            m_barHeight = m_healthBar.transform.localScale.y;
+            m_maxBarWidth = m_floatingHealthBar.transform.localScale.x;
+            m_barHeight = m_floatingHealthBar.transform.localScale.y;
+        }
+    }
+
+    /// <summary>
+    /// On Destroy set the GUI health back to normal
+    /// </summary>
+    void OnDestroy()
+    {
+        if(m_guiHealthBar != null)
+        {
+            m_guiHealthBar.GetComponent<RectTransform>().sizeDelta =
+                new Vector2(m_maxBarWidth, m_barHeight);
         }
     }
 
@@ -72,7 +85,7 @@ public class Health : MonoBehaviour
         }
 
         // If the object has a health bar scale it to show the health
-        if(m_healthBar != null)
+        if(m_floatingHealthBar != null || m_guiHealthBar != null)
         {
             // Convert the value range from 0->100 to 0->maxBarScale
             float barWidth = ((m_healthLevel-m_healthMin)*((m_maxBarWidth-
@@ -80,20 +93,20 @@ public class Health : MonoBehaviour
 
             if(barWidth <= m_minBarWidth)
             {
-                m_healthBar.SetActive(false);
+                if(m_guiHealthBar != null)
+                {
+                    m_guiHealthBar.GetComponent<UnityEngine.UI.Image>().enabled = false;
+                }
+            }
+            else if(m_guiHealthBar != null)
+            {
+                m_guiHealthBar.GetComponent<RectTransform>().sizeDelta =
+                    new Vector2(barWidth, m_barHeight);
             }
             else
             {
-                if(m_hasScreenSpaceBar)
-                {
-                    m_healthBar.GetComponent<RectTransform>().sizeDelta =
-                        new Vector2(barWidth, m_barHeight);
-                }
-                else
-                {
-                    m_healthBar.transform.localScale = new Vector3(
-                        barWidth, m_barHeight, 0.0f);
-                }
+                m_floatingHealthBar.transform.localScale = new Vector3(
+                    barWidth, m_barHeight, 0.0f);
             }
         }
     }

@@ -50,7 +50,7 @@ public class GUIJoiningGame : MonoBehaviour
     /// </summary>
     void Update() 
     {
-        if(!m_network.IsInRoom())
+        if(!m_network.IsConnectedToLevel())
         {
             GetComponent<UnityEngine.UI.Text>().enabled = true;
             GetComponent<UnityEngine.UI.Text>().text = "Entering Game" + GetDots();

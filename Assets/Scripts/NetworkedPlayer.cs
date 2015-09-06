@@ -9,7 +9,7 @@ public class NetworkedPlayer : MonoBehaviour
 {    
     public PhotonView photonView = null;
 
-    private bool m_initialised = false;
+    private bool m_addedToMap = false;
     private static int sm_playerIDCounter = 0;
     private string m_playerName = "unnamed";
     private string m_playerID = "";
@@ -18,38 +18,50 @@ public class NetworkedPlayer : MonoBehaviour
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_healthLevel = -1.0f;
     private bool m_connected = false;
-    private GameObject m_playerPrefab = null;
 
     /// <summary>
-    /// Initialises the player on the client side
+    /// On instantiate of the player by photon networking
     /// </summary>
-    public void InitialiseClient()
+    void Start()
     {
-        gameObject.tag = "Player";
-        gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
-        
-        PlayerPlacer.Placement place = FindObjectOfType<PlayerPlacer>().GetNewPosition(gameObject);
-        gameObject.transform.position = place.position;
-        gameObject.transform.localEulerAngles = place.rotation;
-        
-        GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
-        healthbar.SetActive(false);
+        if(!photonView.isMine)
+        {
+            sm_playerIDCounter++;
+            m_playerID = "Enemy" + sm_playerIDCounter.ToString();
+        }
+        else
+        {
+            m_playerID = "Player";
+            gameObject.tag = "Player";
+            gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
+            
+            PlayerPlacer.Placement place = FindObjectOfType<PlayerPlacer>().GetNewPosition(gameObject);
+            gameObject.transform.position = place.position;
+            gameObject.transform.localEulerAngles = place.rotation;
+            
+            GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
+            healthbar.SetActive(false);
+        }
+
+        name = m_playerID;
+        Debug.Log("Created ship: " + name);
+        DontDestroyOnLoad(gameObject.transform.parent);
     }
 
     /// <summary>
-    /// UnInitialises the player on the client side
+    /// On destroy
     /// </summary>
-    public void UnInitialiseClient()
+    void OnDestroy()
     {
-        // Need to keep the Networked player script active to serialise that the player is dead
-        SpriteRenderer[] sprites = GetComponentsInChildren<SpriteRenderer>();
-        foreach(var sprite in sprites)
+        Debug.Log("Destroying ship: " + name);
+
+        // Will be null if leaving game
+        var animationGenerator = FindObjectOfType<AnimationGenerator>();
+        if(animationGenerator != null)
         {
-            sprite.enabled = false;
+            animationGenerator.PlayAnimation(
+                transform.position, AnimationGenerator.ID.EXPLOSION);
         }
-        GetComponent<PlayerMovement>().enabled = false;
-        GetComponent<PlayerAiming>().enabled = false;
-        transform.FindChild("Cannons").gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -57,30 +69,15 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(!m_initialised)
+        if(!m_addedToMap)
         {
-            if(!photonView.isMine)
-            {
-                sm_playerIDCounter++;
-                m_playerID = "Enemy" + sm_playerIDCounter.ToString();
-            }
-            else
-            {
-                m_playerID = "Player";
-            }
-
-            name = m_playerID;
-            Debug.Log("Created player: " + name);
-
+            // Minimap isn't initialised straight away for non-client players
             var minimap = GameObject.FindObjectOfType<Minimap>();
-            if(minimap == null)
+            if(minimap != null)
             {
-                Debug.LogError("Could not find minimap");
+                minimap.AddPlayer(gameObject, photonView.isMine);
+                m_addedToMap = true;
             }
-            minimap.AddPlayer(gameObject, photonView.isMine);
-
-            m_initialised = true;
-            m_playerPrefab = transform.parent.gameObject;
         }
 
         if (!photonView.isMine)
@@ -96,13 +93,6 @@ public class NetworkedPlayer : MonoBehaviour
                 if(m_healthLevel >= 0)
                 {
                     GetComponent<Health>().SetHealthLevel(m_healthLevel);
-                    if(!GetComponent<Health>().IsAlive)
-                    {
-                        AnimationGenerator.Get().PlayAnimation(
-                            transform.position, AnimationGenerator.ID.EXPLOSION);
-
-                        Destroy(m_playerPrefab);
-                    }
                 }
             }
         }
@@ -171,7 +161,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     static public string GetPlayerName(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedPlayer>().PlayerName;
+        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerName : "";
     }
 
     /// <summary>
@@ -179,7 +169,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     static public float GetPlayerScore(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedPlayer>().PlayerScore;
+        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerScore : 0.0f;
     }
 
     /// <summary>
