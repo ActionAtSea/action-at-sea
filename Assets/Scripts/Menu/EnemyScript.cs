@@ -7,11 +7,11 @@ using System.Collections;
 
 public class EnemyScript : MonoBehaviour 
 {
-	private SoundManager menuMusicHandler;
+    private SoundManager menuMusicHandler;
     
     void Start () 
     {
-		menuMusicHandler = FindObjectOfType<SoundManager> ();
+        menuMusicHandler = FindObjectOfType<SoundManager> ();
         if(!menuMusicHandler)
         {
             Debug.Log("MenuMusicHandler could not be found in scene.");
@@ -21,16 +21,16 @@ public class EnemyScript : MonoBehaviour
     public void NextButton ()
     {
         menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.TREASURE);
+        Application.LoadLevel ((int)SceneID.TREASURE);
     }
     public void BackButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.UPGRADING_DOCKS);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.UPGRADING_DOCKS);
     }
     public void BackToMenu ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.MENU);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.MENU);
     }
 }

@@ -7,11 +7,11 @@ using System.Collections;
 
 public class UpgradingDock : MonoBehaviour 
 {
-	private SoundManager menuMusicHandler;
+    private SoundManager menuMusicHandler;
     
     void Start () 
     {
-		menuMusicHandler = FindObjectOfType<SoundManager>();
+        menuMusicHandler = FindObjectOfType<SoundManager>();
         if(!menuMusicHandler)
         {
             Debug.Log("MenuMusicHandler could not be found in scene.");
@@ -20,17 +20,17 @@ public class UpgradingDock : MonoBehaviour
     
     public void NextButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.ENEMIES);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.ENEMIES);
     }
     public void BackButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.DISCOVER_LAND);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.DISCOVER_LAND);
     }
     public void BackToMenuButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.MENU);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.MENU);
     }
 }

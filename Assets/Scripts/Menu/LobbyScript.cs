@@ -83,8 +83,8 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     public void BackToMenuButton()
     {
-		SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel((int)SceneID.MENU);
+        SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel((int)SceneID.MENU);
     }
 
     /// <summary>

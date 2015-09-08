@@ -8,11 +8,11 @@ using System.Collections;
 public class IslandScript : MonoBehaviour 
 {
 
-	private SoundManager menuMusicHandler;
+    private SoundManager menuMusicHandler;
     
     void Start () 
     {
-		menuMusicHandler = FindObjectOfType<SoundManager>();
+        menuMusicHandler = FindObjectOfType<SoundManager>();
         if(!menuMusicHandler)
         {
             Debug.Log("MenuMusicHandler could not be found in scene.");
@@ -21,17 +21,17 @@ public class IslandScript : MonoBehaviour
 
     public void NextButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.UPGRADING_DOCKS);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.UPGRADING_DOCKS);
     }
     public void BackButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.MOVE_AND_FIRE);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.MOVE_AND_FIRE);
     }
     public void BackToMenuButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.MENU);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.MENU);
     }
 }

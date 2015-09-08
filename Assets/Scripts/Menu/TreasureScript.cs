@@ -8,11 +8,11 @@ using System.Collections;
 public class TreasureScript : MonoBehaviour 
 {
 
-	private SoundManager menuMusicHandler;
+    private SoundManager menuMusicHandler;
 
     void Start()
     {
-		menuMusicHandler = FindObjectOfType<SoundManager>();
+        menuMusicHandler = FindObjectOfType<SoundManager>();
         if (!menuMusicHandler)
         {
             Debug.Log("MenuMusicHandler could not be found in scene.");
@@ -25,12 +25,12 @@ public class TreasureScript : MonoBehaviour
     }
     public void BackButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.ENEMIES);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.ENEMIES);
     }
     public void BackToMenuButton ()
     {
-		menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel ((int)SceneID.MENU);
+        menuMusicHandler.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
+        Application.LoadLevel ((int)SceneID.MENU);
     }
 }

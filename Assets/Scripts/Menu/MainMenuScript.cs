@@ -16,7 +16,7 @@ public class MainMenuScript : MonoBehaviour
     public void HowToPlayButton ()
     {
         SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-		Application.LoadLevel((int)SceneID.MOVE_AND_FIRE);
+        Application.LoadLevel((int)SceneID.MOVE_AND_FIRE);
     }
 
     public void QuitButton ()
