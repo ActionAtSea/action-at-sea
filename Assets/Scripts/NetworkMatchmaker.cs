@@ -8,25 +8,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Controls connecting to Photon Unity Networking for multiplayer play
+/// </summary>
 public class NetworkMatchmaker : Photon.PunBehaviour
 {
-    DisconnectCause? m_disconnectCause = null; /// Reason for why the client disconnected
-    const int m_allowedConnections = 100;      /// Maximum allowed connections to Photon Networking
     List<TypedLobby> m_lobbys = null;          /// Holds one lobby per game type
-    LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Level the player has joined
-    GameObject m_player = null;                /// Main client player generated
-    float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnecting
-    string m_status;                           /// Status of the network connection
+    LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Current level the player has joined
+    DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
+    GameObject m_player = null;                /// Current client player instantiated
+    float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
+    string m_status = "";                      /// Status description of the network connection
 
     /// <summary>
-    /// Initialises the Photon Networking Matchmaker
+    /// Initialises the matchmaker
     /// </summary>
     void Start()
     {
-        m_lobbys = (from i in Enumerable.Range(0, Utilities.GetMaxLevels())
-                    select new TypedLobby()).ToList();
-
         PhotonNetwork.autoJoinLobby = false;
+
+        int maxLevels = Utilities.GetMaxLevels();
+        m_lobbys = (from i in Enumerable.Range(0, maxLevels)
+                    select new TypedLobby()).ToList();
 
         if(!IsConnected())
         {
@@ -36,7 +39,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Attempts to connect to Photon Networking
+    /// Attempts to connect to Photon Unity Networking
+    /// Will call OnFailedToConnectToPhoton if failed
     /// </summary>
     private void ConnectToMatchmaker()
     {
@@ -44,7 +48,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Gets the status of the connection
+    /// Gets the status description of the connection
     /// </summary>
     public string GetNetworkStatus()
     {
@@ -52,13 +56,14 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Gets whether a room is ready to start the game
+    /// Gets whether the client is in a rooom which is filled with players
     /// </summary>
     public bool IsRoomReady()
     {
         if(PhotonNetwork.inRoom)
         {
-            return PhotonNetwork.room.playerCount >= PhotonNetwork.room.maxPlayers;
+            return PhotonNetwork.room.playerCount >= 
+                PhotonNetwork.room.maxPlayers;
         }
         return false;
     }
@@ -103,6 +108,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
 
     /// <summary>
     /// Gets whether the client is in a room
+    /// Note when the client is in a room they are not in a lobby
     /// </summary>
     public bool IsInRoom()
     {
@@ -111,6 +117,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
 
     /// <summary>
     /// Gets whether the client is in a lobby
+    /// Note when the client is in a lobby they are not in a room
     /// </summary>
     private bool IsInLobby()
     {
@@ -156,19 +163,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Called when a JoinRandom() call failed
-    /// This is usually because a room does not yet exist or is full
-    /// </summary>
-    public void OnPhotonRandomJoinFailed()
-    {
-        SetStatus("Creating new game");
-
-        PhotonNetwork.CreateRoom(null, true, true,
-            (byte)Utilities.GetAcceptedPlayersForLevel(m_levelJoined));
-    }
-    
-    /// <summary>
-    /// Called on entering a lobby on the Master Server
+    /// Called on entering a lobby
     /// </summary>
     public override void OnJoinedLobby()
     {
@@ -183,10 +178,22 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         m_levelJoined = LevelID.NO_LEVEL;
     }
+
+    /// <summary>
+    /// Called when a JoinRandom call failed
+    /// This is because a room does not yet exist or is full
+    /// </summary>
+    public void OnPhotonRandomJoinFailed()
+    {
+        SetStatus("Creating new game");
+
+        PhotonNetwork.CreateRoom(null, true, true,
+            (byte)Utilities.GetAcceptedPlayersForLevel(m_levelJoined));
+    }
     
     /// <summary>
     /// Called if a connect call to the Photon server failed before the connection
-    /// was established, followed by a call to OnDisconnectedFromPhoton().
+    /// was established, followed by a call to OnDisconnectedFromPhoton
     /// </summary>
     /// <param name="cause">Reason why client failed to connect</param>
     public override void OnFailedToConnectToPhoton(DisconnectCause cause)
@@ -229,7 +236,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
    
     /// <summary>
-    /// Player attempts to join a level
+    /// Connects the player to the requested game level
+    /// Will find the first open rooom with available slots
     /// </summary>
     public void JoinGameLevel(LevelID level)
     {
@@ -274,7 +282,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Destroys the player
+    /// Destroys the player on all connected clients
     /// </summary>
     public void DestroyPlayer()
     {
@@ -287,7 +295,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Creates a new player once the level has started
+    /// Creates a new player on all connected clients
     /// </summary>
     void CreatePlayer()
     {
@@ -298,7 +306,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Sets the network status
+    /// Sets the network status and logs a debug message
     /// </summary>
     void SetStatus(string status)
     {
@@ -334,6 +342,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
 
     /// <summary>
     /// Gets the Network Matchmaker instance from the scene
+    /// Note, relies on only one matchmaker instance per scene
     /// </summary>
     public static NetworkMatchmaker Get()
     {
