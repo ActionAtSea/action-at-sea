@@ -1,14 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerMovement.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BulletFireScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="40" Column="6" />
-      <File FileName="Assets\Scripts\ParticleSpray.cs" Line="30" Column="67" />
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="34" Column="60" />
-      <File FileName="Assets\Scripts\CameraMovement.cs" Line="19" Column="6" />
-      <File FileName="Assets\Scripts\GameOverScript.cs" Line="162" Column="2" />
-      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="305" Column="26" />
-      <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="139" Column="35" />
+      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="15" Column="36" />
+      <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="137" Column="9" />
+      <File FileName="Assets\Scripts\BulletFireScript.cs" Line="34" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
