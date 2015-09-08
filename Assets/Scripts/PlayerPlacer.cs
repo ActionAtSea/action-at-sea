@@ -136,8 +136,8 @@ public class PlayerPlacer : MonoBehaviour
         }
 
         Placement place = new Placement();
-        place.position.x = position.x;
-        place.position.y = position.y;
+        place.position.x = 0.0f;//position.x;
+        place.position.z = 0.0f;//position.y;
         return place;
     }
 }

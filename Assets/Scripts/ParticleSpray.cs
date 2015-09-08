@@ -19,7 +19,7 @@ public class ParticleSpray : MonoBehaviour
     {
         m_particles = GetComponent<ParticleSystem> ();
         m_particles.GetComponent<Renderer>().sortingLayerName = "World";
-        m_particles.GetComponent<Renderer>().sortingOrder = parent.GetComponent<SpriteRenderer>().sortingOrder - 1;
+        m_particles.GetComponent<Renderer>().sortingOrder = 4;
     }
 
     /// <summary>
@@ -27,6 +27,6 @@ public class ParticleSpray : MonoBehaviour
     /// </summary>
     void Update () 
     {
-        m_particles.enableEmission = parent.GetComponent<Rigidbody2D>().velocity.magnitude >= minSpeedForEmission;
+        m_particles.enableEmission = parent.GetComponent<Rigidbody>().velocity.magnitude >= minSpeedForEmission;
     }
 }

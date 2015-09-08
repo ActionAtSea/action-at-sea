@@ -32,9 +32,9 @@ public class NetworkedPlayer : MonoBehaviour
 
             var placer = FindObjectOfType<PlayerPlacer>();
             PlayerPlacer.Placement place = placer.GetNewPosition(index, gameObject);
+            gameObject.transform.parent.transform.localEulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
-            gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
             gameObject.tag = "Player";
             gameObject.name = m_playerID.ToString() + "(Player)";
 

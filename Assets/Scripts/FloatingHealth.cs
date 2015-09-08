@@ -7,20 +7,16 @@ using System.Collections;
 
 public class FloatingHealth : MonoBehaviour 
 {
-    public float xOffset = 1.0f;
-    public float yOffset = 1.0f;
-    public GameObject enemyShip;
+    public GameObject player;
 
     /// <summary>
     /// Moves a floating health bar alongside the game object
     /// </summary>
     void Update () 
     {
-        if(enemyShip != null)
-        {
-            transform.localPosition = new Vector3 (
-                enemyShip.transform.position.x + xOffset,
-                enemyShip.transform.position.y + yOffset, 0.0f);
-        }
+        transform.localPosition = new Vector3 (
+            player.transform.localPosition.x,
+            player.transform.localPosition.y, 
+            transform.localPosition.z);
     }
 }

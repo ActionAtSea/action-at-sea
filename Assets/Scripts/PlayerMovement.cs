@@ -5,11 +5,10 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour 
 {
-    private float m_forwardSpeed = 8.0f;
-    private float m_rotationSpeed = 1.0f;
+    private float m_forwardSpeed = 0.5f;
+    private float m_rotationSpeed = 0.4f;
     private Vector3 m_forwardForce = new Vector3();
 
     /// <summary>
@@ -19,23 +18,23 @@ public class PlayerMovement : MonoBehaviour
     {
         if(NetworkedPlayer.IsControllable(gameObject))
         {
-            var rb = GetComponent<Rigidbody2D>();
+            var rb = GetComponent<Rigidbody>();
 
             if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))
             {
                 m_forwardForce.x = transform.up.x * m_forwardSpeed;
-                m_forwardForce.y = transform.up.y * m_forwardSpeed;
-                rb.AddForce(m_forwardForce);
+                m_forwardForce.z = transform.up.z * m_forwardSpeed;
+                rb.AddForce(m_forwardForce, ForceMode.Impulse);
             }
 
             if (Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.LeftArrow))
             {
-                rb.AddTorque(m_rotationSpeed);
+                rb.AddTorque(0.0f, -m_rotationSpeed, 0.0f, ForceMode.Impulse);
             }
 
             if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.RightArrow))
             {
-                rb.AddTorque(-m_rotationSpeed);
+                rb.AddTorque(0.0f, m_rotationSpeed, -0.0f, ForceMode.Impulse);
             }
         }
     }
