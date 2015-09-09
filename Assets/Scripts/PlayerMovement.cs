@@ -7,8 +7,8 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour 
 {
-    private float m_forwardSpeed = 0.5f;
-    private float m_rotationSpeed = 0.4f;
+    public float m_forwardSpeed = 0.5f;
+    public float m_rotationSpeed = 0.5f;
     private Vector3 m_forwardForce = new Vector3();
 
     /// <summary>
@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// On collision with another player
     /// </summary>
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")
         {

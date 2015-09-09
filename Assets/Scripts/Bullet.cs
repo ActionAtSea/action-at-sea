@@ -5,7 +5,6 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(Rigidbody2D))]
 public class Bullet : MonoBehaviour 
 {
     private float m_initialVelocity = 30.0f;
@@ -17,7 +16,7 @@ public class Bullet : MonoBehaviour
     /// </summary>
     void Start () 
     {
-        GetComponent<Rigidbody2D>().velocity = transform.forward * m_initialVelocity; 
+        GetComponent<Rigidbody>().velocity = transform.forward * m_initialVelocity; 
     }
 
     /// <summary>
@@ -25,7 +24,7 @@ public class Bullet : MonoBehaviour
     /// </summary>
     void Update() 
     {
-        GetComponent<Rigidbody2D>().AddForce(transform.forward * m_initialVelocity);
+        GetComponent<Rigidbody>().AddForce(transform.forward * m_initialVelocity);
     }
 
     /// <summary>

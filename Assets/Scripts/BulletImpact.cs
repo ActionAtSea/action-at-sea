@@ -5,7 +5,6 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Collider2D))]
 public class BulletImpact : MonoBehaviour 
 {
     private Health m_parentHealth = null; // Health bar for the parent of this script
@@ -21,7 +20,7 @@ public class BulletImpact : MonoBehaviour
     /// <summary>
     /// Collision detection between the bullet and player
     /// </summary>
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Bullet")
         {

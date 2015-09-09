@@ -13,7 +13,7 @@ public class RepairDock : MonoBehaviour
     /// <summary>
     /// On collision with the repair dock
     /// </summary>
-    void OnTriggerStay2D(Collider2D other)
+    void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {

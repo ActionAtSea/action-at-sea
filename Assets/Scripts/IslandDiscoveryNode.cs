@@ -14,7 +14,7 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// <summary>
     /// On collision with a player
     /// </summary>
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.transform.tag == "Player")
         {

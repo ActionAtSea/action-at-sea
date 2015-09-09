@@ -65,9 +65,9 @@ public class PlayerPlacer : MonoBehaviour
             Placement place = new Placement();
             place.position.x = m_spawns[index].transform.position.x;
             place.position.y = m_spawns[index].transform.position.y;
-            place.rotation.x = m_spawns[index].transform.localEulerAngles.x;
-            place.rotation.y = m_spawns[index].transform.localEulerAngles.y;
-            place.rotation.z = m_spawns[index].transform.localEulerAngles.z;
+            place.rotation.x = 0.0f;
+            place.rotation.y = 0.0f;
+            place.rotation.z = -m_spawns[index].transform.localEulerAngles.y;
             return place;
         }
 

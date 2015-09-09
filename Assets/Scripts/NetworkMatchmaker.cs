@@ -37,16 +37,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
             ConnectToMatchmaker();
         }
     }
-
-    /// <summary>
-    /// Attempts to connect to Photon Unity Networking
-    /// Will call OnFailedToConnectToPhoton if failed
-    /// </summary>
-    private void ConnectToMatchmaker()
-    {
-        PhotonNetwork.ConnectUsingSettings(Utilities.GameVersion());
-    }
-
+   
     /// <summary>
     /// Gets the status description of the connection
     /// </summary>
@@ -225,6 +216,15 @@ public class NetworkMatchmaker : Photon.PunBehaviour
             ")\nAttempting to reconnect");
 
         m_reconnectTimer = 1.0f;
+    }
+
+    /// <summary>
+    /// Attempts to connect to Photon Unity Networking
+    /// Will call OnFailedToConnectToPhoton if failed
+    /// </summary>
+    private void ConnectToMatchmaker()
+    {
+        PhotonNetwork.ConnectUsingSettings(Utilities.GameVersion());
     }
 
     /// <summary>

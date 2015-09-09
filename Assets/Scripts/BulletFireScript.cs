@@ -49,7 +49,7 @@ public class BulletFireScript : MonoBehaviour
         obj.GetComponent<Bullet>().Owner = owner;
 
         Vector2 bulletVelocity = transform.right * m_bulletSpeed;
-        obj.GetComponent<Rigidbody2D>().AddForce(bulletVelocity);
+        obj.GetComponent<Rigidbody>().AddForce(bulletVelocity);
 
         if(PlayerPlacer.IsCloseToPlayer(obj.transform.position))
         {

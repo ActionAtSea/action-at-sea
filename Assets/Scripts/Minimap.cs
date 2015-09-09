@@ -118,10 +118,7 @@ public class Minimap : MonoBehaviour
 
         if(isStatic)
         {
-            for(int i = 0; i < m_staticItems.Count; ++i)
-            {
-                UpdateMapItem(m_staticItems[i]);
-            }
+            UpdateMapItem(item);
         }
     }
 
@@ -135,6 +132,13 @@ public class Minimap : MonoBehaviour
             AddStaticItem(m_gameBoard.transform, 
                     m_gameBoard.GetComponent<SpriteRenderer>(), 
                     m_gameBoard.GetComponent<SpriteRenderer>().color);
+
+            var boardItem = m_staticItems[m_staticItems.Count - 1];
+            boardItem.item.transform.localRotation = Quaternion.identity;
+            boardItem.item.transform.localScale = new Vector3(
+                boardItem.item.transform.localScale.x,
+                boardItem.item.transform.localScale.y,
+                boardItem.item.transform.localScale.y);
 
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
             if(terrain == null)
@@ -216,14 +220,12 @@ public class Minimap : MonoBehaviour
 
         item.item.transform.localPosition = new Vector3 (
             item.parentTransform.position.x,
-            item.parentTransform.position.y,
-            item.parentTransform.position.z);
+            item.parentTransform.position.z,
+            0.0f);
         
         item.item.transform.localRotation = new Quaternion(
-            item.parentTransform.localRotation.x,
-            item.parentTransform.localRotation.y,
-            item.parentTransform.localRotation.z,
-            item.parentTransform.localRotation.w);
+            0.0f, item.parentTransform.localRotation.y,
+            0.0f, item.parentTransform.localRotation.w);
         
         item.item.transform.localScale = new Vector3 (
             item.parentTransform.localScale.x * item.scale,

@@ -20,11 +20,11 @@ public class FogOfWar : MonoBehaviour
     private const float m_tileSpacing = 0.75f;  /// Spacing offset between adjacent fog tiles
     private const float m_tileSize = 20.0f;     /// Local Size of the fog tiles
     private int m_tileInsideX = -1;             /// Fog tile the player is currently inside along the X axis
-    private int m_tileInsideY = -1;             /// Fog tile the player is currently inside along the Y axis
+    private int m_tileInsideZ = -1;             /// Fog tile the player is currently inside along the Z axis
     private float m_minRevealRadius = 5.0f;     /// Minimum radius around the player fog is revealed
     private float m_maxRevealRadius = 9.0f;     /// Maximum radius around the player fog is revealed
     private int m_tileAmountX = 0;              /// Number of tiles along the X axis
-    private int m_tileAmountY = 0;              /// Number of tiles along the Y axis
+    private int m_tileAmountZ = 0;              /// Number of tiles along the Z axis
     private float m_worldScale = 0.0f;          /// Size of a tile in world space
     private float m_worldRadius = 0.0f;         /// Radius of a tile in world space for collision detection
     private int m_textureSize = 0;              /// Dimensions of the fog tile texture
@@ -88,18 +88,18 @@ public class FogOfWar : MonoBehaviour
         }
         var boardBounds = gameBoard.GetComponent<SpriteRenderer>().bounds;
         var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
-        var boardHeight = Mathf.Abs(boardBounds.max.y - boardBounds.min.y);
+        var boardLength = Mathf.Abs(boardBounds.max.z - boardBounds.min.z);
 
-        CreateFog(boardWidth, boardHeight);
-        CreateMinimapFog(boardWidth, boardHeight);
+        CreateFog(boardWidth, boardLength);
+        CreateMinimapFog(boardWidth, boardLength);
     }
 
     /// <summary>
     /// Creates the fog tiles placed over the game board
     /// </summary>
     /// <param name="width">The width of the game board to span fog over</param>
-    /// <param name="height">The height of the game board to span fog over</param>
-    void CreateFog(float width, float height)
+    /// <param name="height">The length of the game board to span fog over</param>
+    void CreateFog(float width, float length)
     {
         m_borderTiles = new List<FogTile>();
         m_editableTiles = new List<FogTile>();
@@ -107,18 +107,18 @@ public class FogOfWar : MonoBehaviour
         const int borderTiles = 2;
         const int extraTiles = borderTiles + 1;
         m_tileAmountX = (int)Mathf.Ceil(width / m_worldScale) + extraTiles;
-        m_tileAmountY = (int)Mathf.Ceil(height / m_worldScale) + extraTiles;
+        m_tileAmountZ = (int)Mathf.Ceil(length / m_worldScale) + extraTiles;
 
         // Create and place the tiles on the board
         int ID = 0;
         for(int x = 0; x < m_tileAmountX; ++x)
         {
-            for(int y = 0; y < m_tileAmountY; ++y)
+            for(int z = 0; z < m_tileAmountZ; ++z)
             {
-                bool isBorderTile = x == 0 || y == 0 ||
-                    x == m_tileAmountX-1 || y == m_tileAmountY-1;
+                bool isBorderTile = x == 0 || z == 0 ||
+                    x == m_tileAmountX-1 || z == m_tileAmountZ-1;
 
-                CreateNewTile(!isBorderTile, x, y, ID.ToString());
+                CreateNewTile(!isBorderTile, x, z, ID.ToString());
 
                 ++ID;
             }
@@ -126,15 +126,15 @@ public class FogOfWar : MonoBehaviour
 
         // Actual removable fog amount
         m_tileAmountX -= borderTiles;
-        m_tileAmountY -= borderTiles;
+        m_tileAmountZ -= borderTiles;
     }
 
     /// <summary>
     /// Creates the minimap fog tile with the same dimensions as the game board
     /// </summary>
     /// <param name="width">The width of the game board to span fog over</param>
-    /// <param name="height">The height of the game board to span fog over</param>
-    void CreateMinimapFog(float width, float height)
+    /// <param name="length">The height of the game board to span fog over</param>
+    void CreateMinimapFog(float width, float length)
     {
         int minimapPixels = m_minimapSize * m_minimapSize;
         Color[] pixels = new Color[minimapPixels];
@@ -150,12 +150,16 @@ public class FogOfWar : MonoBehaviour
         InitialiseTile(m_minimapTile, m_minimapSize, "Minimap", pixels);
 
         var renderer = GetComponent<SpriteRenderer>();
-        m_minimapWorldScale = new Vector2(width, height);
+        m_minimapWorldScale = new Vector2(width, length);
         var minimapScale = (float)m_minimapSize / renderer.sprite.pixelsPerUnit;
         var minimapScaleX = m_minimapWorldScale.x / minimapScale;
-        var minimapScaleY = m_minimapWorldScale.y / minimapScale;
+        var minimapScaleZ = m_minimapWorldScale.y / minimapScale;
+
         m_minimapTile.Fog.transform.localScale = 
-            new Vector3(minimapScaleX, minimapScaleY, 1.0f);
+            new Vector3(minimapScaleX, minimapScaleZ, minimapScaleZ);
+
+        m_minimapTile.Fog.transform.localRotation =
+            Quaternion.identity;
 
         m_minimapMaxReveal = m_maxRevealRadius;
         m_minimapMinReveal = (m_maxRevealRadius + m_minRevealRadius) / 2.0f;
@@ -169,9 +173,9 @@ public class FogOfWar : MonoBehaviour
     /// </summary>
     /// <param name="isEditable">Whether this tile is editable or not</param>
     /// <param name="x">The x position of the tile in the grid</param>
-    /// <param name="y">The y position of the tile in the grid</param>
+    /// <param name="z">The z position of the tile in the grid</param>
     /// <param name="name">The name of the tile to create</param>
-    void CreateNewTile(bool isEditable, int x, int y, string name)
+    void CreateNewTile(bool isEditable, int x, int z, string name)
     {
         List<FogTile> container = isEditable 
             ? m_editableTiles : m_borderTiles;
@@ -184,10 +188,14 @@ public class FogOfWar : MonoBehaviour
         InitialiseTile(container[index], m_textureSize, name, pixels);
 
         var gridScale = m_worldScale * m_tileSpacing;
+
         container[index].Fog.transform.position = new Vector3(
             (gridScale * ((m_tileAmountX - 1) * 0.5f)) - (x * gridScale),
-            (gridScale * ((m_tileAmountY - 1) * 0.5f)) - (y * gridScale),
-            transform.position.z);
+            transform.position.y,
+            (gridScale * ((m_tileAmountZ - 1) * 0.5f)) - (z * gridScale));
+
+        container[index].Fog.transform.localRotation =
+            Quaternion.identity;
     }
 
     /// <summary>
@@ -213,7 +221,7 @@ public class FogOfWar : MonoBehaviour
         tile.Fog = new GameObject ();
         tile.Fog.name = "Fog" + name;
         tile.Fog.transform.parent = generatedFog.transform;
-        tile.Fog.transform.localScale = new Vector3(m_tileSize, m_tileSize, 0.0f);
+        tile.Fog.transform.localScale = new Vector3(m_tileSize, m_tileSize, m_tileSize);
         tile.Fog.AddComponent<SpriteRenderer>();
 
         tile.Renderer = tile.Fog.GetComponent<SpriteRenderer>();
@@ -228,11 +236,11 @@ public class FogOfWar : MonoBehaviour
     /// Retrieves an index for the fog from the rows/column of the grid
     /// </summary>
     /// <param name="x">The x coordinate of the tile in the grid</param>
-    /// <param name="y">The y coordinate of the tile in the grid</param>
+    /// <param name="z">The z coordinate of the tile in the grid</param>
     /// <returns>the index in the editable fog container for a tile</returns>
-    int GetIndex(int x, int y)
+    int GetIndex(int x, int z)
     {
-        return x * m_tileAmountX + y;
+        return x * m_tileAmountX + z;
     }
 
     /// <summary>
@@ -240,17 +248,17 @@ public class FogOfWar : MonoBehaviour
     /// </summary>
     /// <param name="position">The position of the player</param>
     /// <param name="x">The x coordinate of the tile in the grid</param>
-    /// <param name="y">The y coordinate of the tile in the grid</param>
-    bool IsInsideTile(Vector2 position, int x, int y)
+    /// <param name="z">The z coordinate of the tile in the grid</param>
+    bool IsInsideTile(Vector2 position, int x, int z)
     {
-        int index = GetIndex(x, y);
+        int index = GetIndex(x, z);
         var tilePosition = m_editableTiles[index].Fog.transform.position;
 
         float halfScale = m_worldScale * 0.5f;
         return position.x < tilePosition.x + halfScale &&
-               position.y < tilePosition.y + halfScale &&
+               position.y < tilePosition.z + halfScale &&
                position.x >= tilePosition.x - halfScale &&
-               position.y >= tilePosition.y - halfScale;
+               position.y >= tilePosition.z - halfScale;
     }
 
     /// <summary>
@@ -278,14 +286,14 @@ public class FogOfWar : MonoBehaviour
     /// <param name="position">The position of the player</param>
     /// <param name="tile">The tile to remove fog from</param>
     /// <param name="scaleX">The world scale on the x axis of the tile</param>
-    /// <param name="scaleY">The world scale on the y axis of the tile</param>
+    /// <param name="scaleZ">The world scale on the z axis of the tile</param>
     /// <param name="dimensions">The dimensions of the tile texture</param>
     /// <param name="minReveal">Minimum radius around the player fog is revealed</param>
     /// <param name="maxReveal">Maximum radius around the player fog is revealed</param>
     void RemoveFog(Vector2 position, 
                    FogTile tile, 
                    float scaleX, 
-                   float scaleY, 
+                   float scaleZ, 
                    int dimensions, 
                    float minReveal, 
                    float maxReveal)
@@ -296,22 +304,22 @@ public class FogOfWar : MonoBehaviour
         }
         
         float pixelSizeX = scaleX / (float)dimensions;
-        float pixelSizeY = scaleY / (float)dimensions;
+        float pixelSizeZ = scaleZ / (float)dimensions;
         float halfSizeX = scaleX / 2.0f;
-        float halfSizeY = scaleY / 2.0f;
+        float halfSizeZ = scaleZ / 2.0f;
 
         // Pixels start at bottom left corner and move upwards
         Vector2 pixelPosition = new Vector2();
         Vector2 pixelStart = new Vector2(
             tile.Fog.transform.position.x - halfSizeX, 
-            tile.Fog.transform.position.y - halfSizeY);
+            tile.Fog.transform.position.z - halfSizeZ);
         
         for(int r = 0; r < dimensions; ++r)
         {
             for(int c = 0; c < dimensions; ++c)
             {
                 pixelPosition.x = pixelStart.x + (c * pixelSizeX);
-                pixelPosition.y = pixelStart.y + (r * pixelSizeY);
+                pixelPosition.y = pixelStart.y + (r * pixelSizeZ);
                 float distance = Vector2.Distance(pixelPosition, position);
                 
                 if(distance <= maxReveal)
@@ -337,18 +345,18 @@ public class FogOfWar : MonoBehaviour
     /// </summary>
     /// <param name="position">The position of the player</param>
     /// <param name="x">The x coordinate of the fog in the grid</param>
-    /// <param name="y">The y coordinate of the fog in the grid</param>
-    void RemoveFog(Vector2 position, int x, int y)
+    /// <param name="z">The z coordinate of the fog in the grid</param>
+    void RemoveFog(Vector2 position, int x, int z)
     {
         // Only remove fog if an editable tile
-        var index = GetIndex(x, y);
+        var index = GetIndex(x, z);
         if (index >= 0 && index < m_editableTiles.Count) 
         {
             var tile = m_editableTiles[index];
 
             Vector2 tilePosition = new Vector2(
                 tile.Fog.transform.position.x,
-                tile.Fog.transform.position.y);
+                tile.Fog.transform.position.z);
 
             // Sphere-sphere Bounds checking
             float distance = Vector2.Distance(tilePosition, position);
@@ -368,20 +376,20 @@ public class FogOfWar : MonoBehaviour
     bool IsInsideTile(Vector2 position)
     {
         // Determine which tile the player is currently inside
-        if (m_tileInsideX == -1 || m_tileInsideY == -1 ||
-            !IsInsideTile(position, m_tileInsideX, m_tileInsideY))
+        if (m_tileInsideX == -1 || m_tileInsideZ == -1 ||
+            !IsInsideTile(position, m_tileInsideX, m_tileInsideZ))
         {
             m_tileInsideX = -1;
-            m_tileInsideY = -1;
+            m_tileInsideZ = -1;
             
             for(int x = 0; x < m_tileAmountX; ++x)
             {
-                for(int y = 0; y < m_tileAmountY; ++y)
+                for(int z = 0; z < m_tileAmountZ; ++z)
                 {
-                    if(IsInsideTile(position, x, y))
+                    if(IsInsideTile(position, x, z))
                     {
                         m_tileInsideX = x;
-                        m_tileInsideY = y;
+                        m_tileInsideZ = z;
                         return true;
                     }
                 }
@@ -389,7 +397,7 @@ public class FogOfWar : MonoBehaviour
         }
 
         return m_tileInsideX != -1 && 
-            m_tileInsideY != -1;
+            m_tileInsideZ != -1;
     }
 
     /// <summary>
@@ -403,7 +411,7 @@ public class FogOfWar : MonoBehaviour
         {
             Vector2 position = new Vector2(
                 player.transform.position.x, 
-                player.transform.position.y);
+                player.transform.position.z);
 
             if(IsInsideTile(position))
             {
@@ -412,15 +420,15 @@ public class FogOfWar : MonoBehaviour
                 // this only remove fog from tile inside and 
                 // all 8 surrounding tiles
 
-                RemoveFog(position, m_tileInsideX, m_tileInsideY);
-                RemoveFog(position, m_tileInsideX, m_tileInsideY + 1);
-                RemoveFog(position, m_tileInsideX, m_tileInsideY - 1);
-                RemoveFog(position, m_tileInsideX + 1, m_tileInsideY);
-                RemoveFog(position, m_tileInsideX - 1, m_tileInsideY);
-                RemoveFog(position, m_tileInsideX + 1, m_tileInsideY + 1);
-                RemoveFog(position, m_tileInsideX - 1, m_tileInsideY - 1);
-                RemoveFog(position, m_tileInsideX + 1, m_tileInsideY - 1);
-                RemoveFog(position, m_tileInsideX - 1, m_tileInsideY + 1);
+                RemoveFog(position, m_tileInsideX, m_tileInsideZ);
+                RemoveFog(position, m_tileInsideX, m_tileInsideZ + 1);
+                RemoveFog(position, m_tileInsideX, m_tileInsideZ - 1);
+                RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ);
+                RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ);
+                RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ + 1);
+                RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ - 1);
+                RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ - 1);
+                RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ + 1);
 
                 RemoveFog(position, 
                           m_minimapTile, 
