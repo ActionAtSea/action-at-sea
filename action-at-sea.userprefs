@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CannonController.cs">
+    <Files>
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="191" Column="31" />
+      <File FileName="Assets\Scripts\Bullet.cs" Line="10" Column="36" />
+      <File FileName="Assets\Scripts\BulletFireScript.cs" Line="40" Column="10" />
+      <File FileName="Assets\Scripts\CannonController.cs" Line="94" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
