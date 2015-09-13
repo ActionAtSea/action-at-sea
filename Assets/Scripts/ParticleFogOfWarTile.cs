@@ -54,6 +54,7 @@ public class ParticleFogOfWarTile : MonoBehaviour
                     transform.position.y + randY,
                     (size * ((amountZ - 1) * 0.5f)) - (z * size) + randZ - center.z);
 
+                particle.SetActive(true);
                 particle.GetComponent<ParticleSystem>().Play();
                 particle.GetComponent<ParticleSystem>().Pause();
                 particle.isStatic = true;
