@@ -138,6 +138,8 @@
      <Compile Include="Assets\Scripts\NetworkMatchmaker.cs" />
      <Compile Include="Assets\Scripts\NetworkedPlayer.cs" />
      <Compile Include="Assets\Scripts\NewObjectPooler.cs" />
+     <Compile Include="Assets\Scripts\ParticleFogOfWar.cs" />
+     <Compile Include="Assets\Scripts\ParticleFogOfWarTile.cs" />
      <Compile Include="Assets\Scripts\ParticleSpray.cs" />
      <Compile Include="Assets\Scripts\PlayerAiming.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />

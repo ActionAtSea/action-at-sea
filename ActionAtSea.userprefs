@@ -1,25 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BulletFireScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ParticleFogOfWarTile.cs">
     <Files>
-      <File FileName="Assets\Scripts\CameraMovement.cs" Line="13" Column="35" />
-      <File FileName="Assets\Scripts\GameInformation.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GUI\GUIPlayerName.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="24" Column="14" />
-      <File FileName="Assets\Scripts\BulletFireScript.cs" Line="52" Column="62" />
-      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\IslandDiscoveryTrigger.cs" Line="32" Column="54" />
-      <File FileName="Assets\Scripts\CreateBackground.cs" Line="1" Column="1" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonNetwork.cs" Line="1" Column="1" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonClasses.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Minimap.cs" Line="225" Column="9" />
+      <File FileName="Assets\Scripts\ParticleFogOfWarTile.cs" Line="60" Column="42" />
+      <File FileName="Assets\Scripts\ParticleFogOfWar.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\FogOfWar.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="17" Column="24" />
-      <File FileName="Assets\Scripts\BulletImpact.cs" Line="7" Column="1" />
-      <File FileName="Assets\Scripts\RepairDock.cs" Line="22" Column="14" />
-      <File FileName="Assets\Scripts\Bullet.cs" Line="27" Column="1" />
-      <File FileName="Assets\Scripts\NewObjectPooler.cs" Line="18" Column="6" />
-      <File FileName="Assets\Scripts\Crosshair.cs" Line="8" Column="39" />
+      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerPlacer.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

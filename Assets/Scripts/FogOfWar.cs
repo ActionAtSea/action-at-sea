@@ -14,6 +14,7 @@ using UnityEngine;
 public class FogOfWar : MonoBehaviour 
 {
     public GameObject generatedFog = null;      /// Holds all generated fog in scene, set through inspector
+    public bool useGeneratedFogTiles = false;
 
     private List<FogTile> m_editableTiles;      /// Tiles that can be interacted with
     private List<FogTile> m_borderTiles;        /// Tiles that cannot be interacted with
@@ -90,7 +91,10 @@ public class FogOfWar : MonoBehaviour
         var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
         var boardLength = Mathf.Abs(boardBounds.max.z - boardBounds.min.z);
 
-        CreateFog(boardWidth, boardLength);
+        if(useGeneratedFogTiles)
+        {
+            CreateFog(boardWidth, boardLength);
+        }
         CreateMinimapFog(boardWidth, boardLength);
     }
 
@@ -413,31 +417,34 @@ public class FogOfWar : MonoBehaviour
                 player.transform.position.x, 
                 player.transform.position.z);
 
-            if(IsInsideTile(position))
+            if(useGeneratedFogTiles && IsInsideTile(position))
             {
                 // Assumes tile scale is less than max reveal 
                 // radius from initialisation check. Because of 
                 // this only remove fog from tile inside and 
                 // all 8 surrounding tiles
 
-                RemoveFog(position, m_tileInsideX, m_tileInsideZ);
-                RemoveFog(position, m_tileInsideX, m_tileInsideZ + 1);
-                RemoveFog(position, m_tileInsideX, m_tileInsideZ - 1);
-                RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ);
-                RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ);
-                RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ + 1);
-                RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ - 1);
-                RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ - 1);
-                RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ + 1);
-
-                RemoveFog(position, 
-                          m_minimapTile, 
-                          m_minimapWorldScale.x,
-                          m_minimapWorldScale.y,
-                          m_minimapSize, 
-                          m_minimapMinReveal,
-                          m_minimapMaxReveal);
+                if(useGeneratedFogTiles)
+                {
+                    RemoveFog(position, m_tileInsideX, m_tileInsideZ);
+                    RemoveFog(position, m_tileInsideX, m_tileInsideZ + 1);
+                    RemoveFog(position, m_tileInsideX, m_tileInsideZ - 1);
+                    RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ);
+                    RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ);
+                    RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ + 1);
+                    RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ - 1);
+                    RemoveFog(position, m_tileInsideX + 1, m_tileInsideZ - 1);
+                    RemoveFog(position, m_tileInsideX - 1, m_tileInsideZ + 1);
+                }
             }
+
+            RemoveFog(position, 
+                      m_minimapTile, 
+                      m_minimapWorldScale.x,
+                      m_minimapWorldScale.y,
+                      m_minimapSize, 
+                      m_minimapMinReveal,
+                      m_minimapMaxReveal);
         }
     }
 }
