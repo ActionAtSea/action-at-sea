@@ -63,15 +63,18 @@ public class CannonController : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the cannones
+    /// Updates the cannons
     /// </summary>  
     void Update()
     {
-        if(NetworkedPlayer.IsControllable(gameObject))
+
+        if (NetworkedPlayer.IsControllable(gameObject))
         {
             UpdateMouseCursorAngle();
             FireCannons();
         }
+        //Debug.Log(m_mouseCursorAngle);
+        //Debug.Log(transform.parent.eulerAngles);
     }
 
     /// <summary>
@@ -88,10 +91,12 @@ public class CannonController : MonoBehaviour
             return; // don't do tiny rotations.
         }
 
-        float angle = Mathf.Atan2(mouseDelta.y, mouseDelta.x) * Mathf.Rad2Deg;
+        //                  atan2(y, z) used to be this in 2d
+        float angle = Mathf.Atan2(mouseDelta.z, mouseDelta.x) * Mathf.Rad2Deg;
 
-        angle -= transform.parent.rotation.eulerAngles.z;   // minus the rotation of the ship
-
+        Debug.Log(angle);
+        angle -= transform.parent.rotation.eulerAngles.y;   // minus the rotation of the ship
+        Debug.Log(angle);
         if (angle < 0.0f)
         {
             angle += 360.0f;
@@ -111,7 +116,7 @@ public class CannonController : MonoBehaviour
         m_currentReloadTimeRight += Time.deltaTime;
         m_currentReloadTimeLeft += Time.deltaTime;
 
-        if(m_fireGuns)
+        if (m_fireGuns)
         {
             //Left side Cannon reload time
             if (m_currentReloadTimeLeft >= m_reloadTime)

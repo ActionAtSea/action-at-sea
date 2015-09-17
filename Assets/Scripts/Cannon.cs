@@ -34,14 +34,14 @@ public class Cannon : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(NetworkedPlayer.IsControllable(gameObject))
+        if (NetworkedPlayer.IsControllable(gameObject))
         {
             m_firePosition = m_fireScript.FirePosition();
             m_fireRotation = m_fireScript.FireRotation();
             UpdateRotation();
         }
-        
-        if(m_shouldFire)
+
+        if (m_shouldFire)
         {
             FireGun();
             m_shouldFire = false;
@@ -56,6 +56,7 @@ public class Cannon : MonoBehaviour
     /// </summary>
     private void UpdateRotation()
     {
+        //transform.eulerAngles = transform.parent.eulerAngles;
         m_cursorAngle = m_controller.MouseCursorAngle;
 
         if (rightSideCannon)
