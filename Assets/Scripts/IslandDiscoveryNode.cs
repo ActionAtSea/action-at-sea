@@ -6,10 +6,8 @@ using UnityEngine;
 using System.Collections;
 
 public class IslandDiscoveryNode : MonoBehaviour
-{
-    public Sprite altSprite;
-
-    private bool m_discovered = false;
+{ 
+    private GameObject m_owner = null;
 
     /// <summary>
     /// On collision with a player
@@ -18,21 +16,28 @@ public class IslandDiscoveryNode : MonoBehaviour
     {
         if (other.transform.tag == "Player")
         {
-            GetComponent<SpriteRenderer>().sprite = altSprite;
-
-            if(!m_discovered)
-            {
-                SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
-            }
-            m_discovered = true;
+            SetOwner(other.gameObject);
         }
     }
 
     /// <summary>
-    /// Gets whether this node has been discovered
+    /// Sets the owner of this node
     /// </summary>
-    public bool Discovered
+    public void SetOwner(GameObject owner)
     {
-        get { return m_discovered; }
+        if(m_owner == null || m_owner.name != owner.name)
+        {
+            GetComponent<SpriteRenderer>().color = NetworkedPlayer.GetPlayerColor(owner);
+            SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
+            m_owner = owner;
+        }
+    }
+
+    /// <summary>
+    /// Gets the owner of this node
+    /// </summary>
+    public GameObject Owner
+    {
+        get { return m_owner; }
     }
 }

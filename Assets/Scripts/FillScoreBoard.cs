@@ -28,7 +28,7 @@ public class FillScoreBoard : MonoBehaviour
         {
             var obj = Instantiate(scoreText);
             obj.SetActive(false);
-            obj.transform.parent = transform;
+            obj.transform.SetParent(transform);
             obj.GetComponent<RectTransform>().localScale =
                 scoreText.GetComponent<RectTransform>().localScale;
 

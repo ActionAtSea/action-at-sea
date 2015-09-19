@@ -13,6 +13,7 @@ class MapItem
     public Transform parentTransform;
     public SpriteRenderer parentRenderer;
     public float scale = 1.0f;
+    public bool updatesColor = false;
 };
 
 public class Minimap : MonoBehaviour 
@@ -21,8 +22,8 @@ public class Minimap : MonoBehaviour
 
     private float m_shipMarkerSize = 2.0f;
     private bool m_isInitialised = false;
-    private List<MapItem> m_staticItems = new List<MapItem>();
-    private List<MapItem> m_dynamicItems = new List<MapItem>();
+    private List<MapItem> m_world = new List<MapItem>();
+    private List<MapItem> m_markers = new List<MapItem>();
     private GameObject m_gameBoard = null;
 
     /// <summary>
@@ -64,9 +65,10 @@ public class Minimap : MonoBehaviour
     /// </summary>
     void AddStaticItem(Transform itemTransform, 
                        SpriteRenderer itemRenderer, 
-                       Color colour)
+                       Color colour,
+                       bool updatesColor = false)
     {
-        AddItem(itemTransform, itemRenderer, colour, true, 0, 1.0f);
+        AddItem(itemTransform, itemRenderer, colour, true, 0, 1.0f, updatesColor);
     }
 
     /// <summary>
@@ -77,21 +79,23 @@ public class Minimap : MonoBehaviour
                  Color colour,
                  bool isStatic,
                  int orderOffset,
-                 float scale)
+                 float scale, 
+                 bool updatesColor)
     {
         MapItem item = null;
 
         if(isStatic)
         {
-            m_staticItems.Add (new MapItem ());
-            item =  m_staticItems [m_staticItems.Count - 1];
+            m_world.Add (new MapItem ());
+            item =  m_world [m_world.Count - 1];
         }
         else
         {
-            m_dynamicItems.Add (new MapItem ());
-            item = m_dynamicItems [m_dynamicItems.Count - 1];
+            m_markers.Add (new MapItem ());
+            item = m_markers [m_markers.Count - 1];
         }
 
+        item.updatesColor = updatesColor;
         item.parentTransform = itemTransform;
         item.parentRenderer = itemRenderer;
         item.scale = scale;
@@ -133,7 +137,7 @@ public class Minimap : MonoBehaviour
                     m_gameBoard.GetComponent<SpriteRenderer>(), 
                     m_gameBoard.GetComponent<SpriteRenderer>().color);
 
-            var boardItem = m_staticItems[m_staticItems.Count - 1];
+            var boardItem = m_world[m_world.Count - 1];
             boardItem.item.transform.localRotation = Quaternion.identity;
             boardItem.item.transform.localScale = new Vector3(
                 boardItem.item.transform.localScale.x,
@@ -150,7 +154,8 @@ public class Minimap : MonoBehaviour
             {
                 AddStaticItem(terrain[i].transform, 
                         terrain[i].GetComponent<SpriteRenderer>(), 
-                        terrain[i].GetComponent<SpriteRenderer>().color);
+                        terrain[i].GetComponent<SpriteRenderer>().color,
+                        true);
             }
 
             GameObject fog = GameObject.FindGameObjectWithTag("MinimapFog");
@@ -176,13 +181,21 @@ public class Minimap : MonoBehaviour
     /// </summary>
     void UpdateMap()
     {
-        for(int i = 0; i < m_dynamicItems.Count; ++i)
+        for(int i = 0; i < m_markers.Count; ++i)
         {
-            if(!UpdateMapItem(m_dynamicItems[i]))
+            if(!UpdateMapItem(m_markers[i]))
             {
-                Destroy (m_dynamicItems[i].item);
-                m_dynamicItems.Remove(m_dynamicItems[i]);
+                Destroy (m_markers[i].item);
+                m_markers.Remove(m_markers[i]);
                 --i;
+            }
+        }
+
+        foreach(var item in m_world)
+        {
+            if(item.updatesColor)
+            {
+                item.renderer.color = item.parentRenderer.color;
             }
         }
     }
@@ -201,7 +214,7 @@ public class Minimap : MonoBehaviour
         AddItem(player.transform, 
                 marker.GetComponent<SpriteRenderer>(), 
                 colour, false, controlled ? 1 : 0,
-                m_shipMarkerSize / maxMapScale);
+                m_shipMarkerSize / maxMapScale, false);
     }
 
     /// <summary>

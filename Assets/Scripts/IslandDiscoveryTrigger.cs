@@ -4,22 +4,36 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
     public float scoreValue = 20.0f;
-    public GameObject islandNodes = null;
-
     private IslandDiscoveryNode[] m_nodes;
-    private bool m_islandDiscovered = false;
-    private bool m_scoreAwarded = false;
+    private GameObject m_owner = null;
+    private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
 
     /// <summary>
     /// Initialises the script
     /// </summary>
     void Start()
     {
-        m_nodes = islandNodes.GetComponentsInChildren<IslandDiscoveryNode>();
+        m_nodes = transform.parent.GetComponentsInChildren<IslandDiscoveryNode>();
+
+        var islands = transform.parent.GetComponentsInChildren<SpriteRenderer>();
+        foreach(var island in islands)
+        {
+            if(island.tag == "Island")
+            {
+                m_islands.Add(island);
+            }
+        }
+
+        if(m_islands.Count == 0)
+        {
+            Debug.LogError("No associated island sprite");
+        }
+
         GetComponent<SpriteRenderer>().enabled = false;
     }
 
@@ -28,32 +42,61 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (!m_islandDiscovered)
+        GameObject owner = m_nodes[0].Owner;
+        for(int i = 1; i < m_nodes.Length; ++i)
         {
-            foreach (IslandDiscoveryNode n in m_nodes)
+            if(owner == null || 
+               m_nodes[i].Owner == null ||
+               owner.name != m_nodes[i].Owner.name)
             {
-                if (n.Discovered != true)
+                if(GetComponent<SpriteRenderer>().enabled)
                 {
-                    return;
+                    SetCaptured(null);
                 }
+                return;
             }
-            m_islandDiscovered = true;
         }
-        else if(!m_scoreAwarded)
+
+        if(owner == null)
         {
+            SetCaptured(null);
+        }
+        else if(m_owner == null || m_owner != null && m_owner.name != owner.name)
+        {
+            SetCaptured(owner);
+        }
+    }
+
+    /// <summary>
+    /// Sets whether the island is captured
+    /// </summary>
+    void SetCaptured(GameObject owner)
+    {
+        var renderer = GetComponent<SpriteRenderer>();
+        renderer.enabled = owner != null;
+
+        if(owner != null)
+        {
+            renderer.color = NetworkedPlayer.GetPlayerColor(owner);
+            SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
+
             var player = PlayerManager.GetControllablePlayer();
-            if(player == null)
+            if(player != null && player.name == owner.name)
             {
-                Debug.LogError("Could not find player");
-            }
-            else
-            {
-                GetComponent<SpriteRenderer>().enabled = true;
-                player.GetComponent<PlayerScore>().AddScore(scoreValue);
-                SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
-                m_scoreAwarded = true;
+                owner.GetComponent<PlayerScore>().AddScore(scoreValue);
             }
         }
+        else
+        {
+            renderer.color = new Color(1.0f, 1.0f, 1.0f);
+        }
+
+        foreach(var island in m_islands)
+        {
+            island.color = renderer.color;
+        }
+
+        m_owner = owner;
     }
 
     /// <summary>
