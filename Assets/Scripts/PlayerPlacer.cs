@@ -38,13 +38,12 @@ public class PlayerPlacer : MonoBehaviour
     /// <summary>
     /// Utility function to determine if the given position is roughly visible to the player
     /// </summary>
-    static public bool IsCloseToPlayer(Vector3 position)
+    static public bool IsCloseToPlayer(Vector3 position, float distance)
     {
         var player = PlayerManager.GetControllablePlayer();
         if(player != null)
         {
-            const float maxDistance = 30.0f;
-            return (player.transform.position - position).magnitude <= maxDistance;
+            return (player.transform.position - position).magnitude <= distance;
         }
         return false;
     }

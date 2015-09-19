@@ -8,6 +8,7 @@ using System.Collections;
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
     public float scoreValue = 20.0f;
+    public GameObject islandNodes = null;
 
     private IslandDiscoveryNode[] m_nodes;
     private bool m_islandDiscovered = false;
@@ -18,7 +19,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_nodes = GetComponentsInChildren<IslandDiscoveryNode>();
+        m_nodes = islandNodes.GetComponentsInChildren<IslandDiscoveryNode>();
         GetComponent<SpriteRenderer>().enabled = false;
     }
 

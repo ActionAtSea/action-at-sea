@@ -120,6 +120,14 @@ class Utilities
     }
 
     /// <summary>
+    /// Returns the maximum allowed players in a single level
+    /// </summary>
+    static public int GetMaximumPlayers()
+    {
+        return 20;
+    }
+
+    /// <summary>
     /// Returns how many players are allowed in each level
     /// </summary>
     static public int GetAcceptedPlayersForLevel(LevelID level)
@@ -127,11 +135,68 @@ class Utilities
         switch(level)
         {
         case LevelID.LEVEL1:
-            return 0; //Unlimited
+            return GetMaximumPlayers();
         case LevelID.LEVEL2:
             return 2;
         default:
              throw new ArgumentException("Unknown level ID");
         }
+    }
+
+    /// <summary>
+    /// Converts hue, value, saturation to rgb
+    /// Note, hue should be 0->360
+    /// http://www.poynton.com/PDFs/coloureq.pdf
+    /// </summary>
+    static public Color HSVToRGB(uint hue, float value, float saturation)
+    {
+        Color color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+        float hex = (float)hue / 60.0f;
+        float primaryColor = Mathf.Floor(hex);
+        float secondaryColour = hex - primaryColor;
+        float a = (1.0f - saturation) * value;
+        float b = (1.0f - (saturation * secondaryColour)) * value;
+        float c = (1.0f - (saturation * (1.0f - secondaryColour))) * value;
+
+        switch((int)primaryColor)
+        {
+        case 0:
+            color.r = value;
+            color.g = c;
+            color.b = a;
+            break;
+        case 1:
+            color.r = b;
+            color.g = value;
+            color.b = a;
+            break;
+        case 2:
+            color.r = a;
+            color.g = value;
+            color.b = c;
+            break;
+        case 3:
+            color.r = a;
+            color.g = b;
+            color.b = value;
+            break;
+        case 4:
+            color.r = c;
+            color.g = a;
+            color.b = value;
+            break;
+        case 5:
+            color.r = value;
+            color.g = a;
+            color.b = b;
+            break;
+        case 6:
+            color.r = value;
+            color.g = c;
+            color.b = a;
+            break;
+        }
+
+        return color;
     }
 }

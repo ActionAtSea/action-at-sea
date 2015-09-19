@@ -51,7 +51,7 @@ public class BulletFireScript : MonoBehaviour
         Vector2 bulletVelocity = transform.right * m_bulletSpeed;
         obj.GetComponent<Rigidbody>().AddForce(bulletVelocity);
 
-        if(PlayerPlacer.IsCloseToPlayer(obj.transform.position))
+        if(PlayerPlacer.IsCloseToPlayer(obj.transform.position, 30.0f))
         {
             SoundManager.Get().PlaySound(SoundManager.SoundID.FIRE);
         }

@@ -9,7 +9,7 @@ public class ParticleFogOfWar : MonoBehaviour
 {    
     private ParticleSystem m_particles;
     private bool m_fade = false;
-    private Color m_colour = new Color(0.294f, 0.294f, 0.353f, 1.0f);
+    public Color m_colour;
     private bool m_initialised = false;
 
     /// <summary>
@@ -37,15 +37,15 @@ public class ParticleFogOfWar : MonoBehaviour
     void Update()
     {
         m_particles.GetComponent<SphereCollider>().enabled = 
-            PlayerPlacer.IsCloseToPlayer(m_particles.transform.position);
+            PlayerPlacer.IsCloseToPlayer(m_particles.transform.position, 15.0f);
 
         if(m_fade || !m_initialised)
         {
             if(m_initialised)
             {
-                m_colour.r -= Time.deltaTime * 0.15f;
-                m_colour.g -= Time.deltaTime * 0.15f;
-                m_colour.b -= Time.deltaTime * 0.15f;
+                m_colour.r -= Time.deltaTime * 0.3f;
+                m_colour.g -= Time.deltaTime * 0.3f;
+                m_colour.b -= Time.deltaTime * 0.3f;
                 m_colour.a -= Time.deltaTime * 0.7f;
             }
 

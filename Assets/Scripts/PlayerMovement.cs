@@ -7,8 +7,8 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour 
 {
-    public float m_forwardSpeed = 0.5f;
-    public float m_rotationSpeed = 0.5f;
+    private float m_forwardSpeed = 100.0f;
+    private float m_rotationSpeed = 100.0f;
     private Vector3 m_forwardForce = new Vector3();
 
     /// <summary>
@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")
         {
-            if(PlayerPlacer.IsCloseToPlayer(other.transform.position))
+            if(PlayerPlacer.IsCloseToPlayer(other.transform.position, 30.0f))
             {
                 SoundManager.Get().PlaySound(SoundManager.SoundID.RAM);
             }

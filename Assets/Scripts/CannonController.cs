@@ -95,7 +95,7 @@ public class CannonController : MonoBehaviour
         float angle = Mathf.Atan2(mouseDelta.z, mouseDelta.x) * Mathf.Rad2Deg;
 
         angle += transform.parent.rotation.eulerAngles.y;   // minus the rotation of the ship
-        Debug.Log(angle);
+        //Debug.Log(angle);
         if (angle < 0.0f)
         {
             angle += 360.0f;
@@ -109,7 +109,7 @@ public class CannonController : MonoBehaviour
             angle -= 360.0f;
         }
         m_mouseCursorAngle = angle;
-        Debug.Log(angle);
+        //Debug.Log(angle);
     }
 
     /// <summary>

@@ -17,6 +17,7 @@ public class NetworkedPlayer : MonoBehaviour
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_healthLevel = -1.0f;
     private bool m_connected = false;
+    public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
 
     /// <summary>
     /// On instantiate of the player by photon networking
@@ -40,6 +41,8 @@ public class NetworkedPlayer : MonoBehaviour
 
             GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
             healthbar.SetActive(false);
+
+            m_playerColor = Utilities.HSVToRGB((uint)Random.Range(0, 360), 1.0f, 1.0f);
         }
         else
         {
@@ -120,6 +123,9 @@ public class NetworkedPlayer : MonoBehaviour
             stream.SendNext(m_playerName);
             stream.SendNext(m_playerID);
             stream.SendNext(m_playerScore);
+            stream.SendNext(m_playerColor.r);
+            stream.SendNext(m_playerColor.g);
+            stream.SendNext(m_playerColor.b);
         }
         else
         {
@@ -132,6 +138,9 @@ public class NetworkedPlayer : MonoBehaviour
             m_playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
             name = m_playerID.ToString();
+            m_playerColor.r = (float)stream.ReceiveNext();
+            m_playerColor.g = (float)stream.ReceiveNext();
+            m_playerColor.b = (float)stream.ReceiveNext();
         }
     }
 
@@ -160,6 +169,14 @@ public class NetworkedPlayer : MonoBehaviour
     }
 
     /// <summary>
+    /// Gets the player Color
+    /// </summary>
+    public Color PlayerColor
+    {
+        get { return m_playerColor; }
+    }
+
+    /// <summary>
     /// Returns whether the player can control this
     /// </summary>
     public bool IsControllable()
@@ -181,6 +198,14 @@ public class NetworkedPlayer : MonoBehaviour
     static public float GetPlayerScore(GameObject obj)
     {
         return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerScore : 0.0f;
+    }
+
+    /// <summary>
+    /// Returns the player color
+    /// </summary>
+    static public Color GetPlayerColor(GameObject obj)
+    {
+        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerColor : new Color();
     }
 
     /// <summary>

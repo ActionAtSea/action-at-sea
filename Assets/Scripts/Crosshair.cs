@@ -7,22 +7,28 @@ using System.Collections;
 
 public class Crosshair : MonoBehaviour
 {
-    public bool hideCursor = false;
+    public Canvas parentCanvas;
+    private bool shouldHide = true;
+
+    /// <summary>
+    /// Starts by hiding the cursor
+    /// </summary>
+    void Start()
+    {
+        Cursor.visible = false;
+        shouldHide = true;
+    }
 
     /// <summary>
     /// Updates the cursor
     /// </summary>
     void Update()
     {
-        HideCursor();
-
-        //Attached object (the crosshair) matches the position of the mouse
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10.0f;
-
-        //converts the screen space postion of the mouse to relative game world position
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        gameObject.transform.position = mousePos;
+        Cursor.visible = !shouldHide;
+        transform.localPosition = new Vector3(
+            Input.mousePosition.x - parentCanvas.GetComponent<RectTransform>().sizeDelta.x / 2,
+            Input.mousePosition.y - parentCanvas.GetComponent<RectTransform>().sizeDelta.y / 2,
+            0.0f);
     }
 
     /// <summary>
@@ -30,10 +36,8 @@ public class Crosshair : MonoBehaviour
     /// </summary>
     private void HideCursor()
     {
-        if (hideCursor)
-        {
-            Cursor.visible = false;
-        }
+        GetComponent<UnityEngine.UI.Image>().enabled = true;
+        shouldHide = true;
     }
 
     /// <summary>
@@ -41,8 +45,8 @@ public class Crosshair : MonoBehaviour
     /// </summary>
     public void ShowCursor()
     {
-        Cursor.visible = true;
-        hideCursor = false;
+        GetComponent<UnityEngine.UI.Image>().enabled = false;
+        shouldHide = false;
     }
 
     /// <summary>
