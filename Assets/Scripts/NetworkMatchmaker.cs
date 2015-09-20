@@ -18,6 +18,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
     GameObject m_player = null;                /// Current client player instantiated
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
+    bool m_showPing = false;                   /// Whether to display the ping
     string m_status = "";                      /// Status description of the network connection
 
     /// <summary>
@@ -53,8 +54,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if(PhotonNetwork.inRoom)
         {
-            return PhotonNetwork.room.playerCount >= 
-                PhotonNetwork.room.maxPlayers;
+            return Utilities.IsOpenLeveL(m_levelJoined) ||
+                PhotonNetwork.room.playerCount >= PhotonNetwork.room.maxPlayers;
         }
         return false;
     }
@@ -158,6 +159,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public override void OnJoinedLobby()
     {
+        Debug.Log("Joined Lobby");
+
         PhotonNetwork.JoinRandomRoom(null, 
             (byte)Utilities.GetAcceptedPlayersForLevel(m_levelJoined));
     }
@@ -167,7 +170,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public override void OnLeftLobby()
     {
-        m_levelJoined = LevelID.NO_LEVEL;
+        Debug.Log("Left Lobby");
     }
 
     /// <summary>
@@ -248,14 +251,32 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
+    /// Starts the level by closing the room if needed
+    /// </summary>
+    public void StartLevel()
+    {
+        if(IsInRoom() && !Utilities.IsOpenLeveL(m_levelJoined))
+        {
+            PhotonNetwork.room.open = false;
+        }
+    }
+
+    /// <summary>
     /// Leaves the level currently connected to
     /// </summary>
     public void LeaveGameLevel()
     {
         DestroyPlayer();
-
+       
         if(IsInRoom())
         {
+            // Player is the last one left in room
+            if(!Utilities.IsOpenLeveL(m_levelJoined) && 
+               PhotonNetwork.room.playerCount == 1)
+            {
+                PhotonNetwork.room.open = true;
+            }
+
             PhotonNetwork.LeaveRoom();
         }
         else if(IsInLobby())
@@ -272,12 +293,22 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         SetStatus("Connected to server");
 
-        // Allows joining a game without using the lobby
-        if(Utilities.IsLevelLoaded() && 
-           !IsConnectedToLevel() && 
-           m_levelJoined == LevelID.NO_LEVEL)
+        if(Utilities.IsLevelLoaded() && !IsConnectedToLevel())
         {
-            JoinGameLevel(Utilities.GetLoadedLevel());
+            // Level has not been joined using the lobby (for development)
+            // Or level joined can be easily rejoined
+            if(m_levelJoined == LevelID.NO_LEVEL ||
+               Utilities.IsOpenLeveL(m_levelJoined))
+            {
+                JoinGameLevel(Utilities.GetLoadedLevel());
+            }
+            else
+            {
+                // Player has disconnected during a closed level
+                // Force move the player back to the lobby
+                m_levelJoined = LevelID.NO_LEVEL;
+                Application.LoadLevel((int)SceneID.LOBBY);
+            }
         }
     }
 
@@ -319,6 +350,17 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            m_showPing = !m_showPing;
+        }
+
+        if(m_showPing)
+        {
+            GUILayout.Label("Ping: " +
+                PhotonNetwork.GetPing());
+        }
+
         // Attempt to reconnect when disconnected
         if(m_reconnectTimer != 0.0f)
         {

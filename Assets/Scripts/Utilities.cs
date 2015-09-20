@@ -120,6 +120,15 @@ class Utilities
     }
 
     /// <summary>
+    /// Returns whether the level is an open level
+    /// This means anyone can connect/disconnect at any time
+    /// </summary>
+    static public bool IsOpenLeveL(LevelID level)
+    {
+        return level == LevelID.LEVEL1;
+    }
+
+    /// <summary>
     /// Returns the maximum allowed players in a single level
     /// </summary>
     static public int GetMaximumPlayers()

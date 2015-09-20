@@ -68,7 +68,9 @@ public class LobbyScript : MonoBehaviour
     void StartGame()
     {
         GameInformation.SetPlayerName(playerNameText.text);
-        
+
+        m_network.StartLevel();
+
         var soundManager = SoundManager.Get();
         soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
         soundManager.StopMusic(SoundManager.MusicID.MENU_TRACK);
@@ -140,13 +142,13 @@ public class LobbyScript : MonoBehaviour
                         m_playGameRequest = true;
                     }
 
-                    int maxSlots = Utilities.GetAcceptedPlayersForLevel(m_selectedLevel);
-                    if(maxSlots == 0 || !m_network.IsInRoom())
+                    if(Utilities.IsOpenLeveL(m_selectedLevel)  || !m_network.IsInRoom())
                     {
                         lobbyStatus.text = "Joining Level" + GetDots();
                     }
                     else
                     {
+                        int maxSlots = Utilities.GetAcceptedPlayersForLevel(m_selectedLevel);
                         int players = m_network.GetRoomPlayerCount();
                         lobbyStatus.text = "Waiting for: " + 
                             (maxSlots - players).ToString() + " / " + maxSlots.ToString();

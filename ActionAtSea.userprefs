@@ -1,12 +1,16 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Minimap.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkMatchmaker.cs">
     <Files>
-      <File FileName="Assets\Scripts\FillScoreBoard.cs" Line="96" Column="1" />
-      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="43" Column="2" />
-      <File FileName="Assets\Scripts\IslandDiscoveryTrigger.cs" Line="68" Column="6" />
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="40" Column="66" />
-      <File FileName="Assets\Scripts\Minimap.cs" Line="236" Column="45" />
+      <File FileName="Assets\Scripts\FillScoreBoard.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IslandDiscoveryTrigger.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="192" Column="37" />
+      <File FileName="Assets\Scripts\Minimap.cs" Line="16" Column="38" />
+      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="162" Column="26" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="126" Column="5" />
+      <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="133" Column="18" />
+      <File FileName="Assets\Scripts\Menu\EnemyScript.cs" Line="24" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

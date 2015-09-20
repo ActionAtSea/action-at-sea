@@ -7,3 +7,5 @@
 *.ilk
 *.vcxproj.user
 Library/
+obj/
+
