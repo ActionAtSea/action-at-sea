@@ -8,17 +8,7 @@ using System.Collections;
 public class FloatingHealth : MonoBehaviour 
 {
     public GameObject player;
-    private Vector3 offset = new Vector3();
-
-    /// <summary>
-    /// Initialises the script
-    /// </summary>
-    void Start()
-    {
-        offset.x = transform.localPosition.x;
-        offset.y = transform.localPosition.y;
-        offset.z = transform.localPosition.z;
-    }
+    public float height = 3.0f;
 
     /// <summary>
     /// Moves a floating health bar alongside the game object
@@ -26,8 +16,8 @@ public class FloatingHealth : MonoBehaviour
     void Update () 
     {
         transform.localPosition = new Vector3 (
-            offset.x + player.transform.localPosition.x,
-            offset.y + player.transform.localPosition.y,
-            offset.z);
+            player.transform.localPosition.x,
+            height,
+            player.transform.localPosition.z);
     }
 }

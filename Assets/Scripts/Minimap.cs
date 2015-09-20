@@ -12,7 +12,6 @@ class MapItem
     public SpriteRenderer renderer;
     public Transform parentTransform;
     public SpriteRenderer parentRenderer;
-    public float scale = 1.0f;
     public bool updatesColor = false;
 };
 
@@ -68,7 +67,7 @@ public class Minimap : MonoBehaviour
                        Color colour,
                        bool updatesColor = false)
     {
-        AddItem(itemTransform, itemRenderer, colour, true, 0, 1.0f, updatesColor);
+        AddItem(itemTransform, itemRenderer, colour, false, 0, 1.0f, updatesColor);
     }
 
     /// <summary>
@@ -77,14 +76,14 @@ public class Minimap : MonoBehaviour
     void AddItem(Transform itemTransform, 
                  SpriteRenderer itemRenderer, 
                  Color colour,
-                 bool isStatic,
+                 bool isMarker,
                  int orderOffset,
                  float scale, 
                  bool updatesColor)
     {
         MapItem item = null;
 
-        if(isStatic)
+        if(!isMarker)
         {
             m_world.Add (new MapItem ());
             item =  m_world [m_world.Count - 1];
@@ -98,7 +97,6 @@ public class Minimap : MonoBehaviour
         item.updatesColor = updatesColor;
         item.parentTransform = itemTransform;
         item.parentRenderer = itemRenderer;
-        item.scale = scale;
 
         item.item = new GameObject();
         item.item.AddComponent<SpriteRenderer>();
@@ -120,10 +118,24 @@ public class Minimap : MonoBehaviour
 
         item.renderer.color = new Color(colour.r, colour.g, colour.b, colour.a);
 
-        if(isStatic)
+        item.item.transform.localPosition = new Vector3 (
+            item.parentTransform.position.x,
+            item.parentTransform.position.z,
+            0.0f);
+
+        if(!isMarker)
         {
-            UpdateMapItem(item);
+            item.item.transform.localRotation = new Quaternion(
+                item.parentTransform.localRotation.x,
+                item.parentTransform.localRotation.y,
+                item.parentTransform.localRotation.z,
+                item.parentTransform.localRotation.w);
         }
+        
+        item.item.transform.localScale = new Vector3 (
+            item.parentTransform.localScale.x * scale,
+            item.parentTransform.localScale.y * scale,
+            item.parentTransform.localScale.z * scale);
     }
 
     /// <summary>
@@ -213,7 +225,7 @@ public class Minimap : MonoBehaviour
 
         AddItem(player.transform, 
                 marker.GetComponent<SpriteRenderer>(), 
-                colour, false, controlled ? 1 : 0,
+                colour, true, controlled ? 1 : 0,
                 m_shipMarkerSize / maxMapScale, false);
     }
 
@@ -231,19 +243,11 @@ public class Minimap : MonoBehaviour
             }
         }
 
+        item.item.transform.localRotation = Quaternion.identity;
         item.item.transform.localPosition = new Vector3 (
             item.parentTransform.position.x,
             item.parentTransform.position.z,
             0.0f);
-        
-        item.item.transform.localRotation = new Quaternion(
-            0.0f, item.parentTransform.localRotation.y,
-            0.0f, item.parentTransform.localRotation.w);
-        
-        item.item.transform.localScale = new Vector3 (
-            item.parentTransform.localScale.x * item.scale,
-            item.parentTransform.localScale.y * item.scale,
-            item.parentTransform.localScale.z * item.scale);
 
         return true;
     }

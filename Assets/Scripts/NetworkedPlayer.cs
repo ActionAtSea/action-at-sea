@@ -33,14 +33,13 @@ public class NetworkedPlayer : MonoBehaviour
 
             var placer = FindObjectOfType<PlayerPlacer>();
             PlayerPlacer.Placement place = placer.GetNewPosition(index, gameObject);
-            gameObject.transform.parent.transform.localEulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
             gameObject.tag = "Player";
             gameObject.name = m_playerID.ToString() + "(Player)";
 
-            GameObject healthbar = transform.parent.FindChild("FloatingHealthBar").gameObject;
-            healthbar.SetActive(false);
+            transform.parent.FindChild("FloatingHealthBar").gameObject.SetActive(false);
 
             m_playerColor = Utilities.HSVToRGB((uint)Random.Range(0, 360), 1.0f, 1.0f);
         }

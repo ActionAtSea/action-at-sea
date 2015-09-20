@@ -14,10 +14,7 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// </summary>
     void OnTriggerEnter(Collider other)
     {
-        if (other.transform.tag == "Player")
-        {
-            SetOwner(other.gameObject);
-        }
+        SetOwner(other.gameObject);
     }
 
     /// <summary>

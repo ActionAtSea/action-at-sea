@@ -344,6 +344,18 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         m_status = status;
         Debug.Log(status);
     }
+        
+    /// <summary>
+    /// Displays diagnostic information about the connection
+    /// </summary>
+    void OnGUI()
+    {
+        if(m_showPing)
+        {
+            GUILayout.Label("Ping: " +
+                PhotonNetwork.GetPing());
+        }
+    }
 
     /// <summary>
     /// Updates the network matchmaker
@@ -353,12 +365,6 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         if(Input.GetKeyDown(KeyCode.P))
         {
             m_showPing = !m_showPing;
-        }
-
-        if(m_showPing)
-        {
-            GUILayout.Label("Ping: " +
-                PhotonNetwork.GetPing());
         }
 
         // Attempt to reconnect when disconnected

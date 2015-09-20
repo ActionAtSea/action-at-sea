@@ -53,6 +53,8 @@ public class PlayerPlacer : MonoBehaviour
     /// </summary>
     public Placement GetNewPosition(int index, GameObject player)
     {
+        Placement place = null;
+
         if(m_spawns != null && m_spawns.Length > 0)
         {
             int playersAllowed = Utilities.GetAcceptedPlayersForLevel(Utilities.GetLoadedLevel());
@@ -61,16 +63,21 @@ public class PlayerPlacer : MonoBehaviour
                 Debug.LogError("Spawn amount does not equal number of accepted players for level");
             }
 
-            Placement place = new Placement();
+            place = new Placement();
             place.position.x = m_spawns[index].transform.position.x;
             place.position.y = m_spawns[index].transform.position.y;
             place.rotation.x = 0.0f;
             place.rotation.y = 0.0f;
             place.rotation.z = -m_spawns[index].transform.localEulerAngles.y;
-            return place;
+        }
+        else
+        {
+            place = GetRandomPosition();
         }
 
-        return GetRandomPosition();
+        // Flip the ship to be upwards
+        place.rotation.x = 90.0f;
+        return place;
     }
 
     /// <summary>
@@ -135,8 +142,8 @@ public class PlayerPlacer : MonoBehaviour
         }
 
         Placement place = new Placement();
-        place.position.x = 0.0f;//position.x;
-        place.position.z = 0.0f;//position.y;
+        place.position.x = position.x;
+        place.position.z = position.y;
         return place;
     }
 }
