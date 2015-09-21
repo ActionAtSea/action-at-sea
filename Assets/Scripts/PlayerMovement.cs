@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")
         {
-            if(PlayerPlacer.IsCloseToPlayer(other.transform.position, 30.0f))
+            if(PlayerManager.IsCloseToPlayer(other.transform.position, 30.0f))
             {
                 SoundManager.Get().PlaySound(SoundManager.SoundID.RAM);
             }

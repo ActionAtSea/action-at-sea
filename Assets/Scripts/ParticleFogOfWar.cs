@@ -37,7 +37,7 @@ public class ParticleFogOfWar : MonoBehaviour
     void Update()
     {
         m_particles.GetComponent<SphereCollider>().enabled = 
-            PlayerPlacer.IsCloseToPlayer(m_particles.transform.position, 15.0f);
+            PlayerManager.IsCloseToPlayer(m_particles.transform.position, 15.0f);
 
         if(m_fade || !m_initialised)
         {

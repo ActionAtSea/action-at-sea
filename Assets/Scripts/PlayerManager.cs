@@ -7,28 +7,20 @@ using System.Collections;
 
 public class PlayerManager : MonoBehaviour 
 {    
-    static private GameObject[] sm_enemies = null; // enemies
-    static private GameObject sm_player = null;    // Controlled player
+    private static GameObject[] m_enemies = null; // enemies
+    private static GameObject m_player = null;    // Controlled player
 
-    /// <summary>
-    /// Fills in a list of current players
-    /// </summary>
-    void Update()
-    {
-        if(sm_player == null)
-        {
-            sm_player = GameObject.FindGameObjectWithTag("Player");
-        }
-
-        sm_enemies = GameObject.FindGameObjectsWithTag("EnemyPlayer");
-    }
+    private GameObject m_gameboard = null;
+    private float m_gameboardOffset = 20.0f;
+    private float m_playerRadious = 5.0f;
+    private GameObject[] m_spawns = null;
 
     /// <summary>
     /// Finds the other players (enemies) in the game
     /// </summary>
     public static GameObject[] GetEnemies()
     {
-        return sm_enemies;
+        return m_enemies;
     }
 
     /// <summary>
@@ -37,6 +29,170 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static GameObject GetControllablePlayer()
     {
-        return sm_player;
+        return m_player;
+    }
+
+    /// <summary> 
+    /// Position/rotation/color information
+    /// </summary>
+    public class Placement
+    {
+        public Vector3 position = new Vector3();
+        public Vector3 rotation = new Vector3();
+        public Color color;
+    }
+    
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
+    void Start()
+    {
+        m_gameboard = GameObject.FindGameObjectWithTag("GameBoard");
+        if(m_gameboard == null)
+        {
+            Debug.LogError("Could not find game board");
+        }
+        
+        m_spawns = GameObject.FindGameObjectsWithTag("Spawn");
+    }
+
+    /// <summary>
+    /// Fills in a list of current players
+    /// </summary>
+    void Update()
+    {
+        if(m_player == null)
+        {
+            m_player = GameObject.FindGameObjectWithTag("Player");
+        }
+        
+        m_enemies = GameObject.FindGameObjectsWithTag("EnemyPlayer");
+    }
+    
+    /// <summary>
+    /// Utility function to determine if the given position is roughly visible to the player
+    /// </summary>
+    static public bool IsCloseToPlayer(Vector3 position, float distance)
+    {
+        var player = GetControllablePlayer();
+        if(player != null)
+        {
+            return (player.transform.position - position).magnitude <= distance;
+        }
+        return false;
+    }
+    
+    /// <summary>
+    /// Retrieves a new position on the map
+    /// </summary>
+    public Placement GetNewPosition(int index, GameObject player)
+    {
+        Placement place = null;
+        
+        if(m_spawns != null && m_spawns.Length > 0)
+        {
+            int playersAllowed = Utilities.GetAcceptedPlayersForLevel(Utilities.GetLoadedLevel());
+            if(m_spawns.Length != playersAllowed)
+            {
+                Debug.LogError("Spawn amount does not equal number of accepted players for level");
+            }
+            
+            place = new Placement();
+            place.position.x = m_spawns[index].transform.position.x;
+            place.position.y = m_spawns[index].transform.position.y;
+            place.rotation.x = 0.0f;
+            place.rotation.y = 0.0f;
+            place.rotation.z = -m_spawns[index].transform.localEulerAngles.y;
+            place.color = m_spawns[index].GetComponent<SpriteRenderer>().color;
+        }
+        else
+        {
+            place = GetRandomPosition();
+            place.color = Utilities.HSVToRGB((uint)Random.Range(0, 360), 1.0f, 1.0f);
+        }
+        
+        // Flip the ship to be upwards
+        place.rotation.x = 90.0f;
+        return place;
+    }
+    
+    /// <summary>
+    /// Retrieves a new position on the map that doesn't collide
+    /// </summary>
+    public Placement GetRandomPosition()
+    {
+        GameObject[] players = PlayerManager.GetEnemies();
+        
+        Vector2 position = new Vector2();
+        bool foundPosition = false;
+        
+        var boardBounds = m_gameboard.GetComponent<SpriteRenderer>().bounds;
+        var halfBoardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x) / 2.0f;
+        var halfBoardLength = Mathf.Abs(boardBounds.max.y - boardBounds.min.y) / 2.0f;
+        
+        while (!foundPosition) 
+        {
+            foundPosition = true;
+            position.x = Random.Range(-halfBoardWidth + m_gameboardOffset, 
+                                      halfBoardWidth - m_gameboardOffset);
+            
+            position.y = Random.Range(-halfBoardLength + m_gameboardOffset, 
+                                      halfBoardLength - m_gameboardOffset);
+            
+            
+            GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
+            if(terrain == null)
+            {
+                Debug.LogError("Could not find any terrain");
+            }
+            
+            for(int i = 0; i < terrain.Length; ++i)
+            {
+                var islandBounds = terrain[i].GetComponent<SpriteRenderer>().bounds;
+                if(position.x > islandBounds.center.x - islandBounds.extents.x &&
+                   position.x < islandBounds.center.x + islandBounds.extents.x &&
+                   position.y > islandBounds.center.y - islandBounds.extents.y &&
+                   position.y < islandBounds.center.y + islandBounds.extents.y)
+                {
+                    foundPosition = false;
+                    break;
+                }
+            }
+            
+            if(foundPosition && players != null)
+            {
+                foreach(GameObject player in players)
+                {
+                    if(player != null)
+                    {
+                        Vector2 playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
+                        Vector2 difference = position - playerPosition;
+                        if(difference.magnitude <= m_playerRadious)
+                        {
+                            foundPosition = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        Placement place = new Placement();
+        place.position.x = position.x;
+        place.position.z = position.y;
+        return place;
+    }
+
+    /// <summary>
+    /// Gets the Player Manager instance from the scene
+    /// </summary>
+    public static PlayerManager Get()
+    {
+        var obj = FindObjectOfType<PlayerManager>();
+        if(obj == null)
+        {
+            Debug.LogError("Could not find PlayerManager in scene");
+        }
+        return obj;
     }
 }

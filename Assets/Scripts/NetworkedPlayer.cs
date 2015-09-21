@@ -31,17 +31,16 @@ public class NetworkedPlayer : MonoBehaviour
             m_playerName = GameInformation.GetPlayerName();
             Debug.Log("Created Player Ship: [" + m_playerID + "] [" + index + "]");
 
-            var placer = FindObjectOfType<PlayerPlacer>();
-            PlayerPlacer.Placement place = placer.GetNewPosition(index, gameObject);
+            PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(index, gameObject);
 
+            m_playerColor = place.color;
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
             gameObject.tag = "Player";
             gameObject.name = m_playerID.ToString() + "(Player)";
 
             transform.parent.FindChild("FloatingHealthBar").gameObject.SetActive(false);
-
-            m_playerColor = Utilities.HSVToRGB((uint)Random.Range(0, 360), 1.0f, 1.0f);
+           
         }
         else
         {

@@ -117,7 +117,7 @@ public class AnimationGenerator : MonoBehaviour
     /// </summary>    
     public void PlayAnimation(Vector3 position, ID id)
     {
-        if(PlayerPlacer.IsCloseToPlayer(position, 30.0f) && StartAnimation(position, id))
+        if(PlayerManager.IsCloseToPlayer(position, 30.0f) && StartAnimation(position, id))
         {
             SoundManager.Get().PlaySound(m_animations[(int)id].effect);
         }
