@@ -9,6 +9,9 @@ using System.Collections.Generic;
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
     public float scoreValue = 20.0f;
+    public UnityEngine.UI.Image tickImage = null;
+    public UnityEngine.UI.Text ownerText = null;
+
     private IslandDiscoveryNode[] m_nodes;
     private GameObject m_owner = null;
     private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
@@ -33,8 +36,12 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         {
             Debug.LogError("No associated island sprite");
         }
+        if(m_nodes.Length == 0)
+        {
+            Debug.LogError("No associated nodes");
+        }
 
-        GetComponent<SpriteRenderer>().enabled = false;
+        GetComponent<Canvas>().enabled = false;
     }
 
     /// <summary>
@@ -49,7 +56,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
                m_nodes[i].Owner == null ||
                owner.name != m_nodes[i].Owner.name)
             {
-                if(GetComponent<SpriteRenderer>().enabled)
+                if(GetComponent<Canvas>().enabled)
                 {
                     SetCaptured(null);
                 }
@@ -72,12 +79,13 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void SetCaptured(GameObject owner)
     {
-        var renderer = GetComponent<SpriteRenderer>();
-        renderer.enabled = owner != null;
+        GetComponent<Canvas>().enabled = owner != null;
 
         if(owner != null)
         {
-            renderer.color = NetworkedPlayer.GetPlayerColor(owner);
+            ownerText.text = NetworkedPlayer.GetPlayerName(owner);
+            ownerText.color = tickImage.color;
+
             SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
 
             var player = PlayerManager.GetControllablePlayer();
@@ -88,12 +96,13 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         }
         else
         {
-            renderer.color = new Color(1.0f, 1.0f, 1.0f);
+            tickImage.color = new Color(1.0f, 1.0f, 1.0f);
+            ownerText.text = "";
         }
 
         foreach(var island in m_islands)
         {
-            island.color = renderer.color;
+            island.color = tickImage.color;
         }
 
         m_owner = owner;
