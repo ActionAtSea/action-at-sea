@@ -83,8 +83,8 @@ public class IslandDiscoveryTrigger : MonoBehaviour
 
         if(owner != null)
         {
+            tickImage.color = NetworkedPlayer.GetPlayerColor(owner);
             ownerText.text = NetworkedPlayer.GetPlayerName(owner);
-            ownerText.color = tickImage.color;
 
             SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
 

@@ -4,11 +4,14 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 public class PlayerManager : MonoBehaviour 
 {    
-    private static GameObject[] m_enemies = null; // enemies
-    private static GameObject m_player = null;    // Controlled player
+    private static GameObject sm_player = null;
+    private static Dictionary<int, GameObject> sm_playerIDs = null;
+    private static List<GameObject> sm_allplayers = null;
 
     private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
@@ -16,37 +19,13 @@ public class PlayerManager : MonoBehaviour
     private GameObject[] m_spawns = null;
 
     /// <summary>
-    /// Finds the other players (enemies) in the game
-    /// </summary>
-    public static GameObject[] GetEnemies()
-    {
-        return m_enemies;
-    }
-
-    /// <summary>
-    /// Finds the controllable player and returns
-    /// @note is possible to be null until the network has initialised
-    /// </summary>
-    public static GameObject GetControllablePlayer()
-    {
-        return m_player;
-    }
-
-    /// <summary> 
-    /// Position/rotation/color information
-    /// </summary>
-    public class Placement
-    {
-        public Vector3 position = new Vector3();
-        public Vector3 rotation = new Vector3();
-        public Color color;
-    }
-    
-    /// <summary>
-    /// Initialises the script
+    /// On start a level
     /// </summary>
     void Start()
     {
+        sm_allplayers = new List<GameObject>();
+        sm_playerIDs = new Dictionary<int, GameObject>();
+
         m_gameboard = GameObject.FindGameObjectWithTag("GameBoard");
         if(m_gameboard == null)
         {
@@ -57,16 +36,90 @@ public class PlayerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Fills in a list of current players
+    /// On leave a level
     /// </summary>
-    void Update()
+    void OnDestroy()
     {
-        if(m_player == null)
+        sm_playerIDs.Clear();
+        sm_allplayers.Clear();
+        sm_player = null;
+    }
+
+    /// <summary>
+    /// Gets all the players in the game
+    /// </summary>
+    public static List<GameObject> GetAllPlayers()
+    {
+        return sm_allplayers;
+    }
+
+    /// <summary>
+    /// Finds the controllable player and returns
+    /// @note is possible to be null until the network has initialised
+    /// </summary>
+    public static GameObject GetControllablePlayer()
+    {
+        return sm_player;
+    }
+
+    /// <summary>
+    /// Finds the player with the given ID
+    /// @note is possible to be null until the network has initialised
+    /// </summary>
+    public static GameObject GetPlayerWithID(int ID)
+    {
+        return sm_playerIDs[ID];
+    }
+
+    /// <summary>
+    /// Adds a new player to the manager
+    /// </summary>
+    public static void AddPlayer(GameObject player)
+    {
+        if(player.tag == "Player")
         {
-            m_player = GameObject.FindGameObjectWithTag("Player");
+            sm_player = player;
         }
-        
-        m_enemies = GameObject.FindGameObjectsWithTag("EnemyPlayer");
+
+        if(sm_allplayers.Exists(x => x == player))
+        {
+            sm_allplayers.Remove(player);
+        }
+        sm_allplayers.Add(player);
+
+        int id = player.GetComponent<NetworkedPlayer>().PlayerID;
+        if(sm_playerIDs.ContainsKey(id))
+        {
+            sm_playerIDs.Remove(id);
+        }
+        sm_playerIDs.Add(id, player);
+        Debug.Log("Adding ship " + id + " to manager");
+    }
+
+    /// <summary>
+    /// Removes a player to the manager
+    /// </summary>
+    public static void RemovePlayer(GameObject player)
+    {
+        if(player.tag == "Player")
+        {
+            sm_player = null;
+        }
+        sm_allplayers.Remove(player);
+
+        int id = player.GetComponent<NetworkedPlayer>().PlayerID;
+        sm_playerIDs.Remove(id);
+        Debug.Log("Removing ship " + id + " from manager");
+    }
+
+    /// <summary> 
+    /// Position/rotation/color information
+    /// </summary>
+    public class Placement
+    {
+        public Vector3 position = new Vector3();
+        public Vector3 rotation = new Vector3();
+        public Color color;
     }
     
     /// <summary>
@@ -121,7 +174,7 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public Placement GetRandomPosition()
     {
-        GameObject[] players = PlayerManager.GetEnemies();
+        List<GameObject> players = GetAllPlayers();
         
         Vector2 position = new Vector2();
         bool foundPosition = false;

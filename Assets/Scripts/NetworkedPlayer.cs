@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NetworkedPlayer : MonoBehaviour 
 {    
@@ -16,7 +17,6 @@ public class NetworkedPlayer : MonoBehaviour
     private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_healthLevel = -1.0f;
-    private bool m_connected = false;
     public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
 
     /// <summary>
@@ -29,10 +29,8 @@ public class NetworkedPlayer : MonoBehaviour
             int index = NetworkMatchmaker.Get().GetPlayerIndex();
             m_playerID = NetworkMatchmaker.Get().GetPlayerID();
             m_playerName = GameInformation.GetPlayerName();
-            Debug.Log("Created Player Ship: [" + m_playerID + "] [" + index + "]");
 
             PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(index, gameObject);
-
             m_playerColor = place.color;
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
@@ -40,21 +38,27 @@ public class NetworkedPlayer : MonoBehaviour
             gameObject.name = m_playerID.ToString() + "(Player)";
 
             transform.parent.FindChild("FloatingHealthBar").gameObject.SetActive(false);
-           
+
+            PlayerManager.AddPlayer(gameObject);
+
+            Debug.Log("Created Player Ship: [" + m_playerID + "] [" + index + "]");
         }
         else
         {
             Debug.Log("Created Enemy Ship");
         }
 
+        // This is required as ships are initially 
+        // created in the lobby until enough players are found
         DontDestroyOnLoad(gameObject.transform.parent);
     }
 
     /// <summary>
-    /// On destroy
+    /// On destroy called for both client and non-client controlled
     /// </summary>
     void OnDestroy()
     {
+        PlayerManager.RemovePlayer(gameObject);
         Debug.Log("Destroying ship: " + name);
 
         // Will be null if leaving game
@@ -84,7 +88,7 @@ public class NetworkedPlayer : MonoBehaviour
 
         if (!photonView.isMine)
         {
-            if(m_connected)
+            if(m_playerID != -1)
             {
                 transform.position = Vector3.Lerp(
                     transform.position, m_correctPlayerPos, Time.deltaTime * 5);
@@ -113,8 +117,6 @@ public class NetworkedPlayer : MonoBehaviour
         if (stream.isWriting)
         {
             // We own this player: send the others our data
-            m_connected = true;
-            stream.SendNext(m_connected);
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(m_healthLevel);
@@ -128,12 +130,18 @@ public class NetworkedPlayer : MonoBehaviour
         else
         {
             // Network player, receive data
-            m_connected = (bool)stream.ReceiveNext();
             m_correctPlayerPos = (Vector3)stream.ReceiveNext();
             m_correctPlayerRot = (Quaternion)stream.ReceiveNext();
             m_healthLevel = (float)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
-            m_playerID = (int)stream.ReceiveNext();
+
+            int playerID = (int)stream.ReceiveNext();
+            if(m_playerID == -1 && playerID != -1)
+            {
+                m_playerID = playerID;
+                PlayerManager.AddPlayer(gameObject);
+            }
+
             m_playerScore = (int)stream.ReceiveNext();
             name = m_playerID.ToString();
             m_playerColor.r = (float)stream.ReceiveNext();

@@ -124,6 +124,7 @@
      <Compile Include="Assets\Scripts\GUI\GUIPlayerName.cs" />
      <Compile Include="Assets\Scripts\GameInformation.cs" />
      <Compile Include="Assets\Scripts\GameOverScript.cs" />
+     <Compile Include="Assets\Scripts\GameSyncher.cs" />
      <Compile Include="Assets\Scripts\Health.cs" />
      <Compile Include="Assets\Scripts\IslandDiscoveryNode.cs" />
      <Compile Include="Assets\Scripts\IslandDiscoveryTrigger.cs" />

@@ -18,8 +18,9 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
     GameObject m_player = null;                /// Current client player instantiated
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
-    bool m_showPing = false;                   /// Whether to display the ping
-    string m_status = "";                      /// Status description of the network connection
+    bool m_showDiagnostics = false;            /// Whether to display diagnostics for the network
+    string m_networkStatus = "";               /// Public description of the network connection
+    string m_networkDiagnostic = "";           /// Diagnostic description of the network connection
 
     /// <summary>
     /// Initialises the matchmaker
@@ -44,7 +45,15 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public string GetNetworkStatus()
     {
-        return m_status;
+        return m_networkStatus;
+    }
+
+    /// <summary>
+    /// Gets the networked time synched with the server
+    /// </summary>
+    public double GetTime()
+    {
+        return PhotonNetwork.time;
     }
 
     /// <summary>
@@ -159,7 +168,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public override void OnJoinedLobby()
     {
-        Debug.Log("Joined Lobby");
+        SetDiagnostic("Joined Lobby");
 
         PhotonNetwork.JoinRandomRoom(null, 
             (byte)Utilities.GetAcceptedPlayersForLevel(m_levelJoined));
@@ -170,7 +179,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public override void OnLeftLobby()
     {
-        Debug.Log("Left Lobby");
+        SetDiagnostic("Left Lobby");
     }
 
     /// <summary>
@@ -257,6 +266,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if(IsInRoom() && !Utilities.IsOpenLeveL(m_levelJoined))
         {
+            SetDiagnostic("Closing Level");
             PhotonNetwork.room.open = false;
         }
     }
@@ -319,7 +329,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if(m_player != null)
         {
-            SetStatus("Destroying player");
+            SetDiagnostic("Destroying player");
             PhotonNetwork.Destroy(m_player);
             m_player = null;
         }
@@ -330,30 +340,44 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void CreatePlayer()
     {
-        SetStatus("Creating player");
+        SetDiagnostic("Creating player");
 
         m_player = PhotonNetwork.Instantiate(
             "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
+
+        PhotonNetwork.Instantiate(
+            "GameSyncher", Vector3.zero, Quaternion.identity, 0);
     }
 
     /// <summary>
     /// Sets the network status and logs a debug message
     /// </summary>
-    void SetStatus(string status)
+    void SetStatus(string text)
     {
-        m_status = status;
-        Debug.Log(status);
+        m_networkStatus = text;
+        SetDiagnostic(text);
+    }
+
+    /// <summary>
+    /// Sets the network diagnostic status and logs a debug message
+    /// </summary>
+    void SetDiagnostic(string text)
+    {
+        m_networkDiagnostic = text;
+        Debug.Log(text);
     }
         
     /// <summary>
-    /// Displays diagnostic information about the connection
+    /// Displays diagnostic information about the network
     /// </summary>
     void OnGUI()
     {
-        if(m_showPing)
+        if(m_showDiagnostics)
         {
-            GUILayout.Label("Ping: " +
-                PhotonNetwork.GetPing());
+            GUILayout.Label(
+                "Status: " + m_networkDiagnostic +
+                "\nPing: " + PhotonNetwork.GetPing() +
+                "\nTime: " + PhotonNetwork.time);
         }
     }
 
@@ -362,9 +386,9 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.P))
+        if(Input.GetKeyDown(KeyCode.F1))
         {
-            m_showPing = !m_showPing;
+            m_showDiagnostics = !m_showDiagnostics;
         }
 
         // Attempt to reconnect when disconnected

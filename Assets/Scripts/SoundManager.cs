@@ -107,8 +107,8 @@ public class SoundManager : MonoBehaviour
             CreateSound(SoundID.EXPLODE, explodeSound, 5, "Explode");
             CreateSound(SoundID.FIRE, fireSound, 20, "Fire");
             CreateSound(SoundID.HIT, hitSound, 20, "Hit");
-            CreateSound(SoundID.ISLAND_FIND, islandFind, 2, "IslandFind");
-            CreateSound(SoundID.ISLAND_NODE, islandNode, 2, "IslandNode");
+            CreateSound(SoundID.ISLAND_FIND, islandFind, 3, "IslandFind");
+            CreateSound(SoundID.ISLAND_NODE, islandNode, 3, "IslandNode");
             CreateSound(SoundID.RAM, ramSound, 5, "Ram");
             CreateSound(SoundID.SPLASH, splashSound, 20, "Splash");
             CreateSound(SoundID.BUTTON_CLICK, buttonClick, 1, "Button");
