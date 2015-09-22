@@ -16,6 +16,10 @@ public class GameSyncher : MonoBehaviour
     /// </summary>
     void Start()
     {
+        // This is required as ships are initially 
+        // created in the lobby until enough players are found
+        DontDestroyOnLoad(gameObject);
+
         m_nodes = new List<IslandDiscoveryNode>();
         GameObject[] nodes = GameObject.FindGameObjectsWithTag("IslandNode");
 

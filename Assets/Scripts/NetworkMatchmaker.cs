@@ -17,6 +17,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Current level the player has joined
     DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
     GameObject m_player = null;                /// Current client player instantiated
+    GameObject m_syncher = null;               /// Current client game syncher instantiated
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
     bool m_showDiagnostics = false;            /// Whether to display diagnostics for the network
     string m_networkStatus = "";               /// Public description of the network connection
@@ -329,9 +330,11 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if(m_player != null)
         {
-            SetDiagnostic("Destroying player");
+            SetDiagnostic("Destroying client player");
             PhotonNetwork.Destroy(m_player);
+            PhotonNetwork.Destroy(m_syncher);
             m_player = null;
+            m_syncher = null;
         }
     }
 
@@ -340,12 +343,12 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void CreatePlayer()
     {
-        SetDiagnostic("Creating player");
+        SetDiagnostic("Creating client player");
 
         m_player = PhotonNetwork.Instantiate(
             "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
 
-        PhotonNetwork.Instantiate(
+        m_syncher = PhotonNetwork.Instantiate(
             "GameSyncher", Vector3.zero, Quaternion.identity, 0);
     }
 
