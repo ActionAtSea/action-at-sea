@@ -10,8 +10,8 @@ public class Cannon : MonoBehaviour
     public PhotonView photonView = null;
     public bool rightSideCannon = true;  // Determines which side the cannon is on the ship.
 
-    private Vector3 m_firePosition = new Vector3();
-    private Quaternion m_fireRotation = new Quaternion();
+    private Vector3 m_firePosition = new Vector3(); //holds position of the cannon when it last fired.
+    private Quaternion m_fireRotation = new Quaternion();   //holds the rotation of the cannon when it last fired.
     private bool m_hasFired = false;
     private bool m_shouldFire = false;
     private float m_swivelRangeDegrees = 45.0f;  // The range that the cannons can swivel.

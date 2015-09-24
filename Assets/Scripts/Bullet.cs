@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     private float m_initialVelocity = 30.0f;
     private int m_owner = -1;               // Player that shot the bullet
     private float m_damage = 10.0f;         // Percentage of health removed when damage is inflicted.
+    private Rigidbody body = null;
 
     /// <summary>
     /// Initialises the bullet
@@ -18,6 +19,7 @@ public class Bullet : MonoBehaviour
     {
         //Bullet heads down the global x-axis with this on
         //GetComponent<Rigidbody>().velocity = transform.forward * m_initialVelocity; 
+        body = GetComponent<Rigidbody>();
     }
 
     /// <summary>
@@ -73,6 +75,7 @@ public class Bullet : MonoBehaviour
 
             AnimationGenerator.Get().PlayAnimation(
                 gameObject.transform.position, AnimationGenerator.ID.HIT);
+            ResetBulletVelocity();
         }
     }
 
@@ -84,9 +87,26 @@ public class Bullet : MonoBehaviour
         if(gameObject.activeSelf)
         {
             gameObject.SetActive(false);
+            ResetBulletVelocity();
 
             AnimationGenerator.Get().PlayAnimation(
                 gameObject.transform.position, AnimationGenerator.ID.SPLASH);
+        }
+    }
+
+    /* Resets the velocity and forces associated with the bullet's rigidbody.*/
+    private void ResetBulletVelocity()
+    {
+        if (body != null)
+        {
+            gameObject.transform.localPosition = Vector3.zero;
+            gameObject.transform.localRotation = Quaternion.identity;
+            body.velocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
+        }
+        else
+        {
+            Debug.LogError("Bullet's rigidbody not found.");
         }
     }
 }

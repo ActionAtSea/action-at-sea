@@ -10,7 +10,7 @@ public class BulletFireScript : MonoBehaviour
 {
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);
 
-    private float m_bulletSpeed = 200.0f;
+    private float m_bulletSpeed = 350.0f;
     private Vector2 m_firingDirection;
 
     /// <summary>

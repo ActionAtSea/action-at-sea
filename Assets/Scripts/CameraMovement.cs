@@ -7,7 +7,7 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour 
 {
-    private float m_dragAmount = 1.0f;
+    private float m_dragAmount = 0.3f;
     private bool m_useCameraDrag = true;
     private Vector3 m_velocity = Vector3.zero;
     private Vector3 m_fixedPosition;

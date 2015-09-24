@@ -123,6 +123,7 @@
      <Compile Include="Assets\Scripts\GUI\GUINetworkStatus.cs" />
      <Compile Include="Assets\Scripts\GUI\GUIPlayerName.cs" />
      <Compile Include="Assets\Scripts\GameInformation.cs" />
+     <Compile Include="Assets\Scripts\GameModeManager.cs" />
      <Compile Include="Assets\Scripts\GameOverScript.cs" />
      <Compile Include="Assets\Scripts\GameSyncher.cs" />
      <Compile Include="Assets\Scripts\Health.cs" />
