@@ -16,7 +16,8 @@ public class Bullet : MonoBehaviour
     /// </summary>
     void Start () 
     {
-        GetComponent<Rigidbody>().velocity = transform.forward * m_initialVelocity; 
+        //Bullet heads down the global x-axis with this on
+        //GetComponent<Rigidbody>().velocity = transform.forward * m_initialVelocity; 
     }
 
     /// <summary>
@@ -24,7 +25,8 @@ public class Bullet : MonoBehaviour
     /// </summary>
     void Update() 
     {
-        GetComponent<Rigidbody>().AddForce(transform.forward * m_initialVelocity);
+        //Bullets head down the global x-axis with this on
+        //GetComponent<Rigidbody>().AddForce(transform.forward * m_initialVelocity);
     }
 
     /// <summary>

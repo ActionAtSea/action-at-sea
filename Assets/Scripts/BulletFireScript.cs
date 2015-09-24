@@ -48,7 +48,7 @@ public class BulletFireScript : MonoBehaviour
         obj.SetActive(true);
         obj.GetComponent<Bullet>().Owner = owner;
 
-        Vector2 bulletVelocity = transform.right * m_bulletSpeed;
+        Vector3 bulletVelocity = this.transform.right * m_bulletSpeed;
         obj.GetComponent<Rigidbody>().AddForce(bulletVelocity);
 
         if(PlayerManager.IsCloseToPlayer(obj.transform.position, 30.0f))
