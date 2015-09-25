@@ -134,6 +134,21 @@ public class PlayerManager : MonoBehaviour
         }
         return false;
     }
+
+    /// <summary>
+    /// Utility function to determine if the given position is roughly visible to the player
+    /// </summary>
+    static public bool IsCloseToPlayer(float x, float z, float distance)
+    {
+        var player = GetControllablePlayer();
+        if(player != null)
+        {
+            float xToPlayer = x - player.transform.position.x;
+            float zToPlayer = z - player.transform.position.z;
+            return ((xToPlayer * xToPlayer) + (zToPlayer * zToPlayer)) <= distance * distance;
+        }
+        return false;
+    }
     
     /// <summary>
     /// Retrieves a new position on the map

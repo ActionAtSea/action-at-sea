@@ -31,8 +31,8 @@ public class FogOfWar : MonoBehaviour
     private int m_textureSize = 0;              /// Dimensions of the fog tile texture
     private FogTile m_minimapTile = null;       /// Single tile for the minimap
     private const int m_minimapSize = 128;      /// Dimensions of the minimap tile texture
-    private float m_minimapMinReveal = 0.0f;    /// Minimum radius around the player fog is revealed on the minimap
-    private float m_minimapMaxReveal = 0.0f;    /// Maximum radius around the player fog is revealed on the minimap
+    private float m_minimapMinReveal = 6.0f;    /// Minimum radius around the player fog is revealed on the minimap
+    private float m_minimapMaxReveal = 8.0f;    /// Maximum radius around the player fog is revealed on the minimap
     private Vector2 m_minimapWorldScale;        /// Size of the minimap tile in world space
 
     /// <summary>
@@ -164,9 +164,6 @@ public class FogOfWar : MonoBehaviour
 
         m_minimapTile.Fog.transform.localRotation =
             Quaternion.identity;
-
-        m_minimapMaxReveal = m_maxRevealRadius;
-        m_minimapMinReveal = (m_maxRevealRadius + m_minRevealRadius) / 2.0f;
 
         m_minimapTile.Renderer.enabled = false;
         m_minimapTile.Fog.tag = "MinimapFog";

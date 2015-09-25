@@ -7,66 +7,81 @@ using System.Collections;
 
 public class ParticleFogOfWar : MonoBehaviour 
 {    
-    private ParticleSystem m_particles;
-    private bool m_fade = false;
-    public Color m_colour;
-    private bool m_initialised = false;
+    private Color m_colour = new Color(0.33f, 0.52f, 0.61f);  /// Colour of the particles
+    private float m_radius = 8.0f;                            /// Bounding radius for collision
+    private ParticleSystem m_particles = null;                /// Particle System component
+    private ParticleSystemRenderer m_renderer = null;         /// Controls the particle rendering
+    private bool m_fade = false;                              /// Whether the system is fading out
+    private bool m_static = false;                            /// Whether can interact with the player
+    private bool m_initialised = false;                       /// Whether the particles have been initialised
 
     /// <summary>
-    /// Initialises the particle effect
+    /// Initialises the particle fog of war script
     /// </summary>
     void Start () 
     {
         m_particles = GetComponent<ParticleSystem>();
+        m_renderer = m_particles.GetComponent<ParticleSystemRenderer>();
     }
 
     /// <summary>
-    /// On collision with the player
+    /// Sets whether this particle system is static and cannot be interacted with
     /// </summary>
-    void OnTriggerEnter(Collider other)
+    public bool IsStatic
     {
-        if (other.gameObject.tag == "Player")
-        {
-            m_fade = true;
-        }
+        set { m_static = value; }
     }
 
     /// <summary>
-    /// Enables/disables collision detection
+    /// Determines if the player is within the radius of the particle system
+    /// Will stop the system once all particles are fully transparent
     /// </summary>
     void Update()
     {
-        m_particles.GetComponent<SphereCollider>().enabled = 
-            PlayerManager.IsCloseToPlayer(m_particles.transform.position, 15.0f);
-
         if(m_fade || !m_initialised)
         {
-            if(m_initialised)
-            {
-                m_colour.r -= Time.deltaTime * 0.3f;
-                m_colour.g -= Time.deltaTime * 0.3f;
-                m_colour.b -= Time.deltaTime * 0.3f;
-                m_colour.a -= Time.deltaTime * 0.7f;
-            }
-
-            m_initialised = true;
-
             if(m_colour.a <= 0.0f)
             {
-                m_particles.gameObject.SetActive(false);
+                gameObject.SetActive(false);
             }
             else
             {
-                ParticleSystem.Particle[] particles = new ParticleSystem.Particle[m_particles.particleCount];
+                ParticleSystem.Particle[] particles = 
+                    new ParticleSystem.Particle[m_particles.particleCount];
+                
                 m_particles.GetParticles(particles);
 
-                for(int i = 0; i < particles.Length; ++i)
+                if(m_initialised)
                 {
-                    particles[i].size -= Time.deltaTime * 2.0f;
-                    particles[i].color = m_colour;
+                    float colorFadeAmount = Time.deltaTime * 0.3f;
+                    float alphaFadeAmount = Time.deltaTime * 0.7f;
+
+                    m_colour.r -= colorFadeAmount;
+                    m_colour.g -= colorFadeAmount;
+                    m_colour.b -= colorFadeAmount;
+                    m_colour.a -= alphaFadeAmount;
                 }
 
+                float sizeReduceAmount = m_initialised ? 
+                    Time.deltaTime * 2.0f : 1.0f;
+                
+                for(int i = 0; i < particles.Length; ++i)
+                {
+                    particles[i].size -= sizeReduceAmount;
+                    particles[i].color = m_colour;
+                }
+                
                 m_particles.SetParticles(particles, m_particles.particleCount);
+                m_initialised = true;
+            }
+        }
+        else if(!m_static && m_renderer.isVisible)
+        {
+            var player = PlayerManager.GetControllablePlayer();
+            if(player != null)
+            {
+                m_fade = PlayerManager.IsCloseToPlayer(
+                    transform.position.x, transform.position.z, m_radius);
             }
         }
     }
