@@ -24,10 +24,12 @@ public class Crosshair : MonoBehaviour
     /// </summary>
     void Update()
     {
+        var canvasTransform = parentCanvas.GetComponent<RectTransform>();
+
         Cursor.visible = !shouldHide;
         transform.localPosition = new Vector3(
-            Input.mousePosition.x - parentCanvas.GetComponent<RectTransform>().sizeDelta.x / 2,
-            Input.mousePosition.y - parentCanvas.GetComponent<RectTransform>().sizeDelta.y / 2,
+            Input.mousePosition.x - canvasTransform.sizeDelta.x / 2,
+            Input.mousePosition.y - canvasTransform.sizeDelta.y / 2,
             0.0f);
     }
 

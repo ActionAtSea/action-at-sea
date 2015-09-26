@@ -22,7 +22,7 @@ public class BulletImpact : MonoBehaviour
     /// </summary>
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Bullet")
+        if (other.gameObject.CompareTag("Bullet"))
         {
             var bullet = other.gameObject.GetComponent<Bullet>();
 

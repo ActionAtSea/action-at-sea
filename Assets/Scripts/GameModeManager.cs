@@ -2,21 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameModeManager : MonoBehaviour {
-
-
-
-    private List<IslandDiscoveryTrigger> islandList = new List<IslandDiscoveryTrigger>(); // Holds all islands within a level.
+public class GameModeManager : MonoBehaviour
+{
     private IslandDiscoveryTrigger[] m_islandList;
 
-	// Use this for initialization
+    /// <summary>
+    /// Initialises the game mode manager
+    /// </summary>  
 	void Start () 
     {
         m_islandList = FindObjectsOfType<IslandDiscoveryTrigger>();
 	}
-	
-	// Update is called once per frame
-	void Update () 
+
+    /// <summary>
+    /// Updates the game mode manager
+    /// </summary>  
+    void Update () 
     {
 	
 	}

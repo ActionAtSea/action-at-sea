@@ -10,6 +10,15 @@ public class PlayerMovement : MonoBehaviour
     private float m_forwardSpeed = 80.0f;
     private float m_rotationSpeed = 100.0f;
     private Vector3 m_forwardForce = new Vector3();
+    private Rigidbody m_rigidBody = null;
+
+    /// <summary>
+    /// Initialises the script
+    /// </summary>
+    void Start()
+    {
+        m_rigidBody = GetComponent<Rigidbody>();
+    }
 
     /// <summary>
     /// Updates the player movement
@@ -18,23 +27,21 @@ public class PlayerMovement : MonoBehaviour
     {
         if(NetworkedPlayer.IsControllable(gameObject))
         {
-            var rb = GetComponent<Rigidbody>();
-
             if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))
             {
                 m_forwardForce.x = transform.up.x * m_forwardSpeed;
                 m_forwardForce.z = transform.up.z * m_forwardSpeed;
-                rb.AddForce(m_forwardForce, ForceMode.Impulse);
+                m_rigidBody.AddForce(m_forwardForce, ForceMode.Impulse);
             }
 
             if (Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.LeftArrow))
             {
-                rb.AddTorque(0.0f, -m_rotationSpeed, 0.0f, ForceMode.Impulse);
+                m_rigidBody.AddTorque(0.0f, -m_rotationSpeed, 0.0f, ForceMode.Impulse);
             }
 
             if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.RightArrow))
             {
-                rb.AddTorque(0.0f, m_rotationSpeed, -0.0f, ForceMode.Impulse);
+                m_rigidBody.AddTorque(0.0f, m_rotationSpeed, -0.0f, ForceMode.Impulse);
             }
         }
     }
@@ -44,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" || other.gameObject.tag == "EnemyPlayer")
+        if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("EnemyPlayer"))
         {
             if(PlayerManager.IsCloseToPlayer(other.transform.position, 30.0f))
             {

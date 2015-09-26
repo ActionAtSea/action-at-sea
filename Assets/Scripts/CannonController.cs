@@ -109,7 +109,7 @@ public class CannonController : MonoBehaviour
             angle -= 360.0f;
         }
         m_mouseCursorAngle = angle;
-        Debug.Log(angle);
+        //Debug.Log(angle);
     }
 
     /// <summary>

@@ -76,7 +76,7 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static void AddPlayer(GameObject player)
     {
-        if(player.tag == "Player")
+        if(player.CompareTag("Player"))
         {
             sm_player = player;
         }
@@ -101,7 +101,7 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static void RemovePlayer(GameObject player)
     {
-        if(player.tag == "Player")
+        if(player.CompareTag("Player"))
         {
             sm_player = null;
         }
@@ -219,8 +219,8 @@ public class PlayerManager : MonoBehaviour
                 var islandBounds = terrain[i].GetComponent<SpriteRenderer>().bounds;
                 if(position.x > islandBounds.center.x - islandBounds.extents.x &&
                    position.x < islandBounds.center.x + islandBounds.extents.x &&
-                   position.y > islandBounds.center.y - islandBounds.extents.y &&
-                   position.y < islandBounds.center.y + islandBounds.extents.y)
+                   position.y > islandBounds.center.z - islandBounds.extents.z &&
+                   position.y < islandBounds.center.z + islandBounds.extents.z)
                 {
                     foundPosition = false;
                     break;

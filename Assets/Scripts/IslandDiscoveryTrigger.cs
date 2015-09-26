@@ -26,7 +26,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         var islands = transform.parent.GetComponentsInChildren<SpriteRenderer>();
         foreach(var island in islands)
         {
-            if(island.tag == "Island")
+            if(island.CompareTag("Island"))
             {
                 m_islands.Add(island);
             }
