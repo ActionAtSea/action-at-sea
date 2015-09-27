@@ -51,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("EnemyPlayer"))
+        if (PlayerManager.IsPlayer(other.gameObject))
         {
             if(PlayerManager.IsCloseToPlayer(other.transform.position, 30.0f))
             {

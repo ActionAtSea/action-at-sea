@@ -91,11 +91,19 @@ public class PlayerManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Determines whether the given game object is a player
+    /// </summary>
+    public static bool IsControllablePlayer(GameObject obj)
+    {
+        return obj.CompareTag("Player");
+    }
+
+    /// <summary>
     /// Adds a new player to the manager
     /// </summary>
     public static void AddPlayer(GameObject player)
     {
-        if(player.CompareTag("Player"))
+        if(IsControllablePlayer(player))
         {
             sm_player = player;
         }

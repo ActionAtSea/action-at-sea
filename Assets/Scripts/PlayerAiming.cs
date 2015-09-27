@@ -7,7 +7,6 @@ using System.Collections;
 
 public class PlayerAiming : MonoBehaviour
 {
-    private Vector3 m_mousePos;
     private CannonController m_controller;
 
     /// <summary>
@@ -15,7 +14,6 @@ public class PlayerAiming : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         m_controller = GetComponentInChildren<CannonController>();
     }
 
@@ -26,7 +24,6 @@ public class PlayerAiming : MonoBehaviour
     {
         if (NetworkedPlayer.IsControllable(gameObject))
         {
-
             Vector3 pos = Input.mousePosition;
             Ray mouseRay = Camera.main.ScreenPointToRay(pos);
             Plane playerPlane = new Plane(Vector3.up, transform.position);
@@ -38,7 +35,6 @@ public class PlayerAiming : MonoBehaviour
             pos.z = Camera.main.transform.position.z;
             toCastPoint.Normalize();
 
-            m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             m_controller.AimWeapon(castPoint);
             //Debug.Log(castPoint);
 

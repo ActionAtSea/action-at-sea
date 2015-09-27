@@ -15,7 +15,7 @@ public class RepairDock : MonoBehaviour
     /// </summary>
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (PlayerManager.IsControllablePlayer(other.gameObject))
         {
             var health = other.gameObject.GetComponent<Health>();
             if (health.HealthLevel < health.HealthMax)

@@ -126,10 +126,8 @@ public class Minimap : MonoBehaviour
         if(!isMarker)
         {
             item.item.transform.localRotation = new Quaternion(
-                item.parentTransform.localRotation.x,
-                item.parentTransform.localRotation.y,
-                item.parentTransform.localRotation.z,
-                item.parentTransform.localRotation.w);
+                0.0f, item.parentTransform.localRotation.y,
+                0.0f, item.parentTransform.localRotation.w);
         }
         
         item.item.transform.localScale = new Vector3 (
