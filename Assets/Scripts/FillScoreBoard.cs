@@ -46,8 +46,9 @@ public class FillScoreBoard : MonoBehaviour
     /// </summary>
     void AddText(GameObject obj)
     {
+        var frontText = obj.transform.GetChild(0);
         m_scoreBack.Add(obj.GetComponent<UnityEngine.UI.Text>());
-        m_scoreFront.Add(obj.transform.FindChild("Front").GetComponent<UnityEngine.UI.Text>());
+        m_scoreFront.Add(frontText.GetComponent<UnityEngine.UI.Text>());
     }
 
     /// <summary>

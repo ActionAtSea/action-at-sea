@@ -59,16 +59,19 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// <summary>
     /// Sets the owner of this node
     /// </summary>
-    public void SetOwner(GameObject owner)
+    private void SetOwner(GameObject owner)
     {
-        if(m_owner == null || (owner != null && m_owner.name != owner.name))
+        if(owner != null && PlayerManager.IsPlayer(owner))
         {
-            GetComponent<SpriteRenderer>().color = NetworkedPlayer.GetPlayerColor(owner);
-            SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
+            if(m_owner == null || m_owner.name != owner.name)
+            {
+                GetComponent<SpriteRenderer>().color = NetworkedPlayer.GetPlayerColor(owner);
+                SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
 
-            m_owner = owner;
-            m_ownerID = NetworkedPlayer.GetPlayerID(owner);
-            m_timestamp = NetworkMatchmaker.Get().GetTime();
+                m_owner = owner;
+                m_ownerID = NetworkedPlayer.GetPlayerID(owner);
+                m_timestamp = NetworkMatchmaker.Get().GetTime();
+            }
         }
     }
 

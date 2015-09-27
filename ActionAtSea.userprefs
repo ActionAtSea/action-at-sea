@@ -1,8 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameSyncher.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\IslandDiscoveryTrigger.cs">
     <Files>
-      <File FileName="Assets\Scripts\GameSyncher.cs" Line="12" Column="41" />
+      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="76" Column="6" />
+      <File FileName="Assets\Scripts\IslandDiscoveryTrigger.cs" Line="81" Column="39" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="26" Column="6" />
+      <File FileName="Assets\Scripts\PlayerManager.cs" Line="87" Column="32" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

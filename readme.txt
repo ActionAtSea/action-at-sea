@@ -3,7 +3,7 @@ TO DO LIST:
 =====================================================================================
 
 
-- Tweak firing/movement for player
+- Game flow/win conditions
 - Convert cannons/dock to 3D
 - Add 3D water
 - Add player list/friend selection to lobby

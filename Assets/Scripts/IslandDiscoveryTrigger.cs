@@ -68,8 +68,9 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         {
             SetCaptured(null);
         }
-        else if(m_owner == null || m_owner != null && m_owner.name != owner.name)
+        else if(m_owner == null || m_owner.name != owner.name)
         {
+            Debug.Log("Setting new owner of island: " + owner.name);
             SetCaptured(owner);
         }
     }

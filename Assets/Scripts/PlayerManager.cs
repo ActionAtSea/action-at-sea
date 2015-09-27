@@ -18,6 +18,16 @@ public class PlayerManager : MonoBehaviour
     private float m_playerRadious = 5.0f;
     private GameObject[] m_spawns = null;
 
+    /// <summary> 
+    /// Position/rotation/color information
+    /// </summary>
+    public class Placement
+    {
+        public Vector3 position = new Vector3();
+        public Vector3 rotation = new Vector3();
+        public Color color;
+    }
+
     /// <summary>
     /// On start a level
     /// </summary>
@@ -72,6 +82,15 @@ public class PlayerManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Determines whether the given game object is a player
+    /// </summary>
+    public static bool IsPlayer(GameObject obj)
+    {
+        return obj.CompareTag("Player") ||
+            obj.CompareTag("EnemyPlayer");
+    }
+
+    /// <summary>
     /// Adds a new player to the manager
     /// </summary>
     public static void AddPlayer(GameObject player)
@@ -110,16 +129,6 @@ public class PlayerManager : MonoBehaviour
         int id = player.GetComponent<NetworkedPlayer>().PlayerID;
         sm_playerIDs.Remove(id);
         Debug.Log("Removing ship " + id + " from manager");
-    }
-
-    /// <summary> 
-    /// Position/rotation/color information
-    /// </summary>
-    public class Placement
-    {
-        public Vector3 position = new Vector3();
-        public Vector3 rotation = new Vector3();
-        public Color color;
     }
     
     /// <summary>
