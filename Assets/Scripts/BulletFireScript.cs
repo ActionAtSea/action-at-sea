@@ -10,7 +10,8 @@ public class BulletFireScript : MonoBehaviour
 {
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);
 
-    private float m_bulletSpeed = 350.0f;
+    private float m_bulletSpeedUp = 50.0f;
+    private float m_bulletSpeedForward = 500.0f;
     private Vector2 m_firingDirection;
 
     /// <summary>
@@ -48,7 +49,10 @@ public class BulletFireScript : MonoBehaviour
         obj.SetActive(true);
         obj.GetComponent<Bullet>().Owner = owner;
 
-        Vector3 bulletVelocity = this.transform.right * m_bulletSpeed;
+        Vector3 bulletVelocity = 
+            transform.right * m_bulletSpeedForward + 
+            Vector3.up * m_bulletSpeedUp;
+
         obj.GetComponent<Rigidbody>().AddForce(bulletVelocity);
 
         if(PlayerManager.IsCloseToPlayer(obj.transform.position, 30.0f))

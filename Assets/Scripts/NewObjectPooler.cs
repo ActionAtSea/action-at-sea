@@ -42,6 +42,7 @@ public class NewObjectPooler : MonoBehaviour
         if (m_willGrow)
         {
             GameObject obj = (GameObject)Instantiate(pooledObject);
+            obj.transform.parent = transform;
             m_pooledObjects.Add(obj);
             return obj;
         }

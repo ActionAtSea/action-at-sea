@@ -44,22 +44,6 @@ public class Bullet : MonoBehaviour
     }
 
     /// <summary>
-    /// Called on bullet enable
-    /// </summary>
-    void OnEnable()
-    {
-        Invoke("DestroyOnSplash", 2f);
-    }
-
-    /// <summary>
-    /// Called on bullet disable
-    /// </summary>
-    void OnDisable()
-    {
-        CancelInvoke();
-    }
-
-    /// <summary>
     /// Destroys the bullet on impact
     /// </summary>
     public void DestroyOnImpact()
@@ -70,6 +54,7 @@ public class Bullet : MonoBehaviour
 
             AnimationGenerator.Get().PlayAnimation(
                 gameObject.transform.position, AnimationGenerator.ID.HIT);
+
             ResetBulletVelocity();
         }
     }
@@ -82,10 +67,11 @@ public class Bullet : MonoBehaviour
         if(gameObject.activeSelf)
         {
             gameObject.SetActive(false);
-            ResetBulletVelocity();
 
             AnimationGenerator.Get().PlayAnimation(
                 gameObject.transform.position, AnimationGenerator.ID.SPLASH);
+
+            ResetBulletVelocity();
         }
     }
 

@@ -14,6 +14,7 @@ public class AnimationGenerator : MonoBehaviour
     public GameObject explosionAnimation;
     public GameObject hitAnimation;
     public GameObject splashAnimation;
+    public float animationHeight = 1.0f;
 
     /// <summary>
     /// Available animations to play 
@@ -137,7 +138,9 @@ public class AnimationGenerator : MonoBehaviour
             if(!instances[i].activeSelf)
             {
                 instances[i].SetActive(true);
-                instances[i].transform.position = position;
+                instances[i].transform.position = 
+                    new Vector3(position.x, animationHeight, position.z);
+
                 instances[i].GetComponent<Animator>().enabled = true;
                 return true;
             }
