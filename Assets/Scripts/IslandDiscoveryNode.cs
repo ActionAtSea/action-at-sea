@@ -41,11 +41,23 @@ public class IslandDiscoveryNode : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the owner of this node only if the timestamp is less
+    /// The server time can overflow to 0. Adjust the timestamp if needed
+    /// Assumes the server time never goes negative
+    /// </summary>
+    public void ResetTimestamp(double time)
+    {
+        if(m_owner != null && m_timestamp > time)
+        {
+            m_timestamp -= double.MaxValue; 
+        }
+    }
+
+    /// <summary>
+    /// Sets the owner of this node only if the timestamp is greater
     /// </summary>
     public void TrySetOwner(int ownerID, double timestamp)
     {
-        if(ownerID != -1 && (m_owner == null || timestamp < m_timestamp))
+        if(ownerID != -1 && (m_owner == null || timestamp > m_timestamp))
         {
             GameObject player = PlayerManager.GetPlayerWithID(ownerID);
             if(player != null)
@@ -70,7 +82,7 @@ public class IslandDiscoveryNode : MonoBehaviour
 
                 m_owner = owner;
                 m_ownerID = NetworkedPlayer.GetPlayerID(owner);
-                m_timestamp = NetworkMatchmaker.Get().GetTime();
+                m_timestamp = GameModeManager.Get().GetTimePassed();
             }
         }
     }

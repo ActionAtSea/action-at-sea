@@ -1,20 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\AnimationGenerator.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkMatchmaker.cs">
     <Files>
-      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\IslandDiscoveryTrigger.cs" Line="99" Column="10" />
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\RepairDock.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Minimap.cs" Line="253" Column="1" />
-      <File FileName="Assets\Scripts\BulletFireScript.cs" Line="22" Column="35" />
-      <File FileName="Assets\Scripts\BulletImpact.cs" Line="17" Column="57" />
-      <File FileName="Assets\Scripts\Bullet.cs" Line="45" Column="5" />
-      <File FileName="Assets\Scripts\NewObjectPooler.cs" Line="46" Column="38" />
-      <File FileName="Assets\Scripts\BulletImpactGround.cs" Line="14" Column="6" />
-      <File FileName="Assets\Scripts\AnimationGenerator.cs" Line="142" Column="21" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="47" Column="66" />
+      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="17" Column="26" />
+      <File FileName="Assets\Scripts\GameSyncher.cs" Line="24" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

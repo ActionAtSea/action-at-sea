@@ -5,6 +5,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class PlayerAiming : MonoBehaviour
 {
     private CannonController m_controller;
@@ -22,6 +27,11 @@ public class PlayerAiming : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(!Utilities.IsLevelLoaded())
+        {
+            return;
+        }
+
         if (NetworkedPlayer.IsControllable(gameObject))
         {
             Vector3 pos = Input.mousePosition;

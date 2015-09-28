@@ -5,6 +5,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class Cannon : MonoBehaviour
 {
     public PhotonView photonView = null;
@@ -34,6 +39,11 @@ public class Cannon : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(!Utilities.IsLevelLoaded())
+        {
+            return;
+        }
+
         if (NetworkedPlayer.IsControllable(gameObject))
         {
             m_firePosition = m_fireScript.FirePosition();

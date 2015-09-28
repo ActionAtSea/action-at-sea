@@ -6,6 +6,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class CannonController : MonoBehaviour
 {
     private float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
@@ -23,7 +28,7 @@ public class CannonController : MonoBehaviour
 
     /// <summary>
     /// Initialises the script
-    /// </summary>    
+    /// </summary>
     void Start()
     {
         m_currentReloadTimeRight = m_reloadTime;
@@ -67,6 +72,10 @@ public class CannonController : MonoBehaviour
     /// </summary>  
     void Update()
     {
+        if(!Utilities.IsLevelLoaded())
+        {
+            return;
+        }
 
         if (NetworkedPlayer.IsControllable(gameObject))
         {

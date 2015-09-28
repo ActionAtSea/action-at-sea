@@ -9,7 +9,8 @@ using System.Collections.Generic;
 public class GameModeManager : MonoBehaviour
 {
     private IslandDiscoveryTrigger[] m_islandList;
-    private float m_timePassed = 0; /// Time passed since starting level
+    private float m_networkedTimePassed = 0.0f;
+    private float m_timePassed = 0;
 
     /// <summary>
     /// Initialises the game mode manager
@@ -25,10 +26,22 @@ public class GameModeManager : MonoBehaviour
 
     /// <summary>
     /// Set the time passed since starting the level
+    /// Set by all clients connected to the room
+    /// Use the smallest time passed a client has
     /// </summary>  
     public void TrySetTimePassed(float timePassed)
     {
-        m_timePassed = Mathf.Min(timePassed, m_timePassed);
+        m_networkedTimePassed = Mathf.Max(
+            timePassed, m_networkedTimePassed);
+    }
+
+    /// <summary>
+    /// Late update required as time passed is set during update()
+    /// </summary>
+    void LateUpdate()
+    {
+        m_timePassed = m_networkedTimePassed;
+        m_networkedTimePassed = 0.0f;
     }
 
     /// <summary>
@@ -38,14 +51,6 @@ public class GameModeManager : MonoBehaviour
     {
         return m_timePassed;
     }
-
-    /// <summary>
-    /// Updates the game mode manager
-    /// </summary>  
-    void Update() 
-    {
-        m_timePassed = Mathf.Max(m_timePassed, Time.time);
-	}
 
     /// <summary>
     /// Gets the Game Mode Manager instance from the scene

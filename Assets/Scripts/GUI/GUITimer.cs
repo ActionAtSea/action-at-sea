@@ -17,11 +17,11 @@ public class GUITimer : MonoBehaviour
     void Start()
     {
         // Don't show the time if an open level
-        if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        //if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
-            gameObject.SetActive(false);
+        //    gameObject.SetActive(false);
         }
-        else
+        //else
         {
             m_manager = GameModeManager.Get();
             m_backText = GetComponent<UnityEngine.UI.Text>();
@@ -30,9 +30,9 @@ public class GUITimer : MonoBehaviour
     }
 
     /// <summary>
-    /// Late update is required as time passed is being generated during Update()
+    /// Updates the timer text
     /// </summary>
-    void LateUpdate()
+    void Update()
     {
         float timePassed = m_manager.GetTimePassed();
         int seconds = (int)timePassed;

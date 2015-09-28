@@ -328,12 +328,17 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public void DestroyPlayer()
     {
+        SetDiagnostic("Destroying client player");
+
         if(m_player != null)
         {
-            SetDiagnostic("Destroying client player");
             PhotonNetwork.Destroy(m_player);
-            PhotonNetwork.Destroy(m_syncher);
             m_player = null;
+        }
+
+        if(m_syncher != null)
+        {
+            PhotonNetwork.Destroy(m_syncher);
             m_syncher = null;
         }
     }

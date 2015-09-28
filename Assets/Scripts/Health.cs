@@ -5,10 +5,15 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class Health : MonoBehaviour
 {
     private GameObject m_healthBar = null;
-    private GameObject m_floatingHealthBarText = null;
+    private UnityEngine.UI.Text m_floatingHealthBarText = null;
     private float m_minBarWidth = 0.0f;
     private float m_maxBarWidth = 0.0f;
     private float m_barHeight = 0.0f;
@@ -16,15 +21,23 @@ public class Health : MonoBehaviour
     private float m_healthMin = 0.0f;
     private float m_healthLevel = 100.0f;
     private bool m_isAlive = true;
+    private bool m_initialised = false;
 
     /// <summary>
     /// Initialises the health
-    /// Health bar can be either a floating or GUI bar
+    /// Code not relying on the world goes here
     /// </summary>
     void Start()
     {
         m_healthLevel = m_healthMax;
+    }
 
+    /// <summary>
+    /// Initialises the health
+    /// Code relying on the world goes here
+    /// </summary>
+    void Initialise()
+    {
         if(NetworkedPlayer.IsControllable(gameObject))
         {
             m_healthBar = GameObject.FindWithTag("PlayerHealth");
@@ -35,7 +48,8 @@ public class Health : MonoBehaviour
             var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
             var canvas = floatingHealthBar.FindChild("Canvas").transform;
             m_healthBar = canvas.FindChild("HealthBar").gameObject;
-            m_floatingHealthBarText = canvas.FindChild("PlayerName").gameObject;
+            var playerName = canvas.FindChild("PlayerName").gameObject;
+            m_floatingHealthBarText = playerName.GetComponent<UnityEngine.UI.Text>();
         }
 
         if(m_healthBar == null)
@@ -45,6 +59,7 @@ public class Health : MonoBehaviour
 
         m_maxBarWidth = m_healthBar.GetComponent<RectTransform>().rect.width;
         m_barHeight = m_healthBar.GetComponent<RectTransform>().rect.height;
+        m_initialised = true;
     }
 
     /// <summary>
@@ -64,9 +79,19 @@ public class Health : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(!Utilities.IsLevelLoaded())
+        {
+            return;
+        }
+        
+        if(!m_initialised)
+        {
+            Initialise();
+        }
+
         if(m_floatingHealthBarText != null)
         {
-            m_floatingHealthBarText.GetComponent<UnityEngine.UI.Text>().text = 
+            m_floatingHealthBarText.text = 
                 NetworkedPlayer.GetPlayerName(gameObject);
         }
 

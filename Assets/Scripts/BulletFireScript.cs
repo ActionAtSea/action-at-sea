@@ -6,6 +6,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class BulletFireScript : MonoBehaviour
 {
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);

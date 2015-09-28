@@ -5,6 +5,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class PlayerMovement : MonoBehaviour 
 {
     private float m_forwardSpeed = 80.0f;
@@ -14,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     /// Initialises the script
-    /// </summary>
+    /// </summary>    
     void Start()
     {
         m_rigidBody = GetComponent<Rigidbody>();
@@ -25,6 +30,11 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void FixedUpdate() 
     {
+        if(!Utilities.IsLevelLoaded())
+        {
+            return;
+        }
+
         if(NetworkedPlayer.IsControllable(gameObject))
         {
             if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))

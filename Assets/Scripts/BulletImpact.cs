@@ -5,6 +5,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class BulletImpact : MonoBehaviour 
 {
     private Health m_parentHealth = null; // Health bar for the parent of this script

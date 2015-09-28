@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 public class PlayerManager : MonoBehaviour 
-{    
+{
     private static GameObject sm_player = null;
     private static Dictionary<int, GameObject> sm_playerIDs = null;
     private static List<GameObject> sm_allplayers = null;
@@ -78,6 +78,12 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static GameObject GetPlayerWithID(int ID)
     {
+        if(!sm_playerIDs.ContainsKey(ID))
+        {
+            // This can sometimes be null if the player hasn't been networked yet
+            Debug.Log("Could not find player with ID " + ID);
+            return null;
+        }
         return sm_playerIDs[ID];
     }
 
@@ -115,6 +121,11 @@ public class PlayerManager : MonoBehaviour
         sm_allplayers.Add(player);
 
         int id = player.GetComponent<NetworkedPlayer>().PlayerID;
+        if(id == -1)
+        {
+            Debug.LogError("Adding ship with invalid ID");
+        }
+
         if(sm_playerIDs.ContainsKey(id))
         {
             sm_playerIDs.Remove(id);

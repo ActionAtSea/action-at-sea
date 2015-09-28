@@ -6,39 +6,55 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// NOTE: Instantiated by Photon Networking
+/// Start() cannot include any code relying on the world/level as 
+/// this object can be instantiated before the level is created
+/// </summary>
 public class NetworkedPlayer : MonoBehaviour 
 {    
     public PhotonView photonView = null;
-
-    private bool m_addedToMap = false;
+    public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
     private string m_playerName = "unnamed";
     private int m_playerID = -1;
     private int m_playerScore = 0;
     private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_healthLevel = -1.0f;
-    public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
+    private bool m_initialised = false;
 
     /// <summary>
-    /// On instantiate of the player by photon networking
+    /// Initilaises the networked player
+    /// Code not relying on the world goes here
     /// </summary>
     void Start()
     {
+        gameObject.tag = "EnemyPlayer"; // Initial tag before initialising
+        DontDestroyOnLoad(transform.parent); // Photon networking controls this
+    }
+
+    /// <summary>
+    /// Initilaises the networked player
+    /// Code relying on the world goes here
+    /// </summary>
+    void Initialise()
+    {
         if(photonView.isMine)
         {
-            int index = NetworkMatchmaker.Get().GetPlayerIndex();
             m_playerID = NetworkMatchmaker.Get().GetPlayerID();
             m_playerName = GameInformation.GetPlayerName();
+            gameObject.tag = "Player";
+            gameObject.name = m_playerID.ToString() + "(Player)";
 
+            // Find a new place/colour for the player
+            int index = NetworkMatchmaker.Get().GetPlayerIndex();
+            //m_playerName = index.ToString();
             PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(index, gameObject);
             m_playerColor = place.color;
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
-            gameObject.tag = "Player";
-            gameObject.name = m_playerID.ToString() + "(Player)";
 
-            transform.parent.FindChild("FloatingHealthBar").gameObject.SetActive(false);
-
+            // Player manager relies on PlayerID being set (enemies are added later)
             PlayerManager.AddPlayer(gameObject);
 
             Debug.Log("Created Player Ship: [" + m_playerID + "] [" + index + "]");
@@ -48,9 +64,13 @@ public class NetworkedPlayer : MonoBehaviour
             Debug.Log("Created Enemy Ship");
         }
 
-        // This is required as ships are initially 
-        // created in the lobby until enough players are found
-        DontDestroyOnLoad(gameObject.transform.parent);
+        var floatingHealth = transform.parent.FindChild("FloatingHealthBar").gameObject;
+        floatingHealth.SetActive(!photonView.isMine);
+        
+        var minimap = GameObject.FindObjectOfType<Minimap>();
+        minimap.AddPlayer(gameObject, photonView.isMine);
+
+        m_initialised = true;
     }
 
     /// <summary>
@@ -75,15 +95,14 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(!m_addedToMap)
+        if(!Utilities.IsLevelLoaded())
         {
-            // Minimap isn't initialised straight away for non-client players
-            var minimap = GameObject.FindObjectOfType<Minimap>();
-            if(minimap != null)
-            {
-                minimap.AddPlayer(gameObject, photonView.isMine);
-                m_addedToMap = true;
-            }
+            return;
+        }
+        
+        if(!m_initialised)
+        {
+            Initialise();
         }
 
         if (!photonView.isMine)
@@ -111,6 +130,7 @@ public class NetworkedPlayer : MonoBehaviour
 
     /// <summary>
     /// Serialises player data to each player
+    /// Note not called if only player in the room
     /// </summary>
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -136,14 +156,14 @@ public class NetworkedPlayer : MonoBehaviour
             m_playerName = (string)stream.ReceiveNext();
 
             int playerID = (int)stream.ReceiveNext();
-            if(m_playerID == -1 && playerID != -1)
+            if(m_initialised && m_playerID == -1 && playerID != -1)
             {
                 m_playerID = playerID;
+                name = m_playerID.ToString();
                 PlayerManager.AddPlayer(gameObject);
             }
 
             m_playerScore = (int)stream.ReceiveNext();
-            name = m_playerID.ToString();
             m_playerColor.r = (float)stream.ReceiveNext();
             m_playerColor.g = (float)stream.ReceiveNext();
             m_playerColor.b = (float)stream.ReceiveNext();

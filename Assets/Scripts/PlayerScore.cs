@@ -16,7 +16,8 @@ public class PlayerScore : MonoBehaviour
     private float m_roundedScore;
 
     /// <summary>
-    /// Initialises the script
+    /// NOTE: Cannot include any code relying on the level as 
+    /// this object can be instantiated before the level is created
     /// </summary>
     void Start()
     {
