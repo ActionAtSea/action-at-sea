@@ -19,7 +19,6 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     GameObject m_player = null;                /// Current client player instantiated
     GameObject m_syncher = null;               /// Current client game syncher instantiated
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
-    bool m_showDiagnostics = false;            /// Whether to display diagnostics for the network
     string m_networkStatus = "";               /// Public description of the network connection
     string m_networkDiagnostic = "";           /// Diagnostic description of the network connection
 
@@ -376,27 +375,16 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
         
     /// <summary>
-    /// Displays diagnostic information about the network
-    /// </summary>
-    void OnGUI()
-    {
-        if(m_showDiagnostics)
-        {
-            GUILayout.Label(
-                "Status: " + m_networkDiagnostic +
-                "\nPing: " + PhotonNetwork.GetPing() +
-                "\nTime: " + PhotonNetwork.time);
-        }
-    }
-
-    /// <summary>
     /// Updates the network matchmaker
     /// </summary>
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F1))
+        if(Diagnostics.IsActive())
         {
-            m_showDiagnostics = !m_showDiagnostics;
+            Diagnostics.Add("Network Status", m_networkDiagnostic);
+            Diagnostics.Add("Disconnect Status", m_disconnectCause);
+            Diagnostics.Add("Ping", PhotonNetwork.GetPing());
+            Diagnostics.Add("Server Time", PhotonNetwork.time);
         }
 
         // Attempt to reconnect when disconnected

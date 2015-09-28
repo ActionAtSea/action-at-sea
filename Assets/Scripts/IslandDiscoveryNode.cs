@@ -86,7 +86,7 @@ public class IslandDiscoveryNode : MonoBehaviour
             }
         }
     }
-
+   
     /// <summary>
     /// Gets the owner of this node
     /// </summary>

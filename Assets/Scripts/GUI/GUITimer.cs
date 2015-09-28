@@ -17,11 +17,11 @@ public class GUITimer : MonoBehaviour
     void Start()
     {
         // Don't show the time if an open level
-        //if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
-        //    gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
-        //else
+        else
         {
             m_manager = GameModeManager.Get();
             m_backText = GetComponent<UnityEngine.UI.Text>();

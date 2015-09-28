@@ -68,8 +68,14 @@ public class GameSyncher : MonoBehaviour
         }
         m_gameManager.TrySetTimePassed(m_timePassed);
 
-        // The server time can overflow and reset to 0
-        // Anything that relies on timestamps from this needs to adjust
+        AdjustTimestamps();
+    }
+
+    /// <summary>
+    /// Adjusts the timestamps if the server time overflows and reset to 9
+    /// </summary>
+    void AdjustTimestamps()
+    {
         double serverTime = m_network.GetTime();
         if(serverTime < m_previousServerTime)
         {

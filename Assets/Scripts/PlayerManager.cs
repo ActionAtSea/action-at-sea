@@ -46,6 +46,17 @@ public class PlayerManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Updates the manager
+    /// </summary>
+    void Update()
+    {
+        if(Diagnostics.IsActive())
+        {
+            Diagnostics.Add("Player Manager Count", sm_allplayers.Count);
+        }
+    }
+
+    /// <summary>
     /// On leave a level
     /// </summary>
     void OnDestroy()

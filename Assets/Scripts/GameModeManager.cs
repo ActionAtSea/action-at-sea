@@ -36,6 +36,14 @@ public class GameModeManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Updates the script
+    /// </summary>
+    void Update()
+    {
+        RenderDiagnostics();
+    }
+
+    /// <summary>
     /// Late update required as time passed is set during update()
     /// </summary>
     void LateUpdate()
@@ -63,5 +71,20 @@ public class GameModeManager : MonoBehaviour
             Debug.LogError("Could not find GameModeManager in scene");
         }
         return gameManager;
+    }
+
+    /// <summary>
+    /// Renders Diagnostics
+    /// </summary>
+    void RenderDiagnostics()
+    {
+        if(Diagnostics.IsActive())
+        {
+            var level = Utilities.GetLoadedLevel();
+            Diagnostics.Add("Time", m_timePassed);
+            Diagnostics.Add("Level", level);
+            Diagnostics.Add("Max Players", Utilities.GetAcceptedPlayersForLevel(level));
+            Diagnostics.Add("Is Open Level", Utilities.IsOpenLeveL(level));
+        }
     }
 }
