@@ -138,15 +138,14 @@ public class NetworkedPlayer : MonoBehaviour
     {
         if(Diagnostics.IsActive())
         {
-            string player = "Player" + m_playerID + " ";
-            Diagnostics.Add(player + "Name", m_playerName);
-            Diagnostics.Add(player + "Score", m_playerScore);
-            Diagnostics.Add(player + "Health", m_healthLevel);
-
             if(photonView.isMine)
             {
-                Diagnostics.Add(player + "Index", m_playerIndex);
+                Diagnostics.Add("Player Client Index", m_playerIndex);
             }
+
+            Diagnostics.Add("Player" + m_playerID, m_playerName + 
+                " [" + m_playerScore + "] [" + m_healthLevel + "] " +
+                (photonView.isMine ? "[Client] " : "[Enemy] "));
         }
     }
 

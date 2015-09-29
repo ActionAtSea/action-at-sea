@@ -3,12 +3,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
+using System.Text;
 using System.Collections;
 
 public class Diagnostics : MonoBehaviour 
 {
     private static bool sm_renderDiagnostics = false;
-    private static string sm_diagnostics = "";
+    private static StringBuilder sm_diagnostics = new StringBuilder();
     private static string sm_rendererdText = "";
 
     /// <summary>
@@ -24,7 +25,7 @@ public class Diagnostics : MonoBehaviour
     /// </summary>
     static public void Add(string category, string text)
     {
-        sm_diagnostics += category + ": " + text + "\n";
+        sm_diagnostics.Append(" " + category + ": " + text + "\n");
     }
 
     /// <summary>
@@ -51,8 +52,12 @@ public class Diagnostics : MonoBehaviour
     /// </summary>
     void LateUpdate()
     {
-        sm_rendererdText = string.Copy(sm_diagnostics);
-        sm_diagnostics = "";
+        if(sm_renderDiagnostics)
+        {
+            sm_diagnostics.Remove(sm_diagnostics.Length-1, 1);
+            sm_rendererdText = sm_diagnostics.ToString();
+            sm_diagnostics = new StringBuilder();
+        }
     }
 
     /// <summary>
@@ -62,7 +67,7 @@ public class Diagnostics : MonoBehaviour
     {
         if(sm_renderDiagnostics)
         {
-            GUILayout.Label(sm_rendererdText);
+            GUILayout.TextArea(sm_rendererdText);
         }
     }
 }
