@@ -18,7 +18,7 @@ public class GameOverScript : MonoBehaviour
     public bool forceLoseGame = false;
     public bool forceWinGame = false;
     public Color mouseOverColor = new Color(1.0f, 1.0f, 1.0f);
-    public Color disabledColour = new Color(0.4f, 0.4f, 0.4f);
+    public Color m_disabledColour;
 
     private Color m_textColour;
     private NetworkMatchmaker m_network = null;
@@ -40,7 +40,13 @@ public class GameOverScript : MonoBehaviour
         {
             Debug.LogError("Colours do not match for game over text");
         }
+
         m_textColour = replayGameText.color;
+        m_disabledColour = new Color(
+            m_textColour.r * 0.25f,
+            m_textColour.g * 0.25f,
+            m_textColour.b * 0.25f);
+
     }
 
     /// <summary>
@@ -121,8 +127,6 @@ public class GameOverScript : MonoBehaviour
         m_levelCompleteTimePassed += Time.deltaTime;
         if(m_levelCompleteTimePassed >= 1.0f)
         {
-            replayGameText.color = disabledColour;
-     
             var player = PlayerManager.GetControllablePlayer();
             List<GameObject> players = PlayerManager.GetAllPlayersByScore();
 
@@ -208,7 +212,7 @@ public class GameOverScript : MonoBehaviour
         {
             m_isGameOver = true;
             replayGameText.enabled = true;
-            replayGameText.color = m_textColour;
+            replayGameText.color = m_levelComplete ? m_disabledColour : m_textColour;
             toMenuText.enabled = true;
             toMenuText.color = m_textColour;
             gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = m_hasLostGame;
