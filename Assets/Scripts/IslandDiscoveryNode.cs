@@ -11,12 +11,15 @@ public class IslandDiscoveryNode : MonoBehaviour
     private int m_ownerID = 0;
     private GameObject m_owner = null;
     private double m_timestamp = 0.0;
+    private SpriteRenderer m_renderer = null;
+    private Color m_unownedColor = new Color(1.0f, 1.0f, 1.0f);
 
     /// <summary>
     /// Initialises the node
     /// </summary>
     void Start()
     {
+        m_renderer = GetComponent<SpriteRenderer>();
     }
 
     /// <summary>
@@ -24,9 +27,9 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(m_owner == null && m_ownerID != -1)
+        if(m_owner == null)
         {
-            GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f);
+            m_renderer.color = m_unownedColor;
             m_ownerID = -1;
             m_timestamp = 0.0;
         }
@@ -73,16 +76,18 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// </summary>
     private void SetOwner(GameObject owner)
     {
-        if(owner != null && PlayerManager.IsPlayer(owner))
+        if(owner != null && PlayerManager.IsPlayer(owner) && NetworkedPlayer.IsInitialised(owner))
         {
             if(m_owner == null || m_owner.name != owner.name)
             {
-                GetComponent<SpriteRenderer>().color = NetworkedPlayer.GetPlayerColor(owner);
+                m_renderer.color = NetworkedPlayer.GetPlayerColor(owner);
                 SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
 
                 m_owner = owner;
                 m_ownerID = NetworkedPlayer.GetPlayerID(owner);
                 m_timestamp = GameModeManager.Get().GetTimePassed();
+
+                Debug.Log(m_owner.name + " grabbed a new node");
             }
         }
     }

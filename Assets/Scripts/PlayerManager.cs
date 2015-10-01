@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -72,6 +73,15 @@ public class PlayerManager : MonoBehaviour
     public static List<GameObject> GetAllPlayers()
     {
         return sm_allplayers;
+    }
+
+    /// <summary>
+    /// Gets all the players in the game ordered by score
+    /// </summary>
+    public static List<GameObject> GetAllPlayersByScore()
+    {
+        return GetAllPlayers().OrderByDescending(
+            x => NetworkedPlayer.GetPlayerScore(x)).ToList();
     }
 
     /// <summary>

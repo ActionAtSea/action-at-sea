@@ -61,7 +61,7 @@ public class FillScoreBoard : MonoBehaviour
             obj.gameObject.SetActive(false);
         }
 
-        List<GameObject> players = PlayerManager.GetAllPlayers().OrderByDescending(x => NetworkedPlayer.GetPlayerScore(x)).ToList();
+        List<GameObject> players = PlayerManager.GetAllPlayersByScore();
         int maxShown = Mathf.Min(players.Count, Utilities.GetMaxLevels());
 
         for(int i = 0; i < maxShown; ++i)

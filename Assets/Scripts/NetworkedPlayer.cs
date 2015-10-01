@@ -236,6 +236,22 @@ public class NetworkedPlayer : MonoBehaviour
     }
 
     /// <summary>
+    /// Whether the player is fully initialised
+    /// </summary>
+    public bool IsInitialised()
+    {
+        return m_initialised;
+    }
+
+    /// <summary>
+    /// Whether the player is fully initialised
+    /// </summary>
+    static public bool IsInitialised(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().IsInitialised();
+    }
+
+    /// <summary>
     /// Returns the player Name
     /// </summary>
     static public string GetPlayerName(GameObject obj)

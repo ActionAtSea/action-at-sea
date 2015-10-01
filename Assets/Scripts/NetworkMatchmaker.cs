@@ -400,9 +400,9 @@ public class NetworkMatchmaker : Photon.PunBehaviour
 
         // Creates a new player when the level has fully initialised
         if(m_player == null && 
+           IsConnectedToLevel() &&
            Utilities.IsLevelLoaded() && 
-           !Utilities.IsGameOver() && 
-           IsConnectedToLevel())
+           !Utilities.IsGameOver())
         {
             CreatePlayer();
         }

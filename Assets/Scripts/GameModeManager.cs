@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,6 +12,19 @@ public class GameModeManager : MonoBehaviour
     private IslandDiscoveryTrigger[] m_islandList;
     private float m_networkedTimePassed = 0.0f;
     private float m_timePassed = 0;
+    private GUITimer m_countdownTimer = null;
+    private Action m_onCountDownFinish = null;
+    private GameState m_state;
+
+    /// <summary>
+    /// States that non-open game levels can be in
+    /// </summary>  
+    enum GameState
+    {
+        OPEN_FIGHT,
+        CAPTURE_ISLANDS,
+        COUNTDOWN
+    }
 
     /// <summary>
     /// Initialises the game mode manager
@@ -22,7 +36,27 @@ public class GameModeManager : MonoBehaviour
         {
             Debug.LogError("Could not find island triggers for level");
         }
-	}
+
+        if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        {
+            m_state = GameState.OPEN_FIGHT;
+        }
+        else
+        {
+            m_state = GameState.CAPTURE_ISLANDS;
+        }
+
+        m_countdownTimer = FindObjectOfType<GUITimer>();
+        if(m_countdownTimer == null)
+        {
+            Debug.LogError("Could not find GUI Count down timer");
+        }
+
+        m_onCountDownFinish = () =>
+        {
+            GameOverScript.Get().SetLevelComplete();
+        };
+    }
 
     /// <summary>
     /// Set the time passed since starting the level
@@ -40,6 +74,26 @@ public class GameModeManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(m_state == GameState.CAPTURE_ISLANDS)
+        {
+            bool allDiscovered = true;
+            for(int i = 0; i < m_islandList.Length; ++i)
+            {
+                if(!m_islandList[i].IsDiscovered())
+                {
+                    allDiscovered = false;
+                    break;
+                }
+            }
+
+            if(allDiscovered)
+            {
+                const float countDownTime = 5.0f * 60.0f; // 5 minutes
+                m_state = GameState.COUNTDOWN;
+                m_countdownTimer.StartCountDown(countDownTime, m_onCountDownFinish);
+            }
+        }
+
         RenderDiagnostics();
     }
 

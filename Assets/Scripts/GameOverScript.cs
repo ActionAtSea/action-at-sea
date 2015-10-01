@@ -16,7 +16,9 @@ public class GameOverScript : MonoBehaviour
     public RectTransform replayGameButton;
     public RectTransform toMenuButton;
     public bool forceLoseGame = false;
+    public bool forceWinGame = false;
     public Color mouseOverColor = new Color(1.0f, 1.0f, 1.0f);
+    public Color disabledColour = new Color(0.4f, 0.4f, 0.4f);
 
     private Color m_textColour;
     private NetworkMatchmaker m_network = null;
@@ -24,6 +26,8 @@ public class GameOverScript : MonoBehaviour
     private bool m_hasLostGame = false;      // whether the player has lost the game
     private bool m_toMenuRequest = false;
     private bool m_toPlayRequest = false;
+    private bool m_levelComplete = false;
+    private double m_levelCompleteTimePassed = 0.0;
 
     /// <summary>
     /// Initialises the script
@@ -40,17 +44,26 @@ public class GameOverScript : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the game over logic
+    /// Sets the the current level has finished
     /// </summary>
-    void Update () 
+    public void SetLevelComplete()
     {
+        m_levelComplete = true;
+    }
+
+    /// <summary>
+    /// Logic for when in game over state
+    /// </summary>
+    void UpdateOnGameOver()
+    {
+        // If currently processing a button press request
         if(m_toMenuRequest || m_toPlayRequest)
         {
             var gameFader = FadeGame.Get();
             if(gameFader.IsFadedIn())
             {
                 gameFader.FadeOut();
-
+                
                 if(m_toMenuRequest)
                 {
                     NetworkMatchmaker.Get().LeaveGameLevel();
@@ -62,41 +75,13 @@ public class GameOverScript : MonoBehaviour
                 }
             }
         }
-        else if (m_network.IsConnectedToLevel())
+        else
         {
-            if(!m_isGameOver)
+            // Check if used has clicked on the buttons
+            // This is done here as raycasting the canvas doesn't seem to work!
+            
+            if(!m_levelComplete)
             {
-                var player = PlayerManager.GetControllablePlayer();
-                bool isGameOver = false;
-
-                if(Input.GetKeyDown (KeyCode.Escape) || forceLoseGame || 
-                   (player != null && !player.GetComponent<Health>().IsAlive))
-                {
-                    m_hasLostGame = true;
-                    isGameOver = true;
-                }
-
-                if (isGameOver) 
-                {
-                    var soundManager = SoundManager.Get();
-                    soundManager.StopMusic(SoundManager.MusicID.GAME_TRACK);
-                    soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
-                    soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
-
-                    if(player != null)
-                    {
-                        player.GetComponent<Health>().SetHealthLevel(0.0f);
-                    }
-
-                    NetworkMatchmaker.Get().DestroyPlayer();
-                    SetGameOver(true);
-                }
-            }
-            else
-            {
-                // Check if used has clicked on the buttons
-                // This is done here as raycasting the canvas doesn't seem to work!
-               
                 if(IsOverImage(replayGameButton))
                 {
                     replayGameText.color = mouseOverColor;
@@ -110,19 +95,77 @@ public class GameOverScript : MonoBehaviour
                 {
                     replayGameText.color = m_textColour;
                 }
-
-                if(IsOverImage(toMenuButton))
+            }
+            
+            if(IsOverImage(toMenuButton))
+            {
+                toMenuText.color = mouseOverColor;
+                if(Input.GetMouseButtonDown(0))
                 {
-                    toMenuText.color = mouseOverColor;
-                    if(Input.GetMouseButtonDown(0))
-                    {
-                        Debug.Log("Clicked To Menu");
-                        GoToMenuButton();
-                    }
+                    Debug.Log("Clicked To Menu");
+                    GoToMenuButton();
                 }
-                else
+            }
+            else
+            {
+                toMenuText.color = m_textColour;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates the on level complete logic
+    /// </summary>
+    void UpdateOnLevelComplete()
+    {
+        m_levelCompleteTimePassed += Time.deltaTime;
+        if(m_levelCompleteTimePassed >= 1.0f)
+        {
+            replayGameText.color = disabledColour;
+     
+            var player = PlayerManager.GetControllablePlayer();
+            List<GameObject> players = PlayerManager.GetAllPlayersByScore();
+
+            m_hasLostGame = players.Count == 0 || player == null ||
+                NetworkedPlayer.GetPlayerID(players[0]) !=
+                    NetworkedPlayer.GetPlayerID(player);
+
+            SetGameOver(true);
+        }
+    }
+
+    /// <summary>
+    /// Updates the game over logic
+    /// </summary>
+    void Update () 
+    {
+        if(m_isGameOver)
+        {
+            UpdateOnGameOver();
+        }
+        else if(m_network.IsConnectedToLevel())
+        {
+            if(m_levelComplete)
+            {
+                UpdateOnLevelComplete();
+            }
+            else if(Input.GetKeyDown(KeyCode.Escape) || forceLoseGame)
+            {
+                m_hasLostGame = true;
+                SetGameOver(true);
+            }
+            else if(forceWinGame)
+            {
+                m_hasLostGame = false;
+                SetGameOver(true);
+            }
+            else
+            {
+                var player = PlayerManager.GetControllablePlayer();
+                if(player != null && !player.GetComponent<Health>().IsAlive)
                 {
-                    toMenuText.color = m_textColour;
+                    m_hasLostGame = true;
+                    SetGameOver(true);
                 }
             }
         }
@@ -170,6 +213,19 @@ public class GameOverScript : MonoBehaviour
             toMenuText.color = m_textColour;
             gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = m_hasLostGame;
             gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = !m_hasLostGame;
+
+            var soundManager = SoundManager.Get();
+            soundManager.StopMusic(SoundManager.MusicID.GAME_TRACK);
+            soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
+            soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
+
+            var player = PlayerManager.GetControllablePlayer();
+            if(player != null)
+            {
+                player.GetComponent<Health>().SetHealthLevel(0.0f);
+            }
+            
+            NetworkMatchmaker.Get().DestroyPlayer();
         }
     }
     

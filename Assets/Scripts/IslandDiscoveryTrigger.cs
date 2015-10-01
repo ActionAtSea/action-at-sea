@@ -12,6 +12,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     public UnityEngine.UI.Image tickImage = null;
     public UnityEngine.UI.Text ownerText = null;
 
+    private Canvas m_canvas = null;
     private IslandDiscoveryNode[] m_nodes;
     private GameObject m_owner = null;
     private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
@@ -41,7 +42,8 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             Debug.LogError("No associated nodes");
         }
 
-        GetComponent<Canvas>().enabled = false;
+        m_canvas = GetComponent<Canvas>();
+        m_canvas.enabled = false;
     }
 
     /// <summary>
@@ -56,7 +58,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
                m_nodes[i].Owner == null ||
                owner.name != m_nodes[i].Owner.name)
             {
-                if(GetComponent<Canvas>().enabled)
+                if(m_canvas.enabled)
                 {
                     SetCaptured(null);
                 }
@@ -80,7 +82,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void SetCaptured(GameObject owner)
     {
-        GetComponent<Canvas>().enabled = owner != null;
+        m_canvas.enabled = owner != null;
 
         if(owner != null)
         {
@@ -114,6 +116,6 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     public bool IsDiscovered()
     {
-        return GetComponent<SpriteRenderer>().enabled;
+        return m_canvas.enabled;
     }
 }
