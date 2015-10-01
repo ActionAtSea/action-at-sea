@@ -213,17 +213,13 @@ public class Minimap : MonoBehaviour
     /// <summary>
     /// Adds the player to the minimap
     /// </summary>
-    public void AddPlayer(GameObject player, bool controlled)
+    public void AddPlayer(GameObject player, bool controlled, Color color)
     {
         var maxMapScale = Mathf.Max(transform.localScale.x, transform.localScale.y);
 
-        var colour = controlled ?
-            new Color(0.0f, 1.0f, 0.0f, 1.0f) :
-            new Color(1.0f, 0.0f, 0.0f, 1.0f);
-
         AddItem(player.transform, 
                 marker.GetComponent<SpriteRenderer>(), 
-                colour, true, controlled ? 1 : 0,
+                color, true, controlled ? 1 : 0,
                 m_shipMarkerSize / maxMapScale, false);
     }
 

@@ -55,9 +55,7 @@ public class NetworkedPlayer : MonoBehaviour
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
 
-            // Player manager relies on PlayerID being set (enemies are added later)
-            PlayerManager.AddPlayer(gameObject);
-
+            NotifyPlayerCreation();
             Debug.Log("Created Player Ship");
         }
         else
@@ -67,11 +65,23 @@ public class NetworkedPlayer : MonoBehaviour
 
         var floatingHealth = transform.parent.FindChild("FloatingHealthBar").gameObject;
         floatingHealth.SetActive(!photonView.isMine);
-        
-        var minimap = GameObject.FindObjectOfType<Minimap>();
-        minimap.AddPlayer(gameObject, photonView.isMine);
 
         m_initialised = true;
+    }
+
+    /// <summary>
+    /// Adds the player to the minimap and notifies its created
+    /// </summary>
+    void NotifyPlayerCreation()
+    {
+        if(m_playerID == -1)
+        {
+            Debug.LogError("Player has not been created!");
+        }
+
+        var minimap = GameObject.FindObjectOfType<Minimap>();
+        minimap.AddPlayer(gameObject, photonView.isMine, m_playerColor);
+        PlayerManager.AddPlayer(gameObject);
     }
 
     /// <summary>
@@ -190,7 +200,7 @@ public class NetworkedPlayer : MonoBehaviour
                 transform.rotation = m_correctPlayerRot;
                 transform.position = m_correctPlayerPos;
 
-                PlayerManager.AddPlayer(gameObject);
+                NotifyPlayerCreation();
             }
         }
     }
