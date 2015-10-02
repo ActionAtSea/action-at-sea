@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 /// <summary>
@@ -16,9 +17,11 @@ public class GameSyncher : MonoBehaviour
     public PhotonView photonView = null;
     private GameModeManager m_gameManager = null;
     private NetworkMatchmaker m_network = null;
-    private IslandDiscoveryNode[] m_nodes;
-    private float m_timePassed = 0.0f;
+    private List<IslandDiscoveryNode> m_nodes;
+    private float m_networkedTimePassed = 0.0f;
+    private GameState m_networkedState = GameState.NONE;
     private double m_previousServerTime = 0.0;
+    private float m_startUpTime = 0.0f;
     private bool m_initialised = false;
 
     /// <summary>
@@ -36,14 +39,15 @@ public class GameSyncher : MonoBehaviour
     /// </summary>
     void Initialise()
     {
-        m_nodes = FindObjectsOfType<IslandDiscoveryNode>();
-        if(m_nodes == null || m_nodes.Length == 0)
+        m_nodes = Utilities.GetOrderedList<IslandDiscoveryNode>();
+        if(m_nodes.Count == 0)
         {
-            Debug.LogError("Could not find island nodes for level");
+            Debug.LogError("Could not find any island nodes");
         }
-        
+
         m_network = NetworkMatchmaker.Get();
         m_gameManager = GameModeManager.Get();
+        m_startUpTime = Time.time;
         m_initialised = true;
     }
 
@@ -64,9 +68,11 @@ public class GameSyncher : MonoBehaviour
 
         if(photonView.isMine)
         {
-            m_timePassed = Time.time;
+            m_networkedTimePassed = Time.time - m_startUpTime;
         }
-        m_gameManager.TrySetTimePassed(m_timePassed);
+
+        m_gameManager.TrySetTimePassed(m_networkedTimePassed);
+        m_gameManager.TrySetState(m_networkedState);
 
         AdjustTimestamps();
     }
@@ -79,7 +85,7 @@ public class GameSyncher : MonoBehaviour
         double serverTime = m_network.GetTime();
         if(serverTime < m_previousServerTime)
         {
-            for(int i = 0; i < m_nodes.Length; ++i)
+            for(int i = 0; i < m_nodes.Count; ++i)
             {
                 m_nodes[i].ResetTimestamp(serverTime);
             }
@@ -100,20 +106,22 @@ public class GameSyncher : MonoBehaviour
 
         if (stream.isWriting)
         {
-            for(int i = 0; i < m_nodes.Length; ++i)
+            for(int i = 0; i < m_nodes.Count; ++i)
             {
                 stream.SendNext(m_nodes[i].OwnerID);
                 stream.SendNext(m_nodes[i].TimeStamp);
-                stream.SendNext(m_timePassed);
+                stream.SendNext(m_networkedTimePassed);
+                stream.SendNext((int)m_gameManager.GetState());
             }
         }
         else
         {
-            for(int i = 0; i < m_nodes.Length; ++i)
+            for(int i = 0; i < m_nodes.Count; ++i)
             {
                 int ownerID = (int)stream.ReceiveNext();
                 double timestamp = (double)stream.ReceiveNext();
-                m_timePassed = (float)stream.ReceiveNext();
+                m_networkedTimePassed = (float)stream.ReceiveNext();
+                m_networkedState = (GameState)stream.ReceiveNext();
                 m_nodes[i].TrySetOwner(ownerID, timestamp);
             }
         }

@@ -18,7 +18,7 @@ public class GameOverScript : MonoBehaviour
     public bool forceLoseGame = false;
     public bool forceWinGame = false;
     public Color mouseOverColor = new Color(1.0f, 1.0f, 1.0f);
-    public Color m_disabledColour;
+    public Color disabledColour = new Color(0.73f, 0.54f, 0.35f);
 
     private Color m_textColour;
     private NetworkMatchmaker m_network = null;
@@ -27,7 +27,6 @@ public class GameOverScript : MonoBehaviour
     private bool m_toMenuRequest = false;
     private bool m_toPlayRequest = false;
     private bool m_levelComplete = false;
-    private double m_levelCompleteTimePassed = 0.0;
 
     /// <summary>
     /// Initialises the script
@@ -42,11 +41,6 @@ public class GameOverScript : MonoBehaviour
         }
 
         m_textColour = replayGameText.color;
-        m_disabledColour = new Color(
-            m_textColour.r * 0.25f,
-            m_textColour.g * 0.25f,
-            m_textColour.b * 0.25f);
-
     }
 
     /// <summary>
@@ -55,6 +49,14 @@ public class GameOverScript : MonoBehaviour
     public void SetLevelComplete()
     {
         m_levelComplete = true;
+        var player = PlayerManager.GetControllablePlayer();
+        List<GameObject> players = PlayerManager.GetAllPlayersByScore();
+        
+        m_hasLostGame = players.Count == 0 || player == null ||
+            NetworkedPlayer.GetPlayerID(players[0]) !=
+                NetworkedPlayer.GetPlayerID(player);
+        
+        SetGameOver(true);
     }
 
     /// <summary>
@@ -81,11 +83,8 @@ public class GameOverScript : MonoBehaviour
                 }
             }
         }
-        else
+        else /*Check if used has clicked/mouseover on the buttons*/
         {
-            // Check if used has clicked on the buttons
-            // This is done here as raycasting the canvas doesn't seem to work!
-            
             if(!m_levelComplete)
             {
                 if(IsOverImage(replayGameButton))
@@ -120,25 +119,6 @@ public class GameOverScript : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the on level complete logic
-    /// </summary>
-    void UpdateOnLevelComplete()
-    {
-        m_levelCompleteTimePassed += Time.deltaTime;
-        if(m_levelCompleteTimePassed >= 1.0f)
-        {
-            var player = PlayerManager.GetControllablePlayer();
-            List<GameObject> players = PlayerManager.GetAllPlayersByScore();
-
-            m_hasLostGame = players.Count == 0 || player == null ||
-                NetworkedPlayer.GetPlayerID(players[0]) !=
-                    NetworkedPlayer.GetPlayerID(player);
-
-            SetGameOver(true);
-        }
-    }
-
-    /// <summary>
     /// Updates the game over logic
     /// </summary>
     void Update () 
@@ -149,11 +129,7 @@ public class GameOverScript : MonoBehaviour
         }
         else if(m_network.IsConnectedToLevel())
         {
-            if(m_levelComplete)
-            {
-                UpdateOnLevelComplete();
-            }
-            else if(Input.GetKeyDown(KeyCode.Escape) || forceLoseGame)
+            if(Input.GetKeyDown(KeyCode.Escape) || forceLoseGame)
             {
                 m_hasLostGame = true;
                 SetGameOver(true);
@@ -212,7 +188,7 @@ public class GameOverScript : MonoBehaviour
         {
             m_isGameOver = true;
             replayGameText.enabled = true;
-            replayGameText.color = m_levelComplete ? m_disabledColour : m_textColour;
+            replayGameText.color = m_levelComplete ? disabledColour : m_textColour;
             toMenuText.enabled = true;
             toMenuText.color = m_textColour;
             gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = m_hasLostGame;
@@ -223,13 +199,15 @@ public class GameOverScript : MonoBehaviour
             soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
             soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
 
-            var player = PlayerManager.GetControllablePlayer();
-            if(player != null)
+            if(!m_levelComplete)
             {
-                player.GetComponent<Health>().SetHealthLevel(0.0f);
+                var player = PlayerManager.GetControllablePlayer();
+                if(player != null)
+                {
+                    player.GetComponent<Health>().SetHealthLevel(0.0f);
+                }
+                NetworkMatchmaker.Get().DestroyPlayer();
             }
-            
-            NetworkMatchmaker.Get().DestroyPlayer();
         }
     }
     

@@ -87,6 +87,8 @@ public class FogOfWar : MonoBehaviour
             throw new NullReferenceException(
                 "Could not find Game Board in scene");
         }
+
+        gameBoard.GetComponent<SpriteRenderer>().enabled = false;
         var boardBounds = gameBoard.GetComponent<SpriteRenderer>().bounds;
         var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
         var boardLength = Mathf.Abs(boardBounds.max.z - boardBounds.min.z);

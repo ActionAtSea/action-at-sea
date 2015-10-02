@@ -9,14 +9,15 @@ using System.Collections.Generic;
 
 public class GameModeManager : MonoBehaviour
 {
-    private IslandDiscoveryTrigger[] m_islandList;
+    private List<IslandDiscoveryTrigger> m_islandList;
     private float m_networkedTimePassed = 0.0f;
     private float m_timePassed = 0;
+    private GameState m_networkedState = GameState.NONE;
+    private GameState m_state = GameState.NONE;
     private GUITimer m_countdownTimer = null;
     private FogOfWar m_fogOfWar = null;
-    private GameState m_state;
-    private bool m_initialised = false;
 
+    private bool m_startedStage1Timer = false;
     private float m_stage1Countdown = 5.0f * 60.0f; // 5 minutes
     private float m_stage2Countdown = 10.0f * 60.0f; // 10 minutes
     private Action m_stage1CountdownFinish = null;
@@ -29,19 +30,16 @@ public class GameModeManager : MonoBehaviour
     /// </summary>  
 	void Start () 
     {
-        m_islandList = FindObjectsOfType<IslandDiscoveryTrigger>();
-        if(m_islandList == null || m_islandList.Length == 0)
+        if(!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
-            Debug.LogError("Could not find island triggers for level");
+            m_networkedState = GameState.STAGE_1;
+            m_state = GameState.STAGE_1;
         }
 
-        if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        m_islandList = Utilities.GetOrderedList<IslandDiscoveryTrigger>();
+        if(m_islandList.Count == 0)
         {
-            m_state = GameState.OPEN_FIGHT;
-        }
-        else
-        {
-            m_state = GameState.STAGE_1;
+            Debug.LogError("Could not find any islands");
         }
 
         m_fogOfWar = FindObjectOfType<FogOfWar>();
@@ -58,7 +56,7 @@ public class GameModeManager : MonoBehaviour
 
         m_stage1CountdownFinish = () =>
         {
-            SwitchToStage2();
+            SwitchToState(GameState.STAGE_2);
         };
 
         m_stage2CountdownFinish = () =>
@@ -76,6 +74,18 @@ public class GameModeManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Set by all clients connected to the room
+    /// Only accepts states further along in gameplay
+    /// </summary>  
+    public void TrySetState(GameState state)
+    {
+        if((int)state > (int)m_networkedState)
+        {
+            m_networkedState = state;
+        }
+    }
+
+    /// <summary>
     /// Set the time passed since starting the level
     /// Set by all clients connected to the room
     /// Use the smallest time passed a client has
@@ -87,13 +97,24 @@ public class GameModeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Switches to stage 2 of the gameplay
+    /// Switches to a new state
     /// </summary>
-    void SwitchToStage2()
+    void SwitchToState(GameState state)
     {
-        m_state = GameState.STAGE_2;
-        m_countdownTimer.StartCountDown(m_stage2Countdown, m_stage2CountdownFinish);
-        m_fogOfWar.HideFog();
+        if(m_state != state)
+        {
+            if(state == GameState.STAGE_2)
+            {
+                Debug.Log("Starting Stage 2");
+                m_state = GameState.STAGE_2;
+                m_countdownTimer.StartCountDown(m_stage2Countdown, m_stage2CountdownFinish);
+                m_fogOfWar.HideFog();
+            }
+            else
+            {
+                Debug.LogError("Tried to set an unsupported state: " + state.ToString());
+            }
+        }
     }
 
     /// <summary>
@@ -101,33 +122,33 @@ public class GameModeManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(!m_initialised)
+        if(m_state == GameState.STAGE_1)
         {
-            if(m_timePassed > 0.0f)
+            if(!m_startedStage1Timer)
             {
-                if(m_state == GameState.STAGE_1)
+                if(m_timePassed > 0.0f)
                 {
+                    m_startedStage1Timer = true;
                     m_countdownTimer.StartCountDown(
                         m_stage1Countdown, m_stage1CountdownFinish);
                 }
-                m_initialised = true;
             }
-        }
-        else if(m_state == GameState.STAGE_1)
-        {
-            bool allDiscovered = true;
-            for(int i = 0; i < m_islandList.Length; ++i)
+            else
             {
-                if(!m_islandList[i].IsDiscovered())
+                bool allDiscovered = true;
+                for(int i = 0; i < m_islandList.Count; ++i)
                 {
-                    allDiscovered = false;
-                    break;
+                    if(!m_islandList[i].IsDiscovered())
+                    {
+                        allDiscovered = false;
+                        break;
+                    }
                 }
-            }
 
-            if(allDiscovered)
-            {
-                SwitchToStage2();
+                if(allDiscovered)
+                {
+                    SwitchToState(GameState.STAGE_2);
+                }
             }
         }
 
@@ -135,10 +156,16 @@ public class GameModeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Late update required as time passed is set during update()
+    /// Late update required as networked time passed/state is set during update()
     /// </summary>
     void LateUpdate()
     {
+        // Player over the network has initiated the next state before the client
+        if((int)m_networkedState > (int)m_state)
+        {
+            SwitchToState(m_networkedState);
+        }
+
         m_timePassed = m_networkedTimePassed;
         m_networkedTimePassed = 0.0f;
     }
@@ -179,6 +206,7 @@ public class GameModeManager : MonoBehaviour
             Diagnostics.Add("Level", level);
             Diagnostics.Add("Max Players", Utilities.GetAcceptedPlayersForLevel(level));
             Diagnostics.Add("Is Open Level", Utilities.IsOpenLeveL(level));
+            Diagnostics.Add("Game State", m_state);
         }
     }
 }

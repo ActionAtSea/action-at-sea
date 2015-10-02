@@ -1,10 +1,12 @@
 ﻿////////////////////////////////////////////////////////////////////////////////////////
-// Action At Sea - Common.cs
+// Action At Sea - Utilities.cs
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// State of fading
@@ -30,7 +32,8 @@ public enum SceneID
     TREASURE = 5,
     LEVEL1 = 6,
     LOBBY = 7,
-    LEVEL2 = 8
+    LEVEL2 = 8,
+    LEVEL3 = 9
 }
 
 /// <summary>
@@ -41,27 +44,57 @@ public enum LevelID
     NO_LEVEL = -1,
     LEVEL1 = 0,
     LEVEL2,
+    LEVEL3,
     MAX_LEVELS
 }
 
 /// <summary>
 /// States that a level can be in
+/// Relies on incrementing during a level
 /// </summary>  
 public enum GameState
 {
-    OPEN_FIGHT,
+    NONE,
     STAGE_1,
     STAGE_2
 }
 
 class Utilities
 {
+    static string sm_defaultName = "Unnamed";
+    static string sm_playerName = sm_defaultName;
+
     /// <summary>
     /// Returns the game version
     /// </summary>
     static public string GameVersion()
     {
         return "0.1";
+    }
+
+    /// <summary>
+    /// Sets the player name
+    /// </summary>
+    static public void SetPlayerName(string name)
+    {
+        sm_playerName = name;
+    }
+
+    /// <summary>
+    /// Gets the player default name
+    /// </summary>
+    static public string GetPlayerDefaultName()
+    {
+        return sm_defaultName;
+
+    }
+
+    /// <summary>
+    /// Gets the player name
+    /// </summary>
+    static public string GetPlayerName()
+    {
+        return sm_playerName;
     }
 
     /// <summary>
@@ -86,7 +119,8 @@ class Utilities
     static public bool IsLevelLoaded()
     {
         return Application.loadedLevel == (int)SceneID.LEVEL1 ||
-               Application.loadedLevel == (int)SceneID.LEVEL2;
+               Application.loadedLevel == (int)SceneID.LEVEL2 ||
+               Application.loadedLevel == (int)SceneID.LEVEL3;
     }
 
     /// <summary>
@@ -116,6 +150,8 @@ class Utilities
             return SceneID.LEVEL1;
         case LevelID.LEVEL2:
             return SceneID.LEVEL2;
+        case LevelID.LEVEL3:
+            return SceneID.LEVEL3;
         default:
             throw new ArgumentException("Unknown level ID");
         }
@@ -132,6 +168,8 @@ class Utilities
             return LevelID.LEVEL1;
         case (int)SceneID.LEVEL2:
             return LevelID.LEVEL2;
+        case (int)SceneID.LEVEL3:
+            return LevelID.LEVEL3;         
         default:
             throw new ArgumentException("loaded scene not a level");
         }
@@ -165,9 +203,52 @@ class Utilities
             return GetMaximumPlayers();
         case LevelID.LEVEL2:
             return 2;
+        case LevelID.LEVEL3:
+            return 4;
         default:
              throw new ArgumentException("Unknown level ID");
         }
+    }
+
+    /// <summary>
+    /// Gets an ordered list of the object type
+    /// Ordering by name is important for networking
+    /// </summary>
+    static public List<GameObject> GetOrderedList(string tag)
+    {
+        return GetOrderedList<GameObject>(GameObject.FindGameObjectsWithTag(tag));
+    }
+
+    /// <summary>
+    /// Gets an ordered list of the object type
+    /// Ordering by name is important for networking
+    /// </summary>
+    static public List<T> GetOrderedList<T>() where T : UnityEngine.Object
+    {
+        return GetOrderedList<T>(GameObject.FindObjectsOfType<T>());
+    }
+
+    /// <summary>
+    /// Gets an ordered list of the object type
+    /// Ordering by name is important for networking
+    /// </summary>
+    static private List<T> GetOrderedList<T>(T[] objs) where T : UnityEngine.Object
+    {
+        List<T> orderedList = (from obj in objs 
+                               orderby obj.name ascending
+                               select obj).ToList();
+        
+        // Check to make sure all have a different name
+        HashSet<string> names = new HashSet<string>();
+        foreach(var obj in orderedList)
+        {
+            if(!names.Add(obj.name))
+            {
+                Debug.LogError(obj.name + " already exists!");
+            }
+        }
+
+        return orderedList;
     }
 
     /// <summary>

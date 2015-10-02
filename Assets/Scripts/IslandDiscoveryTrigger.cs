@@ -75,6 +75,12 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             Debug.Log("Setting new owner of island: " + owner.name);
             SetCaptured(owner);
         }
+
+        if(Diagnostics.IsActive())
+        {
+            Diagnostics.Add(name + " Owner",
+                m_owner == null ? "NONE" : m_owner.name);
+        }
     }
 
     /// <summary>

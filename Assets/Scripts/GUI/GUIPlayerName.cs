@@ -5,15 +5,38 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Used by the input field in the lobby 
+/// and by the player name in game
+/// </summary>
 public class GUIPlayerName : MonoBehaviour
 {
-    void Start () 
+    public UnityEngine.UI.Text placeholder = null;
+
+    void Start() 
     {
-        var name = GameInformation.GetPlayerName();
-        if(name == GameInformation.GetDefaultName() && Application.loadedLevel == (int)SceneID.MENU)
+        string name = Utilities.GetPlayerName();
+
+        if(Utilities.IsLevelLoaded())
         {
-            name = "Enter Name...";
+            GetComponent<UnityEngine.UI.Text>().text = name;
         }
-        GetComponent<UnityEngine.UI.Text>().text = name;
+        else if(name != Utilities.GetPlayerDefaultName())
+        {
+            GetComponent<UnityEngine.UI.Text>().text = name;
+            placeholder.text = name;
+        }
+    }
+
+    void Update()
+    {
+        if(!Utilities.IsLevelLoaded())
+        {
+            string text = GetComponent<UnityEngine.UI.Text>().text;
+            if(text.Length > 0)
+            {
+                Utilities.SetPlayerName(text);
+            }
+        }
     }
 }

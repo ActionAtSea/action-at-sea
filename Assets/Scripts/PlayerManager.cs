@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
     private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
-    private GameObject[] m_spawns = null;
+    private List<GameObject> m_spawns = null;
 
     /// <summary> 
     /// Position/rotation/color information
@@ -42,8 +42,12 @@ public class PlayerManager : MonoBehaviour
         {
             Debug.LogError("Could not find game board");
         }
-        
-        m_spawns = GameObject.FindGameObjectsWithTag("Spawn");
+
+        m_spawns = Utilities.GetOrderedList("Spawn");
+        if(!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()) && m_spawns.Count == 0)
+        {
+            Debug.LogError("Could not find any spawns");
+        }
     }
 
     /// <summary>
@@ -206,17 +210,18 @@ public class PlayerManager : MonoBehaviour
     {
         Placement place = null;
         
-        if(m_spawns != null && m_spawns.Length > 0)
+        if(m_spawns != null && m_spawns.Count > 0)
         {
             int playersAllowed = Utilities.GetAcceptedPlayersForLevel(Utilities.GetLoadedLevel());
-            if(m_spawns.Length != playersAllowed)
+            if(m_spawns.Count != playersAllowed)
             {
                 Debug.LogError("Spawn amount does not equal number of accepted players for level");
             }
-            
+
+            Debug.Log("Using spawn: " + m_spawns[index].name);
             place = new Placement();
             place.position.x = m_spawns[index].transform.position.x;
-            place.position.y = m_spawns[index].transform.position.y;
+            place.position.z = m_spawns[index].transform.position.z;
             place.rotation.x = 0.0f;
             place.rotation.y = 0.0f;
             place.rotation.z = -m_spawns[index].transform.localEulerAngles.y;

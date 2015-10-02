@@ -1,13 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameModeManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GUI\GUIPlayerName.cs">
     <Files>
-      <File FileName="Assets\Scripts\GameModeManager.cs" Line="23" Column="51" />
-      <File FileName="Assets\Scripts\GUI\GUITimer.cs" Line="12" Column="65" />
-      <File FileName="Assets\Scripts\IslandDiscoveryNode.cs" Line="82" Column="64" />
-      <File FileName="Assets\Scripts\Utilities.cs" Line="97" Column="16" />
-      <File FileName="Assets\Scripts\IslandDiscoveryTrigger.cs" Line="9" Column="52" />
-      <File FileName="Assets\Scripts\GUI\GUIGameState.cs" Line="34" Column="27" />
+      <File FileName="Assets\Scripts\GUI\GUIPlayerName.cs" Line="32" Column="6" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="231" Column="1" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="46" Column="37" />
+      <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="18" Column="34" />
+      <File FileName="Assets\Scripts\GUI\GUITimer.cs" Line="34" Column="41" />
+      <File FileName="Assets\Scripts\PlayerManager.cs" Line="43" Column="36" />
+      <File FileName="Assets\Scripts\GameSyncher.cs" Line="45" Column="60" />
+      <File FileName="Assets\Scripts\GameModeManager.cs" Line="40" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

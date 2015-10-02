@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Diagnostics : MonoBehaviour 
 {
@@ -52,7 +53,7 @@ public class Diagnostics : MonoBehaviour
     /// </summary>
     void LateUpdate()
     {
-        if(sm_renderDiagnostics)
+        if(sm_renderDiagnostics && sm_diagnostics.Length > 0)
         {
             sm_diagnostics.Remove(sm_diagnostics.Length-1, 1);
             sm_rendererdText = sm_diagnostics.ToString();
@@ -68,6 +69,7 @@ public class Diagnostics : MonoBehaviour
         if(sm_renderDiagnostics)
         {
             GUILayout.TextArea(sm_rendererdText);
+
         }
     }
 }

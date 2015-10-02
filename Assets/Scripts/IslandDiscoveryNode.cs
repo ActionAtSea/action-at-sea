@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 public class IslandDiscoveryNode : MonoBehaviour
 { 
+    private string m_nodeID;
     private int m_ownerID = 0;
     private GameObject m_owner = null;
     private double m_timestamp = 0.0;
@@ -20,6 +21,7 @@ public class IslandDiscoveryNode : MonoBehaviour
     void Start()
     {
         m_renderer = GetComponent<SpriteRenderer>();
+        m_nodeID = name.Replace("IslandDiscoveryNode", "");
     }
 
     /// <summary>
@@ -32,6 +34,28 @@ public class IslandDiscoveryNode : MonoBehaviour
             m_renderer.color = m_unownedColor;
             m_ownerID = -1;
             m_timestamp = 0.0;
+        }
+    }
+
+    /// <summary>
+    /// Diagnostics for the node
+    /// </summary>
+    void OnGUI()
+    {
+        if(Diagnostics.IsActive())
+        {
+            Vector2 position = Camera.main.WorldToScreenPoint(transform.position);
+
+            GUILayout.BeginArea(new Rect(
+                (int)position.x, 
+                Screen.height - (int)position.y,
+                100, 100));
+
+            GUILayout.TextArea("Node" + m_nodeID.ToString() + ": " +
+                (m_owner == null ? "-" : m_owner.name) + 
+                "\n" + m_timestamp.ToString());
+
+            GUILayout.EndArea ();
         }
     }
 
@@ -87,7 +111,7 @@ public class IslandDiscoveryNode : MonoBehaviour
 
                 m_owner = owner;
                 m_ownerID = NetworkedPlayer.GetPlayerID(owner);
-                m_timestamp = GameModeManager.Get().GetTimePassed();
+                m_timestamp = NetworkMatchmaker.Get().GetTime();
 
                 Debug.Log(m_owner.name + " grabbed a new node");
             }

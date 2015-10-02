@@ -43,7 +43,7 @@ public class NetworkedPlayer : MonoBehaviour
         if(photonView.isMine)
         {
             m_playerID = NetworkMatchmaker.Get().GetPlayerID();
-            m_playerName = GameInformation.GetPlayerName();
+            m_playerName = Utilities.GetPlayerName();
             gameObject.tag = "Player";
             gameObject.name = m_playerID.ToString();
             transform.parent.name = m_playerName + " (Client)";

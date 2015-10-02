@@ -28,6 +28,11 @@ public class GUITimer : MonoBehaviour
         m_backText = GetComponent<UnityEngine.UI.Text>();
         m_frontText = transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         m_normalColor = m_frontText.color;
+
+        if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -40,7 +45,6 @@ public class GUITimer : MonoBehaviour
         m_targetTime = secondsToCount;
         m_startTime = m_manager.GetTimePassed();
         m_frontText.color = m_normalColor;
-        Update();
     }
 
     /// <summary>

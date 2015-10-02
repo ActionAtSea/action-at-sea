@@ -10,7 +10,7 @@ public class GUIGameState : MonoBehaviour
 {
     private UnityEngine.UI.Text m_backText = null;
     private UnityEngine.UI.Text m_frontText = null;
-    private GameState m_previousState = GameState.OPEN_FIGHT;
+    private GameState m_previousState = GameState.NONE;
 
     /// <summary>
     /// Initialises the script
@@ -34,12 +34,12 @@ public class GUIGameState : MonoBehaviour
             switch (state)
             {
             case GameState.STAGE_1:
-                m_backText.text = "CAPTURE ALL ISLANDS!";
-                m_frontText.text = "CAPTURE ALL ISLANDS!";
+                m_backText.text = "CAPTURE ALL ISLANDS";
+                m_frontText.text = "CAPTURE ALL ISLANDS";
                 break;
             case GameState.STAGE_2:
-                m_backText.text = "RE-TAKE ENEMY ISLANDS!";
-                m_frontText.text = "RE-TAKE ENEMY ISLANDS!";
+                m_backText.text = "RE-TAKE ENEMY ISLANDS";
+                m_frontText.text = "RE-TAKE ENEMY ISLANDS";
                 break;
             default:
                 m_backText.text = "";

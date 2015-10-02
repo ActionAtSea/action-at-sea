@@ -10,7 +10,6 @@ public class LobbyScript : MonoBehaviour
 {
     public UnityEngine.UI.Text lobbyStatus = null;
     public UnityEngine.UI.Toggle isReady = null;
-    public UnityEngine.UI.Text playerNameText = null;
     public GameObject selectedLevel = null;
     private bool m_playGameRequest = false;
     private bool m_joinGameRequest = false;
@@ -67,8 +66,6 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     void StartGame()
     {
-        GameInformation.SetPlayerName(playerNameText.text);
-
         m_network.StartLevel();
 
         var soundManager = SoundManager.Get();
