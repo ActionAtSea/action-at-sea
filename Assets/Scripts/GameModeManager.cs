@@ -13,18 +13,16 @@ public class GameModeManager : MonoBehaviour
     private float m_networkedTimePassed = 0.0f;
     private float m_timePassed = 0;
     private GUITimer m_countdownTimer = null;
-    private Action m_onCountDownFinish = null;
+    private FogOfWar m_fogOfWar = null;
     private GameState m_state;
+    private bool m_initialised = false;
 
-    /// <summary>
-    /// States that non-open game levels can be in
-    /// </summary>  
-    enum GameState
-    {
-        OPEN_FIGHT,
-        CAPTURE_ISLANDS,
-        COUNTDOWN
-    }
+    private float m_stage1Countdown = 5.0f * 60.0f; // 5 minutes
+    private float m_stage2Countdown = 10.0f * 60.0f; // 10 minutes
+    private Action m_stage1CountdownFinish = null;
+    private Action m_stage2CountdownFinish = null;
+
+    static GameModeManager m_gameManager = null;
 
     /// <summary>
     /// Initialises the game mode manager
@@ -43,7 +41,13 @@ public class GameModeManager : MonoBehaviour
         }
         else
         {
-            m_state = GameState.CAPTURE_ISLANDS;
+            m_state = GameState.STAGE_1;
+        }
+
+        m_fogOfWar = FindObjectOfType<FogOfWar>();
+        if(m_fogOfWar == null)
+        {
+            Debug.LogError("Could not find Fog of war");
         }
 
         m_countdownTimer = FindObjectOfType<GUITimer>();
@@ -52,10 +56,23 @@ public class GameModeManager : MonoBehaviour
             Debug.LogError("Could not find GUI Count down timer");
         }
 
-        m_onCountDownFinish = () =>
+        m_stage1CountdownFinish = () =>
+        {
+            SwitchToStage2();
+        };
+
+        m_stage2CountdownFinish = () =>
         {
             GameOverScript.Get().SetLevelComplete();
         };
+    }
+
+    /// <summary>
+    /// Returns the game state
+    /// </summary>  
+    public GameState GetState()
+    {
+        return m_state;
     }
 
     /// <summary>
@@ -70,11 +87,33 @@ public class GameModeManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Switches to stage 2 of the gameplay
+    /// </summary>
+    void SwitchToStage2()
+    {
+        m_state = GameState.STAGE_2;
+        m_countdownTimer.StartCountDown(m_stage2Countdown, m_stage2CountdownFinish);
+        m_fogOfWar.HideFog();
+    }
+
+    /// <summary>
     /// Updates the script
     /// </summary>
     void Update()
     {
-        if(m_state == GameState.CAPTURE_ISLANDS)
+        if(!m_initialised)
+        {
+            if(m_timePassed > 0.0f)
+            {
+                if(m_state == GameState.STAGE_1)
+                {
+                    m_countdownTimer.StartCountDown(
+                        m_stage1Countdown, m_stage1CountdownFinish);
+                }
+                m_initialised = true;
+            }
+        }
+        else if(m_state == GameState.STAGE_1)
         {
             bool allDiscovered = true;
             for(int i = 0; i < m_islandList.Length; ++i)
@@ -88,9 +127,7 @@ public class GameModeManager : MonoBehaviour
 
             if(allDiscovered)
             {
-                const float countDownTime = 5.0f * 60.0f; // 5 minutes
-                m_state = GameState.COUNTDOWN;
-                m_countdownTimer.StartCountDown(countDownTime, m_onCountDownFinish);
+                SwitchToStage2();
             }
         }
 
@@ -119,12 +156,15 @@ public class GameModeManager : MonoBehaviour
     /// </summary>
     public static GameModeManager Get()
     {
-        var gameManager = FindObjectOfType<GameModeManager>();
-        if(gameManager == null)
+        if(m_gameManager == null)
         {
-            Debug.LogError("Could not find GameModeManager in scene");
+            m_gameManager = FindObjectOfType<GameModeManager>();
+            if(m_gameManager == null)
+            {
+                Debug.LogError("Could not find GameModeManager in scene");
+            }
         }
-        return gameManager;
+        return m_gameManager;
     }
 
     /// <summary>

@@ -120,6 +120,7 @@
      <Compile Include="Assets\Scripts\FloatingHealth.cs" />
      <Compile Include="Assets\Scripts\FogOfWar.cs" />
      <Compile Include="Assets\Scripts\GUI\GUICoinScore.cs" />
+     <Compile Include="Assets\Scripts\GUI\GUIGameState.cs" />
      <Compile Include="Assets\Scripts\GUI\GUIJoiningGame.cs" />
      <Compile Include="Assets\Scripts\GUI\GUINetworkStatus.cs" />
      <Compile Include="Assets\Scripts\GUI\GUIPlayerName.cs" />

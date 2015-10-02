@@ -76,8 +76,10 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// </summary>
     private void SetOwner(GameObject owner)
     {
+        // If a valid owner to set
         if(owner != null && PlayerManager.IsPlayer(owner) && NetworkedPlayer.IsInitialised(owner))
         {
+            // If doesn't have an owner or is a different owner
             if(m_owner == null || m_owner.name != owner.name)
             {
                 m_renderer.color = NetworkedPlayer.GetPlayerColor(owner);

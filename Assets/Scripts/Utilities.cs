@@ -44,6 +44,16 @@ public enum LevelID
     MAX_LEVELS
 }
 
+/// <summary>
+/// States that a level can be in
+/// </summary>  
+public enum GameState
+{
+    OPEN_FIGHT,
+    STAGE_1,
+    STAGE_2
+}
+
 class Utilities
 {
     /// <summary>
@@ -77,6 +87,14 @@ class Utilities
     {
         return Application.loadedLevel == (int)SceneID.LEVEL1 ||
                Application.loadedLevel == (int)SceneID.LEVEL2;
+    }
+
+    /// <summary>
+    /// Returns the state of the game
+    /// </summary>
+    static public GameState GetGameState()
+    {
+        return GameModeManager.Get().GetState();
     }
 
     /// <summary>

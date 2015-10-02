@@ -5,10 +5,12 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ParticleFogOfWarBuilder : MonoBehaviour 
 {   
     public GameObject m_particleTemplateEffect = null; /// Template to base the particles on
+    public List<GameObject> m_activeEmitters = null;   /// All particle emitters that can be interacted with
 
     /// <summary>
     /// Instantiates all particle systems for the fog of war
@@ -33,6 +35,8 @@ public class ParticleFogOfWarBuilder : MonoBehaviour
         int amountZ = Mathf.CeilToInt(boardLength / size);
         amountX += border * 2;
         amountZ += border * 2;
+
+        m_activeEmitters = new List<GameObject>();
 
         for(int x = 0; x < amountX; ++x)
         {
@@ -63,9 +67,24 @@ public class ParticleFogOfWarBuilder : MonoBehaviour
                 {
                     particle.GetComponent<ParticleFogOfWar>().IsStatic = true;
                 }
+                else
+                {
+                    m_activeEmitters.Add(particle);
+                }
             }
         }
 
         m_particleTemplateEffect.SetActive(false);
+    }
+
+    /// <summary>
+    /// Hides the fog of war by disabling all emitters the player can interact with
+    /// </summary>
+    public void HideFog()
+    {
+        foreach(var emitter in m_activeEmitters)
+        {
+            emitter.SetActive(false);
+        }
     }
 }

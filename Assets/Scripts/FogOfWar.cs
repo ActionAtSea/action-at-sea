@@ -402,6 +402,26 @@ public class FogOfWar : MonoBehaviour
     }
 
     /// <summary>
+    /// Hides the fog of war
+    /// </summary>
+    public void HideFog()
+    {
+        if(useGeneratedFogTiles)
+        {
+            Debug.LogError("Currently not supported");
+        }
+        else
+        {
+            var particleFogOfWar = FindObjectOfType<ParticleFogOfWarBuilder>();
+            if(particleFogOfWar == null)
+            {
+                Debug.LogError("Could not find Fog of war");
+            }
+            particleFogOfWar.HideFog();
+        }
+    }
+
+    /// <summary>
     /// Solves the fog of war for a smooth fog effect
     /// </summary>
     void Update()

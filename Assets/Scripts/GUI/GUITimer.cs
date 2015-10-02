@@ -8,6 +8,9 @@ using System.Collections;
 
 public class GUITimer : MonoBehaviour 
 {
+    public Color m_thirtySecondColor = new Color(1.0f, 0.82f, 0.0f);
+    public Color m_tenSecondColor = new Color(1.0f, 0.0f, 0.0f);
+    private Color m_normalColor;
     private GameModeManager m_manager = null;
     private UnityEngine.UI.Text m_backText = null;
     private UnityEngine.UI.Text m_frontText = null;
@@ -24,8 +27,7 @@ public class GUITimer : MonoBehaviour
         m_manager = GameModeManager.Get();
         m_backText = GetComponent<UnityEngine.UI.Text>();
         m_frontText = transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
-        m_backText.enabled = false;
-        m_frontText.enabled = false;
+        m_normalColor = m_frontText.color;
     }
 
     /// <summary>
@@ -33,16 +35,12 @@ public class GUITimer : MonoBehaviour
     /// </summary>
     public void StartCountDown(float secondsToCount, Action onReachTarget)
     {
-        if(!m_countDown)
-        {
-            m_backText.enabled = true;
-            m_frontText.enabled = true;
-            m_countDown = true;
-            m_onReachTarget = onReachTarget;
-            m_targetTime = secondsToCount;
-            m_startTime = m_manager.GetTimePassed();
-            Update();
-        }
+        m_countDown = true;
+        m_onReachTarget = onReachTarget;
+        m_targetTime = secondsToCount;
+        m_startTime = m_manager.GetTimePassed();
+        m_frontText.color = m_normalColor;
+        Update();
     }
 
     /// <summary>
@@ -75,6 +73,15 @@ public class GUITimer : MonoBehaviour
             string text = minutesStr + ":" + secondsStr;
             m_backText.text = text;
             m_frontText.text = text;
+
+            if(time <= 10.0f)
+            {
+                m_frontText.color = m_tenSecondColor;
+            }
+            else if(time <= 30.0f)
+            {
+                m_frontText.color = m_thirtySecondColor;
+            }
 
             if(time == 0.0f)
             {
