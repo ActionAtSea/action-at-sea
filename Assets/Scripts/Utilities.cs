@@ -33,7 +33,8 @@ public enum SceneID
     LEVEL1 = 6,
     LOBBY = 7,
     LEVEL2 = 8,
-    LEVEL3 = 9
+    LEVEL3 = 9,
+    LEVEL4 = 10
 }
 
 /// <summary>
@@ -45,6 +46,7 @@ public enum LevelID
     LEVEL1 = 0,
     LEVEL2,
     LEVEL3,
+    LEVEL4,
     MAX_LEVELS
 }
 
@@ -120,7 +122,8 @@ class Utilities
     {
         return Application.loadedLevel == (int)SceneID.LEVEL1 ||
                Application.loadedLevel == (int)SceneID.LEVEL2 ||
-               Application.loadedLevel == (int)SceneID.LEVEL3;
+               Application.loadedLevel == (int)SceneID.LEVEL3 ||
+               Application.loadedLevel == (int)SceneID.LEVEL4;
     }
 
     /// <summary>
@@ -152,6 +155,8 @@ class Utilities
             return SceneID.LEVEL2;
         case LevelID.LEVEL3:
             return SceneID.LEVEL3;
+        case LevelID.LEVEL4:
+            return SceneID.LEVEL4;
         default:
             throw new ArgumentException("Unknown level ID");
         }
@@ -169,7 +174,9 @@ class Utilities
         case (int)SceneID.LEVEL2:
             return LevelID.LEVEL2;
         case (int)SceneID.LEVEL3:
-            return LevelID.LEVEL3;         
+            return LevelID.LEVEL3;
+        case (int)SceneID.LEVEL4:
+            return LevelID.LEVEL4;
         default:
             throw new ArgumentException("loaded scene not a level");
         }
@@ -205,6 +212,8 @@ class Utilities
             return 2;
         case LevelID.LEVEL3:
             return 4;
+        case LevelID.LEVEL4:
+            return 4; 
         default:
              throw new ArgumentException("Unknown level ID");
         }

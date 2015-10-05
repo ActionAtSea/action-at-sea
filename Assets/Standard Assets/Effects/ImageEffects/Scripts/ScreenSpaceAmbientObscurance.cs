@@ -13,9 +13,9 @@ namespace UnityStandardAssets.ImageEffects
         public float radius = 0.2f;
         [Range (0,3)]
         public int blurIterations = 1;
-        [Range (0,5)]
+        [Range (0,10)]
         public float blurFilterDistance = 1.25f;
-        [Range (0,100)]
+        [Range (0,5)]
         public int downsample = 0;
 
         public Texture2D rand = null;

@@ -1,7 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\SampleScenes\Scripts\ParticleSceneControls.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Menu\LobbyScript.cs">
     <Files>
+      <File FileName="Assets\Standard Assets\Effects\ImageEffects\Scripts\ScreenSpaceAmbientObscurance.cs" Line="16" Column="21" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="216" Column="23" />
       <File FileName="Assets\Standard Assets\Effects\ImageEffects\Scripts\PostEffectsBase.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GameModeManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CannonController.cs" Line="1" Column="1" />
@@ -10,7 +12,8 @@
       <File FileName="Assets\Scripts\PlayerMovement.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CameraMovement.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\BulletFireScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BulletImpactGround.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="30" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
