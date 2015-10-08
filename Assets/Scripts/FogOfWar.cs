@@ -22,8 +22,8 @@ public class FogOfWar : MonoBehaviour
     private const float m_tileSize = 20.0f;     /// Local Size of the fog tiles
     private int m_tileInsideX = -1;             /// Fog tile the player is currently inside along the X axis
     private int m_tileInsideZ = -1;             /// Fog tile the player is currently inside along the Z axis
-    private float m_minRevealRadius = 5.0f;     /// Minimum radius around the player fog is revealed
-    private float m_maxRevealRadius = 9.0f;     /// Maximum radius around the player fog is revealed
+    private float m_minRevealRadius = 10.0f;     /// Minimum radius around the player fog is revealed // 5 (minimap)
+    private float m_maxRevealRadius = 20.0f;     /// Maximum radius around the player fog is revealed // 9 (mini map)
     private int m_tileAmountX = 0;              /// Number of tiles along the X axis
     private int m_tileAmountZ = 0;              /// Number of tiles along the Z axis
     private float m_worldScale = 0.0f;          /// Size of a tile in world space
