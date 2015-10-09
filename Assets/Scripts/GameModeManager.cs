@@ -9,13 +9,14 @@ using System.Collections.Generic;
 
 public class GameModeManager : MonoBehaviour
 {
-    private List<IslandDiscoveryTrigger> m_islandList;
+    private IslandDiscoveryTrigger[] m_islandList;
     private float m_networkedTimePassed = 0.0f;
     private float m_timePassed = 0;
     private GameState m_networkedState = GameState.NONE;
     private GameState m_state = GameState.NONE;
     private GUITimer m_countdownTimer = null;
     private FogOfWar m_fogOfWar = null;
+    private bool? m_stateInitiatedByNetwork = null;
 
     private bool m_startedStage1Timer = false;
     private float m_stage1Countdown = 5.0f * 60.0f; // 5 minutes
@@ -36,8 +37,8 @@ public class GameModeManager : MonoBehaviour
             m_state = GameState.STAGE_1;
         }
 
-        m_islandList = Utilities.GetOrderedList<IslandDiscoveryTrigger>();
-        if(m_islandList.Count == 0)
+        m_islandList = GameObject.FindObjectsOfType<IslandDiscoveryTrigger>();
+        if(m_islandList.Length == 0)
         {
             Debug.LogError("Could not find any islands");
         }
@@ -57,6 +58,7 @@ public class GameModeManager : MonoBehaviour
         m_stage1CountdownFinish = () =>
         {
             SwitchToState(GameState.STAGE_2);
+            m_stateInitiatedByNetwork = false;
         };
 
         m_stage2CountdownFinish = () =>
@@ -101,19 +103,21 @@ public class GameModeManager : MonoBehaviour
     /// </summary>
     void SwitchToState(GameState state)
     {
-        if(m_state != state)
+        if((int)m_state >= (int)state)
         {
-            if(state == GameState.STAGE_2)
-            {
-                Debug.Log("Starting Stage 2");
-                m_state = GameState.STAGE_2;
-                m_countdownTimer.StartCountDown(m_stage2Countdown, m_stage2CountdownFinish);
-                m_fogOfWar.HideFog();
-            }
-            else
-            {
-                Debug.LogError("Tried to set an unsupported state: " + state.ToString());
-            }
+            return;
+        }
+
+        if(state == GameState.STAGE_2)
+        {
+            Debug.Log("Starting Stage 2");
+            m_state = GameState.STAGE_2;
+            m_countdownTimer.StartCountDown(m_stage2Countdown, m_stage2CountdownFinish);
+            m_fogOfWar.HideFog();
+        }
+        else
+        {
+            Debug.LogError("Tried to set an unsupported state: " + state.ToString());
         }
     }
 
@@ -136,7 +140,7 @@ public class GameModeManager : MonoBehaviour
             else
             {
                 bool allDiscovered = true;
-                for(int i = 0; i < m_islandList.Count; ++i)
+                for(int i = 0; i < m_islandList.Length; ++i)
                 {
                     if(!m_islandList[i].IsDiscovered())
                     {
@@ -164,6 +168,7 @@ public class GameModeManager : MonoBehaviour
         if((int)m_networkedState > (int)m_state)
         {
             SwitchToState(m_networkedState);
+            m_stateInitiatedByNetwork = true;
         }
 
         m_timePassed = m_networkedTimePassed;
@@ -207,6 +212,11 @@ public class GameModeManager : MonoBehaviour
             Diagnostics.Add("Max Players", Utilities.GetAcceptedPlayersForLevel(level));
             Diagnostics.Add("Is Open Level", Utilities.IsOpenLeveL(level));
             Diagnostics.Add("Game State", m_state);
+
+            if(m_stateInitiatedByNetwork != null)
+            {
+                Diagnostics.Add("State Initiated By Network", m_stateInitiatedByNetwork);
+            }
         }
     }
 }

@@ -7,13 +7,13 @@ using System.Collections;
 
 public class ParticleFogOfWar : MonoBehaviour 
 {    
-    private Color m_colour = new Color(0.33f, 0.52f, 0.61f);  /// Colour of the particles
-    private float m_radius = 8.0f;                            /// Bounding radius for collision
-    private ParticleSystem m_particles = null;                /// Particle System component
-    private ParticleSystemRenderer m_renderer = null;         /// Controls the particle rendering
-    private bool m_fade = false;                              /// Whether the system is fading out
-    private bool m_static = false;                            /// Whether can interact with the player
-    private bool m_initialised = false;                       /// Whether the particles have been initialised
+    private Color m_color = new Color(1.0f, 1.0f, 1.0f, 1.0f); /// Colour of the particles 
+    private float m_radius = 10.0f;                             /// Bounding radius for collision
+    private ParticleSystem m_particles = null;                 /// Particle System component
+    private ParticleSystemRenderer m_renderer = null;          /// Controls the particle rendering
+    private bool m_fade = false;                               /// Whether the system is fading out
+    private bool m_static = false;                             /// Whether can interact with the player
+    private bool m_initialised = false;                        /// Whether the particles have been initialised
 
     /// <summary>
     /// Initialises the particle fog of war script
@@ -40,7 +40,7 @@ public class ParticleFogOfWar : MonoBehaviour
     {
         if(m_fade || !m_initialised)
         {
-            if(m_colour.a <= 0.0f)
+            if(m_color.a <= 0.0f)
             {
                 gameObject.SetActive(false);
             }
@@ -53,13 +53,7 @@ public class ParticleFogOfWar : MonoBehaviour
 
                 if(m_initialised)
                 {
-                    float colorFadeAmount = Time.deltaTime * 0.3f;
-                    float alphaFadeAmount = Time.deltaTime * 0.7f;
-
-                    m_colour.r -= colorFadeAmount;
-                    m_colour.g -= colorFadeAmount;
-                    m_colour.b -= colorFadeAmount;
-                    m_colour.a -= alphaFadeAmount;
+                    m_color.a -= Time.deltaTime * 0.7f;
                 }
 
                 float sizeReduceAmount = m_initialised ? 
@@ -68,7 +62,7 @@ public class ParticleFogOfWar : MonoBehaviour
                 for(int i = 0; i < particles.Length; ++i)
                 {
                     particles[i].size -= sizeReduceAmount;
-                    particles[i].color = m_colour;
+                    particles[i].color = m_color;
                 }
                 
                 m_particles.SetParticles(particles, m_particles.particleCount);
@@ -78,9 +72,9 @@ public class ParticleFogOfWar : MonoBehaviour
         else if(!m_static && m_renderer.isVisible)
         {
             var player = PlayerManager.GetControllablePlayer();
-            if(player != null)
+            if(player != null && NetworkedPlayer.IsInitialised(player))
             {
-                m_fade = PlayerManager.IsCloseToPlayer(
+                m_fade = PlayerManager.IsFogCloseToPlayer(
                     transform.position.x, transform.position.z, m_radius);
             }
         }

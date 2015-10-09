@@ -31,8 +31,8 @@ public class FogOfWar : MonoBehaviour
     private int m_textureSize = 0;              /// Dimensions of the fog tile texture
     private FogTile m_minimapTile = null;       /// Single tile for the minimap
     private const int m_minimapSize = 128;      /// Dimensions of the minimap tile texture
-    private float m_minimapMinReveal = 6.0f;    /// Minimum radius around the player fog is revealed on the minimap
-    private float m_minimapMaxReveal = 8.0f;    /// Maximum radius around the player fog is revealed on the minimap
+    private float m_minimapMinReveal = 14.0f;    /// Minimum radius around the player fog is revealed on the minimap
+    private float m_minimapMaxReveal = 16.0f;    /// Maximum radius around the player fog is revealed on the minimap
     private Vector2 m_minimapWorldScale;        /// Size of the minimap tile in world space
 
     /// <summary>
@@ -420,6 +420,7 @@ public class FogOfWar : MonoBehaviour
                 Debug.LogError("Could not find Fog of war");
             }
             particleFogOfWar.HideFog();
+            GameObject.Destroy(m_minimapTile.Fog);
         }
     }
 
@@ -430,7 +431,7 @@ public class FogOfWar : MonoBehaviour
     {
         // Only solve for fog when a player is active
         var player = PlayerManager.GetControllablePlayer();
-        if(player != null)
+        if(player != null && NetworkedPlayer.IsInitialised(player))
         {
             Vector2 position = new Vector2(
                 player.transform.position.x, 
@@ -457,13 +458,16 @@ public class FogOfWar : MonoBehaviour
                 }
             }
 
-            RemoveFog(position, 
-                      m_minimapTile, 
-                      m_minimapWorldScale.x,
-                      m_minimapWorldScale.y,
-                      m_minimapSize, 
-                      m_minimapMinReveal,
-                      m_minimapMaxReveal);
+            if(m_minimapTile.Fog != null)
+            {
+                RemoveFog(position, 
+                          m_minimapTile, 
+                          m_minimapWorldScale.x,
+                          m_minimapWorldScale.y,
+                          m_minimapSize, 
+                          m_minimapMinReveal,
+                          m_minimapMaxReveal);
+            }
         }
     }
 }

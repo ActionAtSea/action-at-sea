@@ -174,6 +174,24 @@ public class PlayerManager : MonoBehaviour
         sm_playerIDs.Remove(id);
         Debug.Log("Removing ship " + id + " from manager");
     }
+
+    /// <summary>
+    /// Utility function to determine if the given position is roughly visible to the player
+    /// </summary>
+    static public bool IsFogCloseToPlayer(float x, float z, float distance)
+    {
+        var player = GetControllablePlayer();
+        if(player != null)
+        {
+            var fogTrigger = PlayerMovement.IsMoving(player) ?
+                player.transform.FindChild("FogTrigger").gameObject : player;
+
+            float xToPlayer = x - fogTrigger.transform.position.x;
+            float zToPlayer = z - fogTrigger.transform.position.z;
+            return ((xToPlayer * xToPlayer) + (zToPlayer * zToPlayer)) <= distance * distance;
+        }
+        return false;
+    }
     
     /// <summary>
     /// Utility function to determine if the given position is roughly visible to the player
@@ -213,7 +231,7 @@ public class PlayerManager : MonoBehaviour
         if(m_spawns != null && m_spawns.Count > 0)
         {
             int playersAllowed = Utilities.GetAcceptedPlayersForLevel(Utilities.GetLoadedLevel());
-            if(m_spawns.Count != playersAllowed)
+            if(m_spawns.Count < playersAllowed)
             {
                 Debug.LogError("Spawn amount does not equal number of accepted players for level");
             }

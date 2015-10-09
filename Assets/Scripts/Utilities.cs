@@ -32,9 +32,7 @@ public enum SceneID
     TREASURE = 5,
     LEVEL1 = 6,
     LOBBY = 7,
-    LEVEL2 = 8,
-    LEVEL3 = 9,
-    LEVEL4 = 10
+    LEVEL2 = 8
 }
 
 /// <summary>
@@ -45,8 +43,6 @@ public enum LevelID
     NO_LEVEL = -1,
     LEVEL1 = 0,
     LEVEL2,
-    LEVEL3,
-    LEVEL4,
     MAX_LEVELS
 }
 
@@ -121,9 +117,7 @@ class Utilities
     static public bool IsLevelLoaded()
     {
         return Application.loadedLevel == (int)SceneID.LEVEL1 ||
-               Application.loadedLevel == (int)SceneID.LEVEL2 ||
-               Application.loadedLevel == (int)SceneID.LEVEL3 ||
-               Application.loadedLevel == (int)SceneID.LEVEL4;
+               Application.loadedLevel == (int)SceneID.LEVEL2;
     }
 
     /// <summary>
@@ -153,10 +147,6 @@ class Utilities
             return SceneID.LEVEL1;
         case LevelID.LEVEL2:
             return SceneID.LEVEL2;
-        case LevelID.LEVEL3:
-            return SceneID.LEVEL3;
-        case LevelID.LEVEL4:
-            return SceneID.LEVEL4;
         default:
             throw new ArgumentException("Unknown level ID");
         }
@@ -173,10 +163,6 @@ class Utilities
             return LevelID.LEVEL1;
         case (int)SceneID.LEVEL2:
             return LevelID.LEVEL2;
-        case (int)SceneID.LEVEL3:
-            return LevelID.LEVEL3;
-        case (int)SceneID.LEVEL4:
-            return LevelID.LEVEL4;
         default:
             throw new ArgumentException("loaded scene not a level");
         }
@@ -209,11 +195,7 @@ class Utilities
         case LevelID.LEVEL1:
             return GetMaximumPlayers();
         case LevelID.LEVEL2:
-            return 2;
-        case LevelID.LEVEL3:
             return 4;
-        case LevelID.LEVEL4:
-            return 4; 
         default:
              throw new ArgumentException("Unknown level ID");
         }
@@ -253,7 +235,9 @@ class Utilities
         {
             if(!names.Add(obj.name))
             {
-                Debug.LogError(obj.name + " already exists!");
+                Debug.LogError(obj.name + " already exists! " +
+                    "This error can cause many seemingly unrelated bugs. " +
+                    "Ensure all islands have a seperate name.");
             }
         }
 

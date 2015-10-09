@@ -1,15 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GUI\GUIPlayerName.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameModeManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\GUI\GUIPlayerName.cs" Line="32" Column="6" />
-      <File FileName="Assets\Scripts\Utilities.cs" Line="231" Column="1" />
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="46" Column="37" />
-      <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="18" Column="34" />
-      <File FileName="Assets\Scripts\GUI\GUITimer.cs" Line="34" Column="41" />
-      <File FileName="Assets\Scripts\PlayerManager.cs" Line="43" Column="36" />
-      <File FileName="Assets\Scripts\GameSyncher.cs" Line="45" Column="60" />
-      <File FileName="Assets\Scripts\GameModeManager.cs" Line="40" Column="1" />
+      <File FileName="Assets\Scripts\GameModeManager.cs" Line="23" Column="41" />
+      <File FileName="Assets\Scripts\Minimap.cs" Line="29" Column="18" />
+      <File FileName="Assets\Scripts\FogOfWar.cs" Line="461" Column="33" />
+      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="54" Column="71" />
+      <File FileName="Assets\Scripts\GUI\GUITimer.cs" Line="68" Column="44" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="198" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

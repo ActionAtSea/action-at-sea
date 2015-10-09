@@ -133,7 +133,7 @@ public class LobbyScript : MonoBehaviour
                         m_joinGameRequest = true;
                         m_network.JoinGameLevel(m_selectedLevel);
                     }
-                    else if(m_network.IsRoomReady())
+                    else if(m_network.IsRoomReady() && m_network.GetPlayerID() >= 0)
                     {
                         StartGame();
                         m_playGameRequest = true;

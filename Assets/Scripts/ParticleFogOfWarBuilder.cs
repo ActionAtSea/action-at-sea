@@ -30,7 +30,7 @@ public class ParticleFogOfWarBuilder : MonoBehaviour
         var position = m_particleTemplateEffect.transform.position;
 
         const int border = 2;
-        const float size = 6.0f;
+        const float size = 15.0f;
         int amountX = Mathf.CeilToInt(boardWidth / size);
         int amountZ = Mathf.CeilToInt(boardLength / size);
         amountX += border * 2;

@@ -22,6 +22,7 @@ public class IslandDiscoveryNode : MonoBehaviour
     {
         m_renderer = GetComponent<SpriteRenderer>();
         m_nodeID = name.Replace("IslandDiscoveryNode", "");
+        name = transform.parent.name + "|" + name;
     }
 
     /// <summary>

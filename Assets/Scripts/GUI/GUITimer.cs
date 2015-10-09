@@ -26,7 +26,7 @@ public class GUITimer : MonoBehaviour
     {
         m_manager = GameModeManager.Get();
         m_backText = GetComponent<UnityEngine.UI.Text>();
-        m_frontText = transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        m_frontText = transform.FindChild("GameTimeFront").GetComponent<UnityEngine.UI.Text>();
         m_normalColor = m_frontText.color;
 
         if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
@@ -52,13 +52,23 @@ public class GUITimer : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(Diagnostics.IsActive())
+        {
+            Diagnostics.Add("Counting", m_countDown);
+            Diagnostics.Add("Start Time", m_startTime);
+            Diagnostics.Add("Target Time", m_targetTime);
+        }
+
         if(m_countDown)
         {
             float timePassed = m_manager.GetTimePassed();
-            float timeDifference = timePassed - m_startTime;
-            float time = Mathf.Max(0.0f, m_targetTime - timeDifference);
+            float timeDifference = Mathf.Abs(timePassed - m_startTime);
+            m_startTime = timePassed;
 
-            int seconds = (int)time;
+            m_targetTime -= timeDifference;
+            m_targetTime = Mathf.Max(0.0f, m_targetTime);
+
+            int seconds = (int)m_targetTime;
             int minutes = seconds / 60;
             seconds -= minutes * 60;
 
@@ -78,19 +88,19 @@ public class GUITimer : MonoBehaviour
             m_backText.text = text;
             m_frontText.text = text;
 
-            if(time <= 10.0f)
+            if(m_targetTime <= 10.0f)
             {
                 m_frontText.color = m_tenSecondColor;
             }
-            else if(time <= 30.0f)
+            else if(m_targetTime <= 30.0f)
             {
                 m_frontText.color = m_thirtySecondColor;
             }
 
-            if(time == 0.0f)
+            if(m_targetTime == 0.0f)
             {
-                m_onReachTarget();
                 m_countDown = false;
+                m_onReachTarget();
             }
         }
     }

@@ -19,11 +19,12 @@ public class Minimap : MonoBehaviour
 {
     public GameObject marker = null;
 
-    private float m_shipMarkerSize = 2.0f;
+    private float m_shipMarkerSize = 1.5f;
     private bool m_isInitialised = false;
     private List<MapItem> m_world = new List<MapItem>();
     private List<MapItem> m_markers = new List<MapItem>();
     private GameObject m_gameBoard = null;
+    private MapItem m_fog = null;
 
     /// <summary>
     /// Initialises the script
@@ -168,7 +169,7 @@ public class Minimap : MonoBehaviour
                         true);
             }
 
-            GameObject fog = GameObject.FindGameObjectWithTag("MinimapFog");
+            var fog = GameObject.FindGameObjectWithTag("MinimapFog");
             if(fog == null)
             {
                 Debug.LogError("Could not find minimap fog");
@@ -176,9 +177,10 @@ public class Minimap : MonoBehaviour
             else
             {
                 AddStaticItem(fog.transform, 
-                        fog.GetComponent<SpriteRenderer>(),
-                        GetComponent<SpriteRenderer>().color);
+                              fog.GetComponent<SpriteRenderer>(),
+                              GetComponent<SpriteRenderer>().color);
             }
+            m_fog = m_world[m_world.Count - 1];
             
             m_isInitialised = true;
         }
@@ -191,6 +193,11 @@ public class Minimap : MonoBehaviour
     /// </summary>
     void UpdateMap()
     {
+        if(m_fog.parentRenderer == null)
+        {
+            m_fog.item.SetActive(false);
+        }
+
         for(int i = 0; i < m_markers.Count; ++i)
         {
             if(!UpdateMapItem(m_markers[i]))

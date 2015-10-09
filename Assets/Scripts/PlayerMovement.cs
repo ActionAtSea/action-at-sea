@@ -57,6 +57,22 @@ public class PlayerMovement : MonoBehaviour
     }
 
     /// <summary>
+    /// Whether the player is moving
+    /// </summary>
+    public bool IsMoving()
+    {
+        return m_rigidBody.velocity.magnitude > 1.0f;
+    }
+
+    /// <summary>
+    /// Whether the player is moving
+    /// </summary>
+    static public bool IsMoving(GameObject obj)
+    {
+        return obj.GetComponentInParent<PlayerMovement>().IsMoving();
+    }
+
+    /// <summary>
     /// On collision with another player
     /// </summary>
     void OnTriggerEnter(Collider other)
