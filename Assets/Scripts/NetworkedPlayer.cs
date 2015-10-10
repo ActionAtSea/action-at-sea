@@ -157,7 +157,7 @@ public class NetworkedPlayer : MonoBehaviour
                     else
                     {
                         float difference = m_networkedHealth - health;
-                        float addSpeed = Time.deltaTime * 0.01f;
+                        float addSpeed = Time.deltaTime * 0.05f;
                         float incrementingHealth = health + (difference * addSpeed);
                         m_healthBar.SetHealthLevel(incrementingHealth);
                     }
