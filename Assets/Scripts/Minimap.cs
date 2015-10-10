@@ -156,7 +156,7 @@ public class Minimap : MonoBehaviour
                 boardItem.item.transform.localScale.y);
 
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
-            if(terrain == null)
+            if(terrain == null || terrain.Length == 0)
             {
                 Debug.LogError("Could not find any terrain");
             }

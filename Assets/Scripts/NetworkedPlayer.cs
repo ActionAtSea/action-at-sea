@@ -21,9 +21,9 @@ public class NetworkedPlayer : MonoBehaviour
     private int m_playerIndex = -1; // Not sent over network
     private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
-    private float m_healthLevel = -1.0f;
+    private float m_networkedHealth = -1.0f;
     private bool m_initialised = false;
-    private bool m_placedOnSpawn = false;
+    private Health m_healthBar = null;
 
     /// <summary>
     /// Initilaises the networked player
@@ -44,6 +44,8 @@ public class NetworkedPlayer : MonoBehaviour
         {
             gameObject.tag = "EnemyPlayer";
         }
+
+        m_healthBar = GetComponent<Health>();
         DontDestroyOnLoad(transform.parent); // Photon networking controls this
     }
 
@@ -59,7 +61,6 @@ public class NetworkedPlayer : MonoBehaviour
             if(m_playerID != -1)
             {
                 m_initialised = true;
-                m_placedOnSpawn = true;
 
                 m_playerName = Utilities.GetPlayerName();
 
@@ -140,16 +141,33 @@ public class NetworkedPlayer : MonoBehaviour
                 transform.rotation = Quaternion.Lerp(
                     transform.rotation, m_correctPlayerRot, Time.deltaTime * 5);
 
-                if(m_healthLevel >= 0)
+                if(m_networkedHealth >= 0)
                 {
-                    GetComponent<Health>().SetHealthLevel(m_healthLevel);
+                    // Only update health if networked version is lower
+                    // This can mean however that networked version thinks its higher
+                    // and the player can be running around seemingly empty
+                    // Because of this, initially set if lower but slowly increment if higher
+                    // This means if theres a difference it'll eventually correct itself 
+
+                    float health = m_healthBar.HealthLevel;
+                    if(m_networkedHealth <= health)
+                    {
+                        m_healthBar.SetHealthLevel(m_networkedHealth);
+                    }
+                    else
+                    {
+                        float difference = m_networkedHealth - health;
+                        float addSpeed = Time.deltaTime * 0.01f;
+                        float incrementingHealth = health + (difference * addSpeed);
+                        m_healthBar.SetHealthLevel(incrementingHealth);
+                    }
                 }
             }
         }
         else
         {
             m_playerScore = (int)(GetComponent<PlayerScore>().RoundedScore);
-            m_healthLevel = GetComponent<Health>().HealthLevel;
+            m_networkedHealth = m_healthBar.HealthLevel;
         }
 
         RenderDiagnostics();
@@ -168,7 +186,7 @@ public class NetworkedPlayer : MonoBehaviour
             }
 
             Diagnostics.Add("Player" + m_playerID, m_playerName + 
-                " [" + m_playerScore + "] [" + m_healthLevel + "] " +
+                " [" + m_playerScore + "] [" + m_networkedHealth + "] " +
                 (photonView.isMine ? "[Client] " : "[Enemy] "));
         }
     }
@@ -184,7 +202,7 @@ public class NetworkedPlayer : MonoBehaviour
             // We own this player: send the others our data
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-            stream.SendNext(m_healthLevel);
+            stream.SendNext(m_networkedHealth);
             stream.SendNext(m_playerName);
             stream.SendNext(m_playerID == null ? -1 : (int)m_playerID);
             stream.SendNext(m_playerScore);
@@ -197,7 +215,7 @@ public class NetworkedPlayer : MonoBehaviour
             // Network player, receive data
             m_correctPlayerPos = (Vector3)stream.ReceiveNext();
             m_correctPlayerRot = (Quaternion)stream.ReceiveNext();
-            m_healthLevel = (float)stream.ReceiveNext();
+            m_networkedHealth = (float)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
             int playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
@@ -264,10 +282,6 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     public bool IsInitialised()
     {
-        if(IsControllable())
-        {
-            return m_initialised && m_placedOnSpawn;
-        }
         return m_initialised;
     }
 

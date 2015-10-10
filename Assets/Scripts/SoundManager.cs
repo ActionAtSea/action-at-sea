@@ -219,7 +219,7 @@ public class SoundManager : MonoBehaviour
                 
                 if(!foundInstance)
                 {
-                    Debug.LogError("Could not find instance for sound " + sound.name);
+                    Debug.Log("Could not find instance for sound " + sound.name);
                 }
             }
         }

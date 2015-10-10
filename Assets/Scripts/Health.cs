@@ -130,10 +130,7 @@ public class Health : MonoBehaviour
     /// </summary>
     public void InflictDamage(float damage)
     {
-        if(NetworkedPlayer.IsControllable(gameObject))
-        {
-            m_healthLevel -= damage;
-        }
+        m_healthLevel -= damage;
     }
 
     /// <summary>
@@ -141,10 +138,7 @@ public class Health : MonoBehaviour
     /// </summary>
     public void RepairDamage(float repairAmount)
     {
-        if(NetworkedPlayer.IsControllable(gameObject))
-        {
-            m_healthLevel += repairAmount;
-        }
+        m_healthLevel += repairAmount;
     }
 
     /// <summary>

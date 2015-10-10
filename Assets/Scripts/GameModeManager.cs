@@ -17,13 +17,11 @@ public class GameModeManager : MonoBehaviour
     private GUITimer m_countdownTimer = null;
     private FogOfWar m_fogOfWar = null;
     private bool? m_stateInitiatedByNetwork = null;
-
     private bool m_startedStage1Timer = false;
     private float m_stage1Countdown = 5.0f * 60.0f; // 5 minutes
     private float m_stage2Countdown = 10.0f * 60.0f; // 10 minutes
     private Action m_stage1CountdownFinish = null;
     private Action m_stage2CountdownFinish = null;
-
     static GameModeManager m_gameManager = null;
 
     /// <summary>
@@ -35,6 +33,12 @@ public class GameModeManager : MonoBehaviour
         {
             m_networkedState = GameState.STAGE_1;
             m_state = GameState.STAGE_1;
+
+            m_countdownTimer = FindObjectOfType<GUITimer>();
+            if (m_countdownTimer == null)
+            {
+                Debug.LogError("Could not find GUI Count down timer");
+            }
         }
 
         m_islandList = GameObject.FindObjectsOfType<IslandDiscoveryTrigger>();
@@ -47,12 +51,6 @@ public class GameModeManager : MonoBehaviour
         if(m_fogOfWar == null)
         {
             Debug.LogError("Could not find Fog of war");
-        }
-
-        m_countdownTimer = FindObjectOfType<GUITimer>();
-        if(m_countdownTimer == null)
-        {
-            Debug.LogError("Could not find GUI Count down timer");
         }
 
         m_stage1CountdownFinish = () =>
@@ -215,7 +213,7 @@ public class GameModeManager : MonoBehaviour
 
             if(m_stateInitiatedByNetwork != null)
             {
-                Diagnostics.Add("State Initiated By Network", m_stateInitiatedByNetwork);
+                Diagnostics.Add("State2 Initiated By Network", m_stateInitiatedByNetwork);
             }
         }
     }
