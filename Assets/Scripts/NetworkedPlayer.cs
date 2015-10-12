@@ -15,14 +15,15 @@ public class NetworkedPlayer : MonoBehaviour
 {    
     public PhotonView photonView = null;
     public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
-    private string m_playerName = "unnamed";
-    private int? m_playerID = null;
+    private string m_playerName = "";
+    private int m_playerID = -1;
     private int m_playerScore = 0;
     private int m_playerIndex = -1; // Not sent over network
     private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
     private float m_networkedHealth = -1.0f;
     private bool m_initialised = false;
+    private bool m_recievedValidData = false;
     private Health m_healthBar = null;
 
     /// <summary>
@@ -31,22 +32,11 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Start()
     {
-        if(photonView.isMine)
-        {
-            m_playerIndex = NetworkMatchmaker.Get().GetPlayerIndex();
-            PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(m_playerIndex, gameObject);
-            m_playerColor = place.color;
-            gameObject.transform.position = place.position;
-            gameObject.transform.localEulerAngles = place.rotation;
-            gameObject.tag = "Player";
-        }
-        else
-        {
-            gameObject.tag = "EnemyPlayer";
-        }
-
         m_healthBar = GetComponent<Health>();
         DontDestroyOnLoad(transform.parent); // Photon networking controls this
+
+        var floatingHealth = transform.parent.FindChild("FloatingHealthBar").gameObject;
+        floatingHealth.SetActive(!photonView.isMine);
     }
 
     /// <summary>
@@ -57,31 +47,34 @@ public class NetworkedPlayer : MonoBehaviour
     {
         if(photonView.isMine)
         {
+            gameObject.tag = "Player";
+            Debug.Log("Created Player Ship");
+
+            m_playerIndex = NetworkMatchmaker.Get().GetPlayerIndex();
+            PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(m_playerIndex, gameObject);
+            m_playerColor = place.color;
+            gameObject.transform.position = place.position;
+            gameObject.transform.localEulerAngles = place.rotation;
+
             m_playerID = NetworkMatchmaker.Get().GetPlayerID();
-            if(m_playerID != -1)
+            m_playerName = Utilities.GetPlayerName();
+            if(m_playerName.Length == 0)
             {
-                m_initialised = true;
-
-                m_playerName = Utilities.GetPlayerName();
-
-                gameObject.name = m_playerID.ToString();
-                transform.parent.name = m_playerName + " (Client)";
-
-                NotifyPlayerCreation();
-                Debug.Log("Created Player Ship");
+                m_playerName = Utilities.GetPlayerDefaultName();
             }
+
+            gameObject.name = m_playerID.ToString();
+            transform.parent.name = m_playerName + " (Client)";
+
+            NotifyPlayerCreation();
         }
         else
         {
-            m_initialised = true;
+            gameObject.tag = "EnemyPlayer";
             Debug.Log("Created Enemy Ship");
         }
-
-        if(m_initialised)
-        {
-            var floatingHealth = transform.parent.FindChild("FloatingHealthBar").gameObject;
-            floatingHealth.SetActive(!photonView.isMine);
-        }
+            
+        m_initialised = true;
     }
 
     /// <summary>
@@ -89,11 +82,6 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void NotifyPlayerCreation()
     {
-        if(m_playerID == -1)
-        {
-            Debug.LogError("Player has not been created!");
-        }
-
         var minimap = GameObject.FindObjectOfType<Minimap>();
         minimap.AddPlayer(gameObject, photonView.isMine, m_playerColor);
         PlayerManager.AddPlayer(gameObject);
@@ -133,7 +121,7 @@ public class NetworkedPlayer : MonoBehaviour
 
         if (!photonView.isMine)
         {
-            if(m_playerID != null)
+            if(m_recievedValidData)
             {
                 transform.position = Vector3.Lerp(
                     transform.position, m_correctPlayerPos, Time.deltaTime * 5);
@@ -204,7 +192,7 @@ public class NetworkedPlayer : MonoBehaviour
             stream.SendNext(transform.rotation);
             stream.SendNext(m_networkedHealth);
             stream.SendNext(m_playerName);
-            stream.SendNext(m_playerID == null ? -1 : (int)m_playerID);
+            stream.SendNext(m_playerID);
             stream.SendNext(m_playerScore);
             stream.SendNext(m_playerColor.r);
             stream.SendNext(m_playerColor.g);
@@ -217,16 +205,16 @@ public class NetworkedPlayer : MonoBehaviour
             m_correctPlayerRot = (Quaternion)stream.ReceiveNext();
             m_networkedHealth = (float)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
-            int playerID = (int)stream.ReceiveNext();
+            m_playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
             m_playerColor.r = (float)stream.ReceiveNext();
             m_playerColor.g = (float)stream.ReceiveNext();
             m_playerColor.b = (float)stream.ReceiveNext();
 
             // On first recieve valid data
-            if(m_initialised && m_playerID == null && playerID != -1)
+            if(!m_recievedValidData && m_playerName.Length > 0)
             {
-                m_playerID = playerID;
+                m_recievedValidData = true;
                 name = m_playerID.ToString();
 
                 transform.rotation = m_correctPlayerRot;
@@ -258,7 +246,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     public int PlayerID
     {
-        get { return m_playerID == null ? -1 : (int)m_playerID; }
+        get { return m_playerID; }
     }
 
     /// <summary>

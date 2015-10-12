@@ -61,6 +61,7 @@ class Utilities
 {
     static string sm_defaultName = "Unnamed";
     static string sm_playerName = sm_defaultName;
+    static int sm_maxPlayers = 0;
 
     /// <summary>
     /// Returns the game version
@@ -178,22 +179,30 @@ class Utilities
     }
 
     /// <summary>
-    /// Returns the maximum allowed players in a single level
+    /// Returns how many players are allowed the selected level
     /// </summary>
     static public int GetMaximumPlayers()
     {
-        return 20;
+        return sm_maxPlayers;
     }
 
     /// <summary>
     /// Returns how many players are allowed in each level
     /// </summary>
-    static public int GetAcceptedPlayersForLevel(LevelID level)
+    static public void SetMaximumPlayers(int value)
+    {
+        sm_maxPlayers = value;
+    }
+
+    /// <summary>
+    /// Returns how many players are allowed in each level
+    /// </summary>
+    static public int GetMaxPlayersForLevel(LevelID level)
     {
         switch(level)
         {
         case LevelID.LEVEL1:
-            return GetMaximumPlayers();
+            return 20;
         case LevelID.LEVEL2:
             return 4;
         default:

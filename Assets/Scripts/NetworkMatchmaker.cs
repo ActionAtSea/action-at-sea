@@ -171,7 +171,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         SetDiagnostic("Joined Lobby");
 
         PhotonNetwork.JoinRandomRoom(null, 
-            (byte)Utilities.GetAcceptedPlayersForLevel(m_levelJoined));
+            (byte)Utilities.GetMaximumPlayers());
     }
     
     /// <summary>
@@ -191,7 +191,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         SetStatus("Creating new game");
 
         PhotonNetwork.CreateRoom(null, true, true,
-            (byte)Utilities.GetAcceptedPlayersForLevel(m_levelJoined));
+            (byte)Utilities.GetMaximumPlayers());
     }
     
     /// <summary>

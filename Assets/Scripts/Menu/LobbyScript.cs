@@ -10,7 +10,9 @@ public class LobbyScript : MonoBehaviour
 {
     public UnityEngine.UI.Text lobbyStatus = null;
     public UnityEngine.UI.Toggle isReady = null;
+    public UnityEngine.UI.Slider slider = null;
     public GameObject selectedLevel = null;
+    private GUIMaxPlayers m_maxSlider = null;
     private bool m_playGameRequest = false;
     private bool m_joinGameRequest = false;
     private LevelID m_selectedLevel = LevelID.LEVEL1;
@@ -25,6 +27,7 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     void Start () 
     {
+        m_maxSlider = slider.GetComponentInParent<GUIMaxPlayers>();
         m_network = NetworkMatchmaker.Get();
         SelectNewLevel(selectedLevel);
     }
@@ -55,10 +58,15 @@ public class LobbyScript : MonoBehaviour
     {
         m_selectedLevel = (LevelID)(int.Parse(level.name) - 1); // Levels start at 0
         selectedLevel = level;
-        
+
+        m_maxSlider.SetEnabled(!Utilities.IsOpenLeveL(m_selectedLevel));
+        m_maxSlider.SetMaxPlayers(Utilities.GetMaxPlayersForLevel(m_selectedLevel));
+
         var newBackground = selectedLevel.transform.FindChild("Background");
         newBackground.GetComponent<UnityEngine.UI.Image>().color = 
             new Color(1.0f, 0.96f, 0.43f, 0.88f);
+
+        isReady.isOn = false;
     }
 
     /// <summary>
@@ -115,6 +123,11 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(Diagnostics.IsActive())
+        {
+            Diagnostics.Add("Max Players Chosen", Utilities.GetMaximumPlayers());
+        }
+
         if(!m_playGameRequest)
         {
             if(!m_network.IsConnected())
@@ -132,20 +145,23 @@ public class LobbyScript : MonoBehaviour
                     {
                         m_joinGameRequest = true;
                         m_network.JoinGameLevel(m_selectedLevel);
+                        m_maxSlider.SetEnabled(false);
                     }
-                    else if(m_network.IsRoomReady() && m_network.GetPlayerID() >= 0)
+                    else if(m_network.IsRoomReady())
                     {
                         StartGame();
                         m_playGameRequest = true;
                     }
 
-                    if(Utilities.IsOpenLeveL(m_selectedLevel)  || !m_network.IsInRoom())
+                    if(Utilities.IsOpenLeveL(m_selectedLevel)  || 
+                      !m_network.IsInRoom() || 
+                       m_network.GetPlayerID() < 0)
                     {
                         lobbyStatus.text = "Joining Level" + GetDots();
                     }
                     else
                     {
-                        int maxSlots = Utilities.GetAcceptedPlayersForLevel(m_selectedLevel);
+                        int maxSlots = Utilities.GetMaximumPlayers();
                         int players = m_network.GetRoomPlayerCount();
                         lobbyStatus.text = "Waiting for: " + 
                             (maxSlots - players).ToString() + " / " + maxSlots.ToString();
@@ -155,6 +171,7 @@ public class LobbyScript : MonoBehaviour
                 {
                     m_network.LeaveGameLevel();
                     m_joinGameRequest = false;
+                    m_maxSlider.SetEnabled(!Utilities.IsOpenLeveL(m_selectedLevel));
                 }
             }
         }

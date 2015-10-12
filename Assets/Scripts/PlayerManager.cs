@@ -230,7 +230,7 @@ public class PlayerManager : MonoBehaviour
         
         if(m_spawns != null && m_spawns.Count > 0)
         {
-            int playersAllowed = Utilities.GetAcceptedPlayersForLevel(Utilities.GetLoadedLevel());
+            int playersAllowed = Utilities.GetMaximumPlayers();
             if(m_spawns.Count < playersAllowed)
             {
                 Debug.LogError("Spawn amount does not equal number of accepted players for level");

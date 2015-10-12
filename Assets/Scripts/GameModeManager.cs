@@ -207,7 +207,8 @@ public class GameModeManager : MonoBehaviour
             var level = Utilities.GetLoadedLevel();
             Diagnostics.Add("Time", m_timePassed);
             Diagnostics.Add("Level", level);
-            Diagnostics.Add("Max Players", Utilities.GetAcceptedPlayersForLevel(level));
+            Diagnostics.Add("Max Players Chosen", Utilities.GetMaximumPlayers());
+            Diagnostics.Add("Max Players For Level", Utilities.GetMaxPlayersForLevel(level));
             Diagnostics.Add("Is Open Level", Utilities.IsOpenLeveL(level));
             Diagnostics.Add("Game State", m_state);
 
