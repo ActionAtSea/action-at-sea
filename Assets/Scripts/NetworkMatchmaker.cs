@@ -190,8 +190,12 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         SetStatus("Creating new game");
 
-        PhotonNetwork.CreateRoom(null, true, true,
-            (byte)Utilities.GetMaximumPlayers());
+        RoomOptions options = new RoomOptions();
+        options.isOpen = true;
+        options.isVisible = true;
+        options.maxPlayers = (byte)Utilities.GetMaximumPlayers();
+
+        PhotonNetwork.CreateRoom(null, options, m_lobbys[(int)m_levelJoined]);
     }
     
     /// <summary>

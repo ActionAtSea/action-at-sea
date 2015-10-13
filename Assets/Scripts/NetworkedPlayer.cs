@@ -32,11 +32,9 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_healthBar = GetComponent<Health>();
         DontDestroyOnLoad(transform.parent); // Photon networking controls this
 
-        var floatingHealth = transform.parent.FindChild("FloatingHealthBar").gameObject;
-        floatingHealth.SetActive(!photonView.isMine);
+        m_healthBar = GetComponent<Health>();
     }
 
     /// <summary>
@@ -53,6 +51,8 @@ public class NetworkedPlayer : MonoBehaviour
             m_playerIndex = NetworkMatchmaker.Get().GetPlayerIndex();
             PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(m_playerIndex, gameObject);
             m_playerColor = place.color;
+
+            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
 
@@ -60,6 +60,7 @@ public class NetworkedPlayer : MonoBehaviour
             m_playerName = Utilities.GetPlayerName();
             if(m_playerName.Length == 0)
             {
+                // Name is used to determine when successful data is recieved and cannot be null
                 m_playerName = Utilities.GetPlayerDefaultName();
             }
 
@@ -73,6 +74,9 @@ public class NetworkedPlayer : MonoBehaviour
             gameObject.tag = "EnemyPlayer";
             Debug.Log("Created Enemy Ship");
         }
+
+        var floatingHealth = transform.parent.FindChild("FloatingHealthBar");
+        floatingHealth.gameObject.SetActive(!photonView.isMine);
             
         m_initialised = true;
     }

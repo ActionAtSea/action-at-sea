@@ -2,12 +2,10 @@
 TO DO LIST:
 =====================================================================================
 
-- Fix health lag
-- Networked timer account for latency
-
+- Implement player prediction to improve hit/health latency
+- Improving fog/spray
 - Convert dock to 3D
-- Add 3D water
-- Add player list/friend selection to lobby
 
 IF REQUIRED:
+- Add player list/friend selection to lobby
 - Support for game board having non-uniform dimensions

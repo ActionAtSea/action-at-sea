@@ -12,7 +12,6 @@ public class LobbyScript : MonoBehaviour
     public UnityEngine.UI.Toggle isReady = null;
     public UnityEngine.UI.Slider slider = null;
     public GameObject selectedLevel = null;
-    private GUIMaxPlayers m_maxSlider = null;
     private bool m_playGameRequest = false;
     private bool m_joinGameRequest = false;
     private LevelID m_selectedLevel = LevelID.LEVEL1;
@@ -27,7 +26,6 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     void Start () 
     {
-        m_maxSlider = slider.GetComponentInParent<GUIMaxPlayers>();
         m_network = NetworkMatchmaker.Get();
         SelectNewLevel(selectedLevel);
     }
@@ -52,6 +50,16 @@ public class LobbyScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the max slider enabled/disabled
+    /// </summary>
+    private void SetMaxPlayerSlider(bool enabled)
+    {
+        // only enable for non-open levels
+        slider.GetComponentInParent<GUIMaxPlayers>().SetEnabled(
+            enabled && !Utilities.IsOpenLeveL(m_selectedLevel));
+    }
+
+    /// <summary>
     /// Selects the level
     /// </summary>
     private void SelectNewLevel(GameObject level)
@@ -59,8 +67,10 @@ public class LobbyScript : MonoBehaviour
         m_selectedLevel = (LevelID)(int.Parse(level.name) - 1); // Levels start at 0
         selectedLevel = level;
 
-        m_maxSlider.SetEnabled(!Utilities.IsOpenLeveL(m_selectedLevel));
-        m_maxSlider.SetMaxPlayers(Utilities.GetMaxPlayersForLevel(m_selectedLevel));
+        SetMaxPlayerSlider(true);
+
+        slider.GetComponentInParent<GUIMaxPlayers>().SetMaxPlayers(
+            Utilities.GetMaxPlayersForLevel(m_selectedLevel));
 
         var newBackground = selectedLevel.transform.FindChild("Background");
         newBackground.GetComponent<UnityEngine.UI.Image>().color = 
@@ -145,7 +155,7 @@ public class LobbyScript : MonoBehaviour
                     {
                         m_joinGameRequest = true;
                         m_network.JoinGameLevel(m_selectedLevel);
-                        m_maxSlider.SetEnabled(false);
+                        SetMaxPlayerSlider(false);
                     }
                     else if(m_network.IsRoomReady())
                     {
@@ -171,7 +181,7 @@ public class LobbyScript : MonoBehaviour
                 {
                     m_network.LeaveGameLevel();
                     m_joinGameRequest = false;
-                    m_maxSlider.SetEnabled(!Utilities.IsOpenLeveL(m_selectedLevel));
+                    SetMaxPlayerSlider(true);
                 }
             }
         }
