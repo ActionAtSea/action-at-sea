@@ -9,9 +9,21 @@ using System.Collections.Generic;
 
 public class Diagnostics : MonoBehaviour 
 {
+    public bool m_tickTest = false;
+    private float m_timePassed = 0.0f;
+    private static bool sm_tickTest = false;
     private static bool sm_renderDiagnostics = false;
     private static StringBuilder sm_diagnostics = new StringBuilder();
     private static string sm_rendererdText = "";
+
+    void Start()
+    {
+        if(!sm_tickTest && m_tickTest)
+        {
+            sm_tickTest = true;
+            Application.LoadLevel(0);
+        }
+    }
 
     /// <summary>
     /// Gets whether the diagnostics are rendering
@@ -45,6 +57,30 @@ public class Diagnostics : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.F1))
         {
             sm_renderDiagnostics = !sm_renderDiagnostics;
+        }
+
+        if(sm_tickTest)
+        {
+            Utilities.SetMaximumPlayers(1);
+
+            m_timePassed += Time.deltaTime;
+
+            float maxTime = Utilities.IsLevelLoaded() ? 15.0f : 1.0f;
+
+            if(m_timePassed >= maxTime)
+            {
+                m_timePassed = 0.0f;
+                int level = Application.loadedLevel + 1;
+                if(level < (int)SceneID.MAX_SCENES)
+                {
+                    Application.LoadLevel(level);
+                }
+                else
+                {
+                    sm_tickTest = false;
+                    Debug.Log("TICK TEST COMPLETE");
+                }
+            }
         }
     }
 

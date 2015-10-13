@@ -32,7 +32,8 @@ public enum SceneID
     TREASURE = 5,
     LEVEL1 = 6,
     LOBBY = 7,
-    LEVEL2 = 8
+    LEVEL2 = 8,
+    MAX_SCENES
 }
 
 /// <summary>
