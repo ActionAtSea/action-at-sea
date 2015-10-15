@@ -12,6 +12,7 @@ public class CameraMovement : MonoBehaviour
     private Vector3 m_velocity = Vector3.zero;
     private Vector3 m_fixedPosition;
 
+
     /// <summary>
     /// Initialises the script
     /// </summary>
@@ -23,6 +24,24 @@ public class CameraMovement : MonoBehaviour
     /// <summary>
     /// Updates the dragged camera once a player has been found
     /// </summary>
+    /// 
+    void CameraZoom()
+    {
+        if(Input.mouseScrollDelta.y < 0.0f)
+        {
+            gameObject.transform.position = new Vector3(transform.position.x, transform.position.y +1.0f, transform.position.z);
+        }
+        else if(Input.mouseScrollDelta.y > 0.0f)
+        {
+            gameObject.transform.position = new Vector3(transform.position.x, transform.position.y -1.0f, transform.position.z);
+        }
+    }
+
+    void Update()
+    {
+        CameraZoom();
+    }
+
     void FixedUpdate ()
     {
         var player = PlayerManager.GetControllablePlayer();

@@ -205,7 +205,7 @@ class Utilities
         case LevelID.LEVEL1:
             return 20;
         case LevelID.LEVEL2:
-            return 4;
+            return 8;
         default:
              throw new ArgumentException("Unknown level ID");
         }

@@ -12,7 +12,7 @@ using System.Collections;
 /// </summary>
 public class PlayerMovement : MonoBehaviour 
 {
-    private float m_forwardSpeed = 40.0f; // 80
+    public float m_forwardSpeed = 20.0f; // 80, 40
     private float m_rotationSpeed = 165.0f;
     private Vector3 m_forwardForce = new Vector3();
     private Rigidbody m_rigidBody = null;

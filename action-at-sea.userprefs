@@ -1,19 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Menu\LobbyScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Utilities.cs">
     <Files>
-      <File FileName="Assets\Standard Assets\Effects\ImageEffects\Scripts\ScreenSpaceAmbientObscurance.cs" Line="16" Column="21" />
-      <File FileName="Assets\Scripts\Utilities.cs" Line="216" Column="23" />
-      <File FileName="Assets\Standard Assets\Effects\ImageEffects\Scripts\PostEffectsBase.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameModeManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CannonController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Cannon.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Bullet.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CameraMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BulletFireScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BulletImpactGround.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Menu\LobbyScript.cs" Line="30" Column="6" />
+      <File FileName="Assets\Scripts\Placeable Items\ObjectPlacementManager.cs" Line="22" Column="2" />
+      <File FileName="Assets\Scripts\Placeable Items\ObjectPlacement.cs" Line="30" Column="36" />
+      <File FileName="Assets\Scripts\Placeable Items\PlaceableObject.cs" Line="35" Column="14" />
+      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="16" Column="44" />
+      <File FileName="Assets\Scripts\CameraMovement.cs" Line="34" Column="49" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="206" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
