@@ -71,9 +71,9 @@ public class FillScoreBoard : MonoBehaviour
             {
                 m_scoreBack[i].gameObject.SetActive(true);
 
-                m_scoreFront[i].color = NetworkedPlayer.GetPlayerColor(obj);
-                m_scoreBack[i].text = NetworkedPlayer.GetPlayerScore(obj).ToString() + ": " +
-                    NetworkedPlayer.GetPlayerName(obj);
+                m_scoreFront[i].color = Utilities.GetPlayerColor(obj);
+                m_scoreBack[i].text = Utilities.GetPlayerScore(obj).ToString() + ": " +
+                    Utilities.GetPlayerName(obj);
                 m_scoreFront[i].text = m_scoreBack[i].text;
             }
 

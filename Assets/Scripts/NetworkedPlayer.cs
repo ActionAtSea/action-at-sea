@@ -7,24 +7,36 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// NOTE: Instantiated by Photon Networking
-/// Start() cannot include any code relying on the world/level as 
-/// this object can be instantiated before the level is created
+/// Player information instantiated by Photon Networking
 /// </summary>
 public class NetworkedPlayer : MonoBehaviour 
 {    
     public PhotonView photonView = null;
+
+    /// <summary>
+    /// Information required which is not networked
+    /// </summary>
     public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
-    private string m_playerName = "";
-    private int m_playerID = -1;
-    private int m_playerScore = 0;
-    private int m_playerIndex = -1; // Not sent over network
-    private Vector3 m_correctPlayerPos = Vector3.zero; // We lerp towards this
-    private Quaternion m_correctPlayerRot = Quaternion.identity; // We lerp towards this
-    private float m_networkedHealth = -1.0f;
+    private int m_playerIndex = -1;
     private bool m_initialised = false;
     private bool m_recievedValidData = false;
     private Health m_healthBar = null;
+    private CannonController m_cannonController = null;
+    private PlayerScore m_score = null;
+
+    /// <summary>
+    /// Information networked peer-to-peer
+    /// </summary>
+    private int m_playerHue = 0;
+    private string m_playerName = "";
+    private int m_playerID = -1;
+    private int m_playerScore = 0;
+    private Vector3 m_position = Vector3.zero;
+    private Quaternion m_rotation = Quaternion.identity;
+    private float m_health = -1.0f;
+    private float m_mouseCursorAngle = 0.0f;
+    private bool m_firedCannonsLeft = false;
+    private bool m_firedCannonsRight = false;
 
     /// <summary>
     /// Initilaises the networked player
@@ -32,9 +44,12 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Start()
     {
-        DontDestroyOnLoad(transform.parent); // Photon networking controls this
+        // Photon Networking will destroy the object
+        DontDestroyOnLoad(transform.parent);
 
         m_healthBar = GetComponent<Health>();
+        m_score = GetComponent<PlayerScore>();
+        m_cannonController = GetComponentInChildren<CannonController>();
     }
 
     /// <summary>
@@ -46,48 +61,53 @@ public class NetworkedPlayer : MonoBehaviour
         if(photonView.isMine)
         {
             gameObject.tag = "Player";
-            Debug.Log("Created Player Ship");
 
-            m_playerIndex = NetworkMatchmaker.Get().GetPlayerIndex();
-            PlayerManager.Placement place = PlayerManager.Get().GetNewPosition(m_playerIndex, gameObject);
-            m_playerColor = place.color;
+            var matchMaker = NetworkMatchmaker.Get();
+            m_playerIndex = matchMaker.GetPlayerIndex();
+            m_playerID = matchMaker.GetPlayerID();
+
+            var playerManager = PlayerManager.Get();
+            var place = playerManager.GetNewPosition(m_playerIndex, gameObject);
+            m_playerHue = place.hue;
 
             gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
 
-            m_playerID = NetworkMatchmaker.Get().GetPlayerID();
             m_playerName = Utilities.GetPlayerName();
             if(m_playerName.Length == 0)
             {
-                // Name is used to determine when successful data is recieved and cannot be null
+                // Name is used to determine when successful
+                // data is recieved and cannot be null
                 m_playerName = Utilities.GetPlayerDefaultName();
             }
-
-            gameObject.name = m_playerID.ToString();
-            transform.parent.name = m_playerName + " (Client)";
-
+           
             NotifyPlayerCreation();
         }
         else
         {
             gameObject.tag = "EnemyPlayer";
-            Debug.Log("Created Enemy Ship");
         }
 
         var floatingHealth = transform.parent.FindChild("FloatingHealthBar");
         floatingHealth.gameObject.SetActive(!photonView.isMine);
-            
+         
+        Debug.Log("Created " + gameObject.tag);
         m_initialised = true;
     }
 
     /// <summary>
-    /// Adds the player to the minimap and notifies its created
+    /// Adds the player to the minimap and notifies the player manager of creation
     /// </summary>
     void NotifyPlayerCreation()
     {
+        gameObject.name = m_playerID.ToString();
+        transform.parent.name = m_playerName;
+        m_playerColor = Colour.HueToRGB(m_playerHue);
+
         var minimap = GameObject.FindObjectOfType<Minimap>();
         minimap.AddPlayer(gameObject, photonView.isMine, m_playerColor);
+
         PlayerManager.AddPlayer(gameObject);
     }
 
@@ -113,6 +133,8 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Update()
     {
+        RenderDiagnostics();
+
         if(!Utilities.IsLevelLoaded())
         {
             return;
@@ -123,107 +145,150 @@ public class NetworkedPlayer : MonoBehaviour
             Initialise();
         }
 
-        if (!photonView.isMine)
+        if(photonView.isMine)
         {
-            if(m_recievedValidData)
+            m_playerScore = (int)m_score.RoundedScore;
+            m_health = m_healthBar.HealthLevel;
+            m_mouseCursorAngle = m_cannonController.MouseCursorAngle;
+
+            if(m_cannonController.CannonsFiredRight)
             {
-                transform.position = Vector3.Lerp(
-                    transform.position, m_correctPlayerPos, Time.deltaTime * 5);
+                m_firedCannonsRight = true;
+            }
+            if(m_cannonController.CannonsFiredLeft)
+            {
+                m_firedCannonsLeft = true;
+            }
+        }
+        else if(m_recievedValidData)
+        {
+            // Ship positioning
+            transform.position = Vector3.Lerp(
+                transform.position, m_position, Time.deltaTime * 5);
 
-                transform.rotation = Quaternion.Lerp(
-                    transform.rotation, m_correctPlayerRot, Time.deltaTime * 5);
+            transform.rotation = Quaternion.Lerp(
+                transform.rotation, m_rotation, Time.deltaTime * 5);
 
-                if(m_networkedHealth >= 0)
+            // Cannon firing and positioning
+            m_cannonController.MouseCursorAngle = m_mouseCursorAngle;
+
+            if(m_firedCannonsLeft)
+            {
+                m_cannonController.FireWeaponLeft();
+                m_firedCannonsLeft = false;
+            }
+
+            if(m_firedCannonsRight)
+            {
+                m_cannonController.FireWeaponRight();
+                m_firedCannonsRight = false;
+            }
+
+            // Ship health
+            if(m_health >= 0)
+            {
+                // Only update health if networked version is lower
+                // This can mean however that networked version thinks its higher
+                // and the player can be running around seemingly empty
+                // Because of this, initially set if lower but slowly increment if higher
+                // This means if theres a difference it'll eventually correct itself 
+
+                float health = m_healthBar.HealthLevel;
+                if(m_health <= health)
                 {
-                    // Only update health if networked version is lower
-                    // This can mean however that networked version thinks its higher
-                    // and the player can be running around seemingly empty
-                    // Because of this, initially set if lower but slowly increment if higher
-                    // This means if theres a difference it'll eventually correct itself 
-
-                    float health = m_healthBar.HealthLevel;
-                    if(m_networkedHealth <= health)
-                    {
-                        m_healthBar.SetHealthLevel(m_networkedHealth);
-                    }
-                    else
-                    {
-                        float difference = m_networkedHealth - health;
-                        float addSpeed = Time.deltaTime * 0.05f;
-                        float incrementingHealth = health + (difference * addSpeed);
-                        m_healthBar.SetHealthLevel(incrementingHealth);
-                    }
+                    m_healthBar.SetHealthLevel(m_health);
+                }
+                else
+                {
+                    float difference = m_health - health;
+                    float addSpeed = Time.deltaTime * 0.05f;
+                    float incrementingHealth = health + (difference * addSpeed);
+                    m_healthBar.SetHealthLevel(incrementingHealth);
                 }
             }
         }
-        else
-        {
-            m_playerScore = (int)(GetComponent<PlayerScore>().RoundedScore);
-            m_networkedHealth = m_healthBar.HealthLevel;
-        }
-
-        RenderDiagnostics();
     }
 
     /// <summary>
-    /// Renders diagnostics
+    /// Renders diagnostics for the player networking
     /// </summary>
     void RenderDiagnostics()
     {
         if(Diagnostics.IsActive())
         {
+            string playerConnection;
             if(photonView.isMine)
             {
                 Diagnostics.Add("Player Client Index", m_playerIndex);
+                playerConnection = "Client";
+            }
+            else
+            {
+                playerConnection = "Enemy [" + (m_recievedValidData ? "x" : " ") + "]";
             }
 
             Diagnostics.Add("Player" + m_playerID, m_playerName + 
-                " [" + m_playerScore + "] [" + m_networkedHealth + "] " +
-                (photonView.isMine ? "[Client] " : "[Enemy] "));
+                "|" + m_playerScore + 
+                "|" + m_health + 
+                "|" + m_playerHue + 
+                "|" + m_initialised + 
+                "|" + playerConnection);
         }
     }
 
     /// <summary>
     /// Serialises player data to each player
     /// Note not called if only player in the room
+    /// Note not called every tick or at regular intervals
     /// </summary>
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
         {
-            // We own this player: send the others our data
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-            stream.SendNext(m_networkedHealth);
             stream.SendNext(m_playerName);
             stream.SendNext(m_playerID);
             stream.SendNext(m_playerScore);
-            stream.SendNext(m_playerColor.r);
-            stream.SendNext(m_playerColor.g);
-            stream.SendNext(m_playerColor.b);
+            stream.SendNext(m_playerHue);
+            stream.SendNext(m_health);
+            stream.SendNext(m_mouseCursorAngle);
+            stream.SendNext(m_firedCannonsLeft);
+            stream.SendNext(m_firedCannonsRight);
+
+            m_firedCannonsRight = false;
+            m_firedCannonsLeft = false;
         }
         else
         {
-            // Network player, receive data
-            m_correctPlayerPos = (Vector3)stream.ReceiveNext();
-            m_correctPlayerRot = (Quaternion)stream.ReceiveNext();
-            m_networkedHealth = (float)stream.ReceiveNext();
+            m_position = (Vector3)stream.ReceiveNext();
+            m_rotation = (Quaternion)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
             m_playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
-            m_playerColor.r = (float)stream.ReceiveNext();
-            m_playerColor.g = (float)stream.ReceiveNext();
-            m_playerColor.b = (float)stream.ReceiveNext();
+            m_playerHue = (int)stream.ReceiveNext();
+            m_health = (float)stream.ReceiveNext();
+            m_mouseCursorAngle = (float)stream.ReceiveNext();
+
+            bool firedCannonsLeft = (bool)stream.ReceiveNext();
+            if(firedCannonsLeft)
+            {
+                m_firedCannonsLeft = true;
+            }
+
+            bool firedCannonsRight = (bool)stream.ReceiveNext();
+            if(firedCannonsRight)
+            {
+                m_firedCannonsRight = true;
+            }
 
             // On first recieve valid data
-            if(!m_recievedValidData && m_playerName.Length > 0)
+            if(m_initialised && !m_recievedValidData && m_playerName.Length > 0)
             {
                 m_recievedValidData = true;
                 name = m_playerID.ToString();
-
-                transform.rotation = m_correctPlayerRot;
-                transform.position = m_correctPlayerPos;
-
+                transform.rotation = m_rotation;
+                transform.position = m_position;
                 NotifyPlayerCreation();
             }
         }
@@ -274,54 +339,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     public bool IsInitialised()
     {
-        return m_initialised;
-    }
-
-    /// <summary>
-    /// Whether the player is fully initialised
-    /// </summary>
-    static public bool IsInitialised(GameObject obj)
-    {
-        return obj.GetComponentInParent<NetworkedPlayer>().IsInitialised();
-    }
-
-    /// <summary>
-    /// Returns the player Name
-    /// </summary>
-    static public string GetPlayerName(GameObject obj)
-    {
-        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerName : "";
-    }
-
-    /// <summary>
-    /// Returns the player Score
-    /// </summary>
-    static public float GetPlayerScore(GameObject obj)
-    {
-        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerScore : 0.0f;
-    }
-
-    /// <summary>
-    /// Returns the player color
-    /// </summary>
-    static public Color GetPlayerColor(GameObject obj)
-    {
-        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerColor : new Color();
-    }
-
-    /// <summary>
-    /// Returns the player ID
-    /// </summary>
-    static public int GetPlayerID(GameObject obj)
-    {
-        return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
-    }
-
-    /// <summary>
-    /// Returns whether the player can control this
-    /// </summary>
-    static public bool IsControllable(GameObject obj)
-    {
-        return obj.GetComponentInParent<NetworkedPlayer>().IsControllable();
+        return IsControllable() ? m_initialised : 
+            m_initialised && m_recievedValidData;
     }
 }

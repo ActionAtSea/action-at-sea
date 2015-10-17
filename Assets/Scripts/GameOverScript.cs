@@ -53,8 +53,7 @@ public class GameOverScript : MonoBehaviour
         List<GameObject> players = PlayerManager.GetAllPlayersByScore();
         
         m_hasLostGame = players.Count == 0 || player == null ||
-            NetworkedPlayer.GetPlayerID(players[0]) !=
-                NetworkedPlayer.GetPlayerID(player);
+            Utilities.GetPlayerID(players[0]) != Utilities.GetPlayerID(player);
         
         SetGameOver(true);
     }
@@ -74,6 +73,7 @@ public class GameOverScript : MonoBehaviour
                 
                 if(m_toMenuRequest)
                 {
+                    Debug.Log("Leaving game room from game over");
                     NetworkMatchmaker.Get().LeaveGameLevel();
                     Application.LoadLevel((int)SceneID.LOBBY);
                 }

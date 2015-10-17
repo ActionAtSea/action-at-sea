@@ -179,6 +179,7 @@ public class LobbyScript : MonoBehaviour
                 }
                 else if(m_joinGameRequest)
                 {
+                    Debug.Log("Leaving game room from lobby");
                     m_network.LeaveGameLevel();
                     m_joinGameRequest = false;
                     SetMaxPlayerSlider(true);

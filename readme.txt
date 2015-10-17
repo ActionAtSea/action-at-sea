@@ -2,10 +2,12 @@
 TO DO LIST:
 =====================================================================================
 
-- Implement player prediction to improve hit/health latency
+
+- Dead Reckoning
+- Fix firing request not reliable (UDP)
 - Improving fog/spray
-- Convert dock to 3D
 
 IF REQUIRED:
+- Convert dock to 3D
 - Add player list/friend selection to lobby
 - Support for game board having non-uniform dimensions

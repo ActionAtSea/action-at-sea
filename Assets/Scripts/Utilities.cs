@@ -233,6 +233,15 @@ class Utilities
     /// Gets an ordered list of the object type
     /// Ordering by name is important for networking
     /// </summary>
+    static public List<T> GetOrderedListInChildren<T>(GameObject obj) where T : UnityEngine.Object
+    {
+        return GetOrderedList<T>(obj.GetComponentsInChildren<T>());
+    }
+
+    /// <summary>
+    /// Gets an ordered list of the object type
+    /// Ordering by name is important for networking
+    /// </summary>
     static private List<T> GetOrderedList<T>(T[] objs) where T : UnityEngine.Object
     {
         List<T> orderedList = (from obj in objs 
@@ -255,59 +264,50 @@ class Utilities
     }
 
     /// <summary>
-    /// Converts hue, value, saturation to rgb
-    /// Note, hue should be 0->360
-    /// http://www.poynton.com/PDFs/coloureq.pdf
+    /// Whether the player is fully initialised
     /// </summary>
-    static public Color HSVToRGB(uint hue, float value, float saturation)
+    static public bool IsPlayerInitialised(GameObject obj)
     {
-        Color color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
-        float hex = (float)hue / 60.0f;
-        float primaryColor = Mathf.Floor(hex);
-        float secondaryColour = hex - primaryColor;
-        float a = (1.0f - saturation) * value;
-        float b = (1.0f - (saturation * secondaryColour)) * value;
-        float c = (1.0f - (saturation * (1.0f - secondaryColour))) * value;
-
-        switch((int)primaryColor)
-        {
-        case 0:
-            color.r = value;
-            color.g = c;
-            color.b = a;
-            break;
-        case 1:
-            color.r = b;
-            color.g = value;
-            color.b = a;
-            break;
-        case 2:
-            color.r = a;
-            color.g = value;
-            color.b = c;
-            break;
-        case 3:
-            color.r = a;
-            color.g = b;
-            color.b = value;
-            break;
-        case 4:
-            color.r = c;
-            color.g = a;
-            color.b = value;
-            break;
-        case 5:
-            color.r = value;
-            color.g = a;
-            color.b = b;
-            break;
-        case 6:
-            color.r = value;
-            color.g = c;
-            color.b = a;
-            break;
-        }
-
-        return color;
+        return obj.GetComponentInParent<NetworkedPlayer>().IsInitialised();
+    }
+    
+    /// <summary>
+    /// Returns the player Name
+    /// </summary>
+    static public string GetPlayerName(GameObject obj)
+    {
+        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerName : "";
+    }
+    
+    /// <summary>
+    /// Returns the player Score
+    /// </summary>
+    static public float GetPlayerScore(GameObject obj)
+    {
+        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerScore : 0.0f;
+    }
+    
+    /// <summary>
+    /// Returns the player color
+    /// </summary>
+    static public Color GetPlayerColor(GameObject obj)
+    {
+        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerColor : new Color();
+    }
+    
+    /// <summary>
+    /// Returns the player ID
+    /// </summary>
+    static public int GetPlayerID(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
+    }
+    
+    /// <summary>
+    /// Returns whether the player can control this
+    /// </summary>
+    static public bool IsPlayerControllable(GameObject obj)
+    {
+        return obj.GetComponentInParent<NetworkedPlayer>().IsControllable();
     }
 }

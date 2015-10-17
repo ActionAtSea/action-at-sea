@@ -38,7 +38,7 @@ public class Health : MonoBehaviour
     /// </summary>
     void Initialise()
     {
-        if(NetworkedPlayer.IsControllable(gameObject))
+        if(Utilities.IsPlayerControllable(gameObject))
         {
             m_healthBar = GameObject.FindWithTag("PlayerHealth");
             m_healthBar.GetComponent<UnityEngine.UI.Image>().enabled = true;
@@ -92,7 +92,7 @@ public class Health : MonoBehaviour
         if(m_floatingHealthBarText != null)
         {
             m_floatingHealthBarText.text = 
-                NetworkedPlayer.GetPlayerName(gameObject);
+                Utilities.GetPlayerName(gameObject);
         }
 
         if (m_healthLevel > m_healthMax)

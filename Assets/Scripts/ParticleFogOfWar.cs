@@ -72,7 +72,7 @@ public class ParticleFogOfWar : MonoBehaviour
         else if(!m_static && m_renderer.isVisible)
         {
             var player = PlayerManager.GetControllablePlayer();
-            if(player != null && NetworkedPlayer.IsInitialised(player))
+            if(player != null && Utilities.IsPlayerInitialised(player))
             {
                 m_fade = PlayerManager.IsFogCloseToPlayer(
                     transform.position.x, transform.position.z, m_radius);

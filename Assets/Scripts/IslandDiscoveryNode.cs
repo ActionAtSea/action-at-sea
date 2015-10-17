@@ -102,16 +102,19 @@ public class IslandDiscoveryNode : MonoBehaviour
     private void SetOwner(GameObject owner)
     {
         // If a valid owner to set
-        if(owner != null && PlayerManager.IsPlayer(owner) && NetworkedPlayer.IsInitialised(owner))
+        if(owner != null && PlayerManager.IsPlayer(owner) && Utilities.IsPlayerInitialised(owner))
         {
             // If doesn't have an owner or is a different owner
             if(m_owner == null || m_owner.name != owner.name)
             {
-                m_renderer.color = NetworkedPlayer.GetPlayerColor(owner);
-                SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
+                if(PlayerManager.IsCloseToPlayer(owner.transform.position, 30.0f))
+                {
+                    SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
+                }
 
                 m_owner = owner;
-                m_ownerID = NetworkedPlayer.GetPlayerID(owner);
+                m_renderer.color = Utilities.GetPlayerColor(owner);
+                m_ownerID = Utilities.GetPlayerID(owner);
                 m_timestamp = NetworkMatchmaker.Get().GetTime();
 
                 Debug.Log(m_owner.name + " grabbed a new node");

@@ -12,17 +12,11 @@ using System.Collections;
 /// </summary>
 public class Cannon : MonoBehaviour
 {
-    public PhotonView photonView = null;
     public bool rightSideCannon = true;  // Determines which side the cannon is on the ship.
-
-    private Vector3 m_firePosition = new Vector3(); //holds position of the cannon when it last fired.
-    private Quaternion m_fireRotation = new Quaternion();   //holds the rotation of the cannon when it last fired.
-    private bool m_hasFired = false;
-    private bool m_shouldFire = false;
-    private float m_swivelRangeDegrees = 45.0f;  // The range that the cannons can swivel.
-    private float m_cursorAngle = 0.0f;          // stores the angle the mouse cursor is at relative to the ship.
+    private float m_swivelRangeDegrees = 45.0f;
     private BulletFireScript m_fireScript = null;
     private CannonController m_controller = null;
+    private bool m_shouldFire = false;
 
     /// <summary>
     /// Initialises the script
@@ -39,22 +33,15 @@ public class Cannon : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(!Utilities.IsLevelLoaded())
+        if(Utilities.IsLevelLoaded())
         {
-            return;
-        }
-
-        if (NetworkedPlayer.IsControllable(gameObject))
-        {
-            m_firePosition = m_fireScript.FirePosition();
-            m_fireRotation = m_fireScript.FireRotation();
             UpdateRotation();
-        }
 
-        if (m_shouldFire)
-        {
-            FireGun();
-            m_shouldFire = false;
+            if(m_shouldFire)
+            {
+                m_fireScript.Fire(Utilities.GetPlayerID(gameObject), transform.position, transform.rotation);
+                m_shouldFire = false;
+            }
         }
     }
 
@@ -67,48 +54,25 @@ public class Cannon : MonoBehaviour
     private void UpdateRotation()
     {
         //transform.eulerAngles = transform.parent.eulerAngles;
-        m_cursorAngle = m_controller.MouseCursorAngle;
+        var cursorAngle = m_controller.MouseCursorAngle;
 
         if (rightSideCannon)
         {
-            if (m_cursorAngle <= (0.0f + m_swivelRangeDegrees) && m_cursorAngle >= 0.0f)
+            if (cursorAngle <= (0.0f + m_swivelRangeDegrees) && cursorAngle >= 0.0f)
             {
-                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, m_cursorAngle);
+                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, cursorAngle);
             }
-            else if (m_cursorAngle >= (360.0f - m_swivelRangeDegrees))
+            else if (cursorAngle >= (360.0f - m_swivelRangeDegrees))
             {
-                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, m_cursorAngle);
+                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, cursorAngle);
             }
         }
         else
         {
-            if (m_cursorAngle >= (180.0f - m_swivelRangeDegrees) && m_cursorAngle <= (180.0f + m_swivelRangeDegrees))
+            if (cursorAngle >= (180.0f - m_swivelRangeDegrees) && cursorAngle <= (180.0f + m_swivelRangeDegrees))
             {
-                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, m_cursorAngle);
+                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, cursorAngle);
             }
-        }
-    }
-
-    /// <summary>
-    /// Serialises the cannon across the network
-    /// </summary>
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.isWriting)
-        {
-            stream.SendNext(transform.localEulerAngles);
-            stream.SendNext(m_hasFired);
-            stream.SendNext(m_firePosition);
-            stream.SendNext(m_fireRotation);
-            m_hasFired = false;
-        }
-        else
-        {
-            var angles = (Vector3)stream.ReceiveNext();
-            transform.localEulerAngles = new Vector3(angles.x, angles.y, angles.z);
-            m_shouldFire = (bool)stream.ReceiveNext();
-            m_firePosition = (Vector3)stream.ReceiveNext();
-            m_fireRotation = (Quaternion)stream.ReceiveNext();
         }
     }
 
@@ -117,8 +81,6 @@ public class Cannon : MonoBehaviour
     /// </summary>
     public void FireGun()
     {
-        int ID = NetworkedPlayer.GetPlayerID(gameObject);
-        m_fireScript.Fire(ID, m_firePosition, m_fireRotation);
-        m_hasFired = NetworkedPlayer.IsControllable(gameObject);
+        m_shouldFire = true;
     }
 }

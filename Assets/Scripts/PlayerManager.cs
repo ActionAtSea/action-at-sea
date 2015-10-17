@@ -26,7 +26,7 @@ public class PlayerManager : MonoBehaviour
     {
         public Vector3 position = new Vector3();
         public Vector3 rotation = new Vector3();
-        public Color color;
+        public int hue = 0;
     }
 
     /// <summary>
@@ -47,6 +47,14 @@ public class PlayerManager : MonoBehaviour
         if(!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()) && m_spawns.Count == 0)
         {
             Debug.LogError("Could not find any spawns");
+        }
+
+        foreach(var spawn in m_spawns)
+        {
+            if(Colour.HasSaturationValue(spawn.GetComponent<SpriteRenderer>().color))
+            {
+                Debug.LogError(spawn.name + " colour has saturation and/or value which will not translate in-game");
+            }
         }
     }
 
@@ -85,7 +93,7 @@ public class PlayerManager : MonoBehaviour
     public static List<GameObject> GetAllPlayersByScore()
     {
         return GetAllPlayers().OrderByDescending(
-            x => NetworkedPlayer.GetPlayerScore(x)).ToList();
+            x => Utilities.GetPlayerScore(x)).ToList();
     }
 
     /// <summary>
@@ -243,12 +251,13 @@ public class PlayerManager : MonoBehaviour
             place.rotation.x = 0.0f;
             place.rotation.y = 0.0f;
             place.rotation.z = -m_spawns[index].transform.localEulerAngles.y;
-            place.color = m_spawns[index].GetComponent<SpriteRenderer>().color;
+            place.hue = Colour.RGBToHue(m_spawns[index].GetComponent<SpriteRenderer>().color);
         }
         else
         {
+            Random.seed = (int)NetworkMatchmaker.Get().GetTime();
             place = GetRandomPosition();
-            place.color = Utilities.HSVToRGB((uint)Random.Range(0, 360), 1.0f, 1.0f);
+            place.hue = Random.Range(0, 360);
         }
         
         // Flip the ship to be upwards

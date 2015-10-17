@@ -32,7 +32,7 @@ public class PlayerAiming : MonoBehaviour
             return;
         }
 
-        if (NetworkedPlayer.IsControllable(gameObject))
+        if (Utilities.IsPlayerControllable(gameObject))
         {
             Vector3 pos = Input.mousePosition;
             Ray mouseRay = Camera.main.ScreenPointToRay(pos);

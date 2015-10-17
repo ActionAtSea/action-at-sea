@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if(NetworkedPlayer.IsControllable(gameObject))
+        if(Utilities.IsPlayerControllable(gameObject))
         {
             if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))
             {

@@ -92,10 +92,13 @@ public class IslandDiscoveryTrigger : MonoBehaviour
 
         if(owner != null)
         {
-            tickImage.color = NetworkedPlayer.GetPlayerColor(owner);
-            ownerText.text = NetworkedPlayer.GetPlayerName(owner);
+            tickImage.color = Utilities.GetPlayerColor(owner);
+            ownerText.text = Utilities.GetPlayerName(owner);
 
-            SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
+            if(PlayerManager.IsCloseToPlayer(owner.transform.position, 30.0f))
+            {
+                SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
+            }
 
             var player = PlayerManager.GetControllablePlayer();
             if(player != null && player.name == owner.name)

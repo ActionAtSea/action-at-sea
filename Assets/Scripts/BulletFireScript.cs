@@ -14,26 +14,9 @@ using System.Collections.Generic;
 public class BulletFireScript : MonoBehaviour
 {
     public Vector3 SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f);
-
     private float m_bulletSpeedUp = 50.0f;
     private float m_bulletSpeedForward = 500.0f;
     private Vector2 m_firingDirection;
-
-    /// <summary>
-    /// Returns the position fired from
-    /// </summary>
-    public Vector3 FirePosition()
-    {
-        return transform.position;
-    }
-
-    /// <summary>
-    /// Returns the rotation fired from
-    /// </summary>
-    public Quaternion FireRotation()
-    {
-        return transform.rotation;
-    }
 
     /// <summary>
     /// Fires a bullet

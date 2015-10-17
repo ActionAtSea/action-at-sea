@@ -431,7 +431,7 @@ public class FogOfWar : MonoBehaviour
     {
         // Only solve for fog when a player is active
         var player = PlayerManager.GetControllablePlayer();
-        if(player != null && NetworkedPlayer.IsInitialised(player))
+        if(player != null && Utilities.IsPlayerInitialised(player))
         {
             Vector2 position = new Vector2(
                 player.transform.position.x, 

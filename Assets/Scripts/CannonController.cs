@@ -13,6 +13,8 @@ using System.Collections.Generic;
 /// </summary>
 public class CannonController : MonoBehaviour
 {
+    public static int MAX_CANNONS = 8;
+
     private float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
     private float m_swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
     private float m_aimingRangeDegrees = 90.0f;       //The range within which which side's cannons can be fired is determined.
@@ -21,10 +23,12 @@ public class CannonController : MonoBehaviour
     private float m_currentReloadTimeLeft = 0.0f;
     private Vector3 m_startPosition;                  //Contains the parent's position for use in aiming calculations.
     private Vector3 m_mousePositionWorld;             //Contains the mousePosition in world space.
-    private Cannon[] m_cannonList;                    //Array of all the cannons on the ship.
+    private List<Cannon> m_cannonList;                //Array of all the cannons on the ship.
     private List<Cannon> m_rightSideCannons;
     private List<Cannon> m_leftSideCannons;
     private bool m_fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
+    private bool m_firedCannonRight = false;          //Whether the right cannons were recently fired
+    private bool m_firedCannonLeft = false;          //Whether the left cannons were recently fired
 
     /// <summary>
     /// Initialises the script
@@ -34,9 +38,9 @@ public class CannonController : MonoBehaviour
         m_currentReloadTimeRight = m_reloadTime;
         m_currentReloadTimeLeft = m_reloadTime;
 
-        m_cannonList = GetComponentsInChildren<Cannon>();
-        m_rightSideCannons = new List<Cannon>(4);
-        m_leftSideCannons = new List<Cannon>(4);
+        m_cannonList = Utilities.GetOrderedListInChildren<Cannon>(gameObject);
+        m_rightSideCannons = new List<Cannon>(MAX_CANNONS/2);
+        m_leftSideCannons = new List<Cannon>(MAX_CANNONS/2);
 
         foreach (Cannon c in m_cannonList)
         {
@@ -72,18 +76,15 @@ public class CannonController : MonoBehaviour
     /// </summary>  
     void Update()
     {
-        if(!Utilities.IsLevelLoaded())
+        if(Utilities.IsLevelLoaded() && Utilities.IsPlayerControllable(gameObject))
         {
-            return;
-        }
+            m_firedCannonLeft = false;
+            m_firedCannonRight = false;
 
-        if (NetworkedPlayer.IsControllable(gameObject))
-        {
             UpdateMouseCursorAngle();
             FireCannons();
+            RenderDiagnostics();
         }
-
-        RenderDiagnostics();
     }
 
     /// <summary>
@@ -93,10 +94,9 @@ public class CannonController : MonoBehaviour
     {
         if(Diagnostics.IsActive())
         {
-            if(NetworkedPlayer.IsControllable(gameObject))
-            {
-                Diagnostics.Add("Mouse Cursor Angle", m_mouseCursorAngle);
-            }
+            Diagnostics.Add("Mouse Cursor Angle", m_mouseCursorAngle);
+            Diagnostics.Add("Fired Cannons Left", m_firedCannonLeft);
+            Diagnostics.Add("Fired Cannons Right", m_firedCannonRight);
         }
     }
 
@@ -131,7 +131,29 @@ public class CannonController : MonoBehaviour
         {
             angle -= 360.0f;
         }
-        m_mouseCursorAngle = angle;
+        MouseCursorAngle = angle;
+    }
+
+    /// <summary>
+    /// Fires the cannons
+    /// </summary>  
+    public void FireWeaponLeft()
+    {
+        foreach (Cannon c in m_leftSideCannons)
+        {
+            c.FireGun();
+        }
+    }
+
+    /// <summary>
+    /// Fires the cannons
+    /// </summary>  
+    public void FireWeaponRight()
+    {
+        foreach (Cannon c in m_rightSideCannons)
+        {
+            c.FireGun();
+        }
     }
 
     /// <summary>
@@ -150,11 +172,9 @@ public class CannonController : MonoBehaviour
                 //If the mouse cursor is within the ship's left side firing range.
                 if (m_mouseCursorAngle >= (180.0f - m_aimingRangeDegrees) && m_mouseCursorAngle <= (180.0f + m_aimingRangeDegrees))
                 {
-                    foreach (Cannon c in m_leftSideCannons)
-                    {
-                        c.FireGun();
-                    }
+                    FireWeaponLeft();
                     m_currentReloadTimeLeft = 0.0f;
+                    m_firedCannonLeft = true;
                 }
             }
             //Right side Cannon reload time
@@ -163,19 +183,15 @@ public class CannonController : MonoBehaviour
                 //If the mouse cursor is within the ship's right side firing range.
                 if (m_mouseCursorAngle <= (0.0f + m_aimingRangeDegrees) && m_mouseCursorAngle >= 0.0f)
                 {
-                    foreach (Cannon c in m_rightSideCannons)
-                    {
-                        c.FireGun();
-                    }
+                    FireWeaponRight();
                     m_currentReloadTimeRight = 0.0f;
+                    m_firedCannonRight = true;
                 }
                 else if (m_mouseCursorAngle >= (360.0f - m_aimingRangeDegrees))
                 {
-                    foreach (Cannon c in m_rightSideCannons)
-                    {
-                        c.FireGun();
-                    }
+                    FireWeaponRight();
                     m_currentReloadTimeRight = 0.0f;
+                    m_firedCannonRight = true;
                 }
             }
             //Resets the fireGuns condition
@@ -189,6 +205,7 @@ public class CannonController : MonoBehaviour
     public float MouseCursorAngle
     {
         get { return m_mouseCursorAngle; }
+        set { m_mouseCursorAngle = value; }
     }
 
     /// <summary>
@@ -205,6 +222,22 @@ public class CannonController : MonoBehaviour
     public float AimingRangeDegrees
     {
         get { return m_aimingRangeDegrees; }
+    }
+
+    /// <summary>
+    /// Returns whether the right cannons were recently fired
+    /// </summary>  
+    public bool CannonsFiredRight
+    {
+        get { return m_firedCannonRight; }
+    }
+
+    /// <summary>
+    /// Returns whether the left cannons were recently fired
+    /// </summary>  
+    public bool CannonsFiredLeft
+    {
+        get { return m_firedCannonLeft; }
     }
 
     /// <summary>
