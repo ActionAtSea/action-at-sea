@@ -20,9 +20,12 @@ public class NetworkedPlayer : MonoBehaviour
     private int m_playerIndex = -1;
     private bool m_initialised = false;
     private bool m_recievedValidData = false;
+    private bool m_requiresPositionUpdate = false;
     private Health m_healthBar = null;
     private CannonController m_cannonController = null;
     private PlayerScore m_score = null;
+    private Rigidbody m_rigidBody = null;
+    private GameObject m_networkDiagnostics = null;
 
     /// <summary>
     /// Information networked peer-to-peer
@@ -31,12 +34,25 @@ public class NetworkedPlayer : MonoBehaviour
     private string m_playerName = "";
     private int m_playerID = -1;
     private int m_playerScore = 0;
-    private Vector3 m_position = Vector3.zero;
-    private Quaternion m_rotation = Quaternion.identity;
     private float m_health = -1.0f;
     private float m_mouseCursorAngle = 0.0f;
     private bool m_firedCannonsLeft = false;
     private bool m_firedCannonsRight = false;
+
+    /// <summary>
+    /// Player positional information
+    /// </summary>
+    class MotionState
+    {
+        public Vector3 position = Vector3.zero;
+        public Vector3 velocity = Vector3.zero;
+        public Vector3 acceleration = Vector3.zero;
+    }
+
+    private MotionState m_recievedState = new MotionState();
+    private MotionState m_currentState = new MotionState();
+    private MotionState m_previousState = new MotionState();
+    private Quaternion m_rotation = Quaternion.identity;
 
     /// <summary>
     /// Initilaises the networked player
@@ -45,11 +61,14 @@ public class NetworkedPlayer : MonoBehaviour
     void Start()
     {
         // Photon Networking will destroy the object
-        DontDestroyOnLoad(transform.parent);
+        var parent = transform.parent;
+        DontDestroyOnLoad(parent);
 
         m_healthBar = GetComponent<Health>();
         m_score = GetComponent<PlayerScore>();
+        m_rigidBody = GetComponent<Rigidbody>();
         m_cannonController = GetComponentInChildren<CannonController>();
+        m_networkDiagnostics = parent.FindChild("NetworkDiagnostics").gameObject;
     }
 
     /// <summary>
@@ -70,7 +89,7 @@ public class NetworkedPlayer : MonoBehaviour
             var place = playerManager.GetNewPosition(m_playerIndex, gameObject);
             m_playerHue = place.hue;
 
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            m_rigidBody.velocity = Vector3.zero;
             gameObject.transform.position = place.position;
             gameObject.transform.localEulerAngles = place.rotation;
 
@@ -133,8 +152,6 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Update()
     {
-        RenderDiagnostics();
-
         if(!Utilities.IsLevelLoaded())
         {
             return;
@@ -162,14 +179,8 @@ public class NetworkedPlayer : MonoBehaviour
         }
         else if(m_recievedValidData)
         {
-            // Ship positioning
-            transform.position = Vector3.Lerp(
-                transform.position, m_position, Time.deltaTime * 5);
+            PositionNonClientPlayer();
 
-            transform.rotation = Quaternion.Lerp(
-                transform.rotation, m_rotation, Time.deltaTime * 5);
-
-            // Cannon firing and positioning
             m_cannonController.MouseCursorAngle = m_mouseCursorAngle;
 
             if(m_firedCannonsLeft)
@@ -184,7 +195,6 @@ public class NetworkedPlayer : MonoBehaviour
                 m_firedCannonsRight = false;
             }
 
-            // Ship health
             if(m_health >= 0)
             {
                 // Only update health if networked version is lower
@@ -212,10 +222,20 @@ public class NetworkedPlayer : MonoBehaviour
     /// <summary>
     /// Renders diagnostics for the player networking
     /// </summary>
-    void RenderDiagnostics()
+    void LateUpdate()
     {
+        m_networkDiagnostics.SetActive(
+            Diagnostics.IsActive() && !photonView.isMine);
+
         if(Diagnostics.IsActive())
         {
+            if(m_networkDiagnostics.activeSelf)
+            {
+                m_networkDiagnostics.GetComponent<SpriteRenderer>().color = m_playerColor;
+                m_networkDiagnostics.transform.position = m_recievedState.position;
+                m_networkDiagnostics.transform.rotation = m_rotation;
+            }
+
             string playerConnection;
             if(photonView.isMine)
             {
@@ -245,6 +265,7 @@ public class NetworkedPlayer : MonoBehaviour
     {
         if (stream.isWriting)
         {
+            stream.SendNext(m_rigidBody.velocity);
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(m_playerName);
@@ -261,7 +282,13 @@ public class NetworkedPlayer : MonoBehaviour
         }
         else
         {
-            m_position = (Vector3)stream.ReceiveNext();
+            m_requiresPositionUpdate = true;
+
+            var velocity = (Vector3)stream.ReceiveNext();
+            m_recievedState.acceleration = velocity - m_recievedState.velocity;
+            m_recievedState.velocity = velocity;
+
+            m_recievedState.position = (Vector3)stream.ReceiveNext();
             m_rotation = (Quaternion)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
             m_playerID = (int)stream.ReceiveNext();
@@ -287,10 +314,70 @@ public class NetworkedPlayer : MonoBehaviour
             {
                 m_recievedValidData = true;
                 name = m_playerID.ToString();
+                m_rigidBody.velocity = Vector3.zero;
                 transform.rotation = m_rotation;
-                transform.position = m_position;
+                transform.position = m_recievedState.position;
                 NotifyPlayerCreation();
             }
+        }
+    }
+
+    /// <summary>
+    /// Attempts to predict where the non-client player would be to reduce network latency
+    /// </summary>
+    void PositionNonClientPlayer()
+    {
+        bool usePrediction = false;
+        if(!usePrediction)
+        {
+            transform.position = Vector3.Lerp(
+                transform.position, m_recievedState.position, Time.deltaTime * 5);
+            
+            transform.rotation = Quaternion.Lerp(
+                transform.rotation, m_rotation, Time.deltaTime * 5);
+        }
+        else
+        {
+            const float interpolationPeriod = 0.5f; // Must be [0, 1]
+
+            if(m_requiresPositionUpdate)
+            {
+                // Recieved a position update from the network. This position will be 
+                // back in time and requires blending with the predictive position
+                float recievedAmount = 1.0f - interpolationPeriod;
+                float currentAmount = interpolationPeriod;
+
+                m_currentState.position = 
+                    (recievedAmount * m_recievedState.position) + 
+                    (currentAmount * m_currentState.position);
+
+                m_currentState.velocity = 
+                    (recievedAmount * m_recievedState.velocity) + 
+                    (currentAmount * m_currentState.velocity);
+
+                m_currentState.acceleration = 
+                    (recievedAmount * m_recievedState.acceleration) + 
+                    (currentAmount * m_currentState.acceleration);
+
+                m_requiresPositionUpdate = false;
+            }
+
+            // Euler integration to predict the future
+            // P(t) = P + Vt + (1/2)At^2
+            m_previousState.position = m_currentState.position;
+            m_previousState.velocity = m_currentState.velocity;
+            m_previousState.acceleration = m_currentState.velocity - m_previousState.velocity;
+
+            m_currentState.position = m_previousState.position + 
+                (m_previousState.velocity * Time.deltaTime) + 
+                (0.5f * m_previousState.acceleration * (Time.deltaTime * Time.deltaTime));
+
+            // Interpolate to create a smooth motion
+            transform.position = Vector3.Lerp(
+                transform.position, m_currentState.position, interpolationPeriod);
+            
+            transform.rotation = Quaternion.Lerp(
+                transform.rotation, m_rotation, interpolationPeriod);
         }
     }
 

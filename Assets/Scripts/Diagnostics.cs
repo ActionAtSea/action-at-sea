@@ -7,21 +7,49 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// F1 Shows diagnostic information
+/// F2 Shows messages from the console
+/// Tick Tick should be ticked and then the application run
+/// </summary>
 public class Diagnostics : MonoBehaviour 
 {
     public bool m_tickTest = false;
     private float m_timePassed = 0.0f;
     private static bool sm_tickTest = false;
+    private static bool sm_registeredLogCallback = false;
     private static bool sm_renderDiagnostics = false;
+    private static bool sm_renderLogging = false;
     private static StringBuilder sm_diagnostics = new StringBuilder();
     private static string sm_rendererdText = "";
+    private static List<string> sm_logMessages = new List<string>();
 
     void Start()
     {
+        if(!sm_registeredLogCallback)
+        {
+            UnityEngine.Application.logMessageReceived += Diagnostics.OnLogConsole;
+            sm_registeredLogCallback = true;
+        }
+
         if(!sm_tickTest && m_tickTest)
         {
             sm_tickTest = true;
             Application.LoadLevel(0);
+        }
+    }
+
+    /// <summary>
+    /// Callback when logging to the console
+    /// </summary>
+    static void OnLogConsole(string log, string stackTrace, LogType type)
+    {
+        sm_logMessages.Add(type.ToString() + ": " + log);
+
+        const int maxLogEntries = 40;
+        if(sm_logMessages.Count > maxLogEntries)
+        {
+            sm_logMessages.RemoveAt(0);
         }
     }
 
@@ -57,6 +85,12 @@ public class Diagnostics : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.F1))
         {
             sm_renderDiagnostics = !sm_renderDiagnostics;
+            sm_renderLogging = false;
+        }
+        else if(Input.GetKeyDown(KeyCode.F2))
+        {
+            sm_renderLogging = !sm_renderLogging;
+            sm_renderDiagnostics = false;
         }
 
         if(sm_tickTest)
@@ -105,7 +139,16 @@ public class Diagnostics : MonoBehaviour
         if(sm_renderDiagnostics)
         {
             GUILayout.TextArea(sm_rendererdText);
-
+        }
+        else if(sm_renderLogging)
+        {
+            string text = "";
+            foreach(var log in sm_logMessages)
+            {
+                text += log + "\n";
+            }
+            text.Remove(text.Length-1, 1);
+            GUILayout.TextArea(text);
         }
     }
 }

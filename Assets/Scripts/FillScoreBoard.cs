@@ -23,7 +23,9 @@ public class FillScoreBoard : MonoBehaviour
         float xPosition = scoreText.GetComponent<RectTransform>().localPosition.x;
         float yPosition = scoreText.GetComponent<RectTransform>().localPosition.y;
 
-        int amount = Utilities.GetMaximumPlayers();
+        var level = Utilities.GetLoadedLevel();
+        int amount = Utilities.GetMaxPlayersForLevel(level);
+
         for(int i = 1; i < amount; ++i)
         {
             var obj = Instantiate(scoreText);
