@@ -113,15 +113,8 @@ public class Health : MonoBehaviour
             float barWidth = ((m_healthLevel-m_healthMin)*((m_maxBarWidth-
                 m_minBarWidth)/(m_healthMax-m_healthMin)))+m_minBarWidth;
 
-            if(barWidth <= m_minBarWidth)
-            {
-                m_healthBar.GetComponent<UnityEngine.UI.Image>().enabled = false;
-            }
-            else
-            {
-                m_healthBar.GetComponent<RectTransform>().sizeDelta =
-                    new Vector2(barWidth, m_barHeight);
-            }
+            m_healthBar.GetComponent<UnityEngine.UI.Image>().enabled = barWidth > m_minBarWidth;
+            m_healthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(barWidth, m_barHeight);
         }
     }
 
@@ -176,8 +169,20 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Gets whether the health is alive
     /// </summary>
+    public void SetAlive(bool isAlive)
+    {
+        m_isAlive = isAlive; 
+        SetHealthLevel(isAlive ? HealthMax : HealthMin);
+    }
+
+    /// <summary>
+    /// Gets whether the health is alive
+    /// </summary>
     public bool IsAlive
     {
-        get { return m_isAlive; }
+        get 
+        { 
+            return m_isAlive; 
+        }
     }
 }

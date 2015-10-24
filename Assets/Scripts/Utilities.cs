@@ -302,6 +302,14 @@ class Utilities
     {
         return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
     }
+
+    /// <summary>
+    /// Returns whether the player can control this
+    /// </summary>
+    static public bool IsPlayerAlive(GameObject obj)
+    {
+        return obj.GetComponentInParent<Health>().IsAlive;
+    }
     
     /// <summary>
     /// Returns whether the player can control this

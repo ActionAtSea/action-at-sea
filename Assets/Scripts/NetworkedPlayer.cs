@@ -12,6 +12,7 @@ using System.Collections.Generic;
 public class NetworkedPlayer : MonoBehaviour 
 {    
     public PhotonView photonView = null;
+    public GameObject[] children = null;
 
     /// <summary>
     /// Information required which is not networked
@@ -19,9 +20,11 @@ public class NetworkedPlayer : MonoBehaviour
     public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
     private int m_playerIndex = -1;
     private bool m_initialised = false;
+    private bool m_visible = true;
     private bool m_recievedValidData = false;
     private bool m_requiresPositionUpdate = false;
     private Health m_healthBar = null;
+    private GameObject m_floatingHealthBar = null;
     private CannonController m_cannonController = null;
     private PlayerScore m_score = null;
     private Rigidbody m_rigidBody = null;
@@ -85,13 +88,7 @@ public class NetworkedPlayer : MonoBehaviour
             m_playerIndex = matchMaker.GetPlayerIndex();
             m_playerID = matchMaker.GetPlayerID();
 
-            var playerManager = PlayerManager.Get();
-            var place = playerManager.GetNewPosition(m_playerIndex, gameObject);
-            m_playerHue = place.hue;
-
-            m_rigidBody.velocity = Vector3.zero;
-            gameObject.transform.position = place.position;
-            gameObject.transform.localEulerAngles = place.rotation;
+            PlaceOnSpawn();
 
             m_playerName = Utilities.GetPlayerName();
             if(m_playerName.Length == 0)
@@ -108,8 +105,8 @@ public class NetworkedPlayer : MonoBehaviour
             gameObject.tag = "EnemyPlayer";
         }
 
-        var floatingHealth = transform.parent.FindChild("FloatingHealthBar");
-        floatingHealth.gameObject.SetActive(!photonView.isMine);
+        m_floatingHealthBar = transform.parent.FindChild("FloatingHealthBar").gameObject;
+        m_floatingHealthBar.SetActive(!photonView.isMine);
          
         Debug.Log("Created " + gameObject.tag);
         m_initialised = true;
@@ -131,13 +128,69 @@ public class NetworkedPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// On destroy called for both client and non-client controlled
+    /// Positions the ship on a spawn
     /// </summary>
-    void OnDestroy()
+    void PlaceOnSpawn()
     {
-        PlayerManager.RemovePlayer(gameObject);
-        Debug.Log("Destroying ship: " + name);
+        var playerManager = PlayerManager.Get();
+        var place = playerManager.GetNewPosition(m_playerIndex, gameObject);
+        m_playerHue = place.hue;
+        
+        m_rigidBody.velocity = Vector3.zero;
+        gameObject.transform.position = place.position;
+        gameObject.transform.localEulerAngles = place.rotation;
+    }
 
+    /// <summary>
+    /// Hides/shows the ship. Keep the networked player active 
+    /// to allow connected players to still recieve information
+    /// </summary>
+    void ShowShip(bool show)
+    {
+        m_visible = show;
+        GetComponent<PlayerMovement>().enabled = show;
+        GetComponent<PlayerAiming>().enabled = show;
+        GetComponent<CapsuleCollider>().enabled = show;
+        m_floatingHealthBar.SetActive(show && !photonView.isMine);
+
+        foreach(var child in children)
+        {
+            child.SetActive(show);
+        }
+    }
+
+    /// <summary>
+    /// Callback when game over is set
+    /// </summary>
+    public void SetVisible(bool isVisible, bool shouldExplode = false)
+    {
+        if(isVisible)
+        {
+            ShowShip(true);
+            m_healthBar.SetAlive(true);
+        }
+        else
+        {
+            if(shouldExplode)
+            {
+                m_healthBar.SetAlive(false);
+                Explode();
+            }
+
+            ShowShip(false);
+
+            if(photonView.isMine)
+            {
+                PlaceOnSpawn();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Explodes the ship
+    /// </summary>
+    void Explode()
+    {
         // Will be null if leaving game
         var animationGenerator = FindObjectOfType<AnimationGenerator>();
         if(animationGenerator != null)
@@ -145,6 +198,16 @@ public class NetworkedPlayer : MonoBehaviour
             animationGenerator.PlayAnimation(
                 transform.position, AnimationGenerator.ID.EXPLOSION);
         }
+    }
+
+    /// <summary>
+    /// On destroy called for both client and non-client controlled
+    /// </summary>
+    void OnDestroy()
+    {
+        PlayerManager.RemovePlayer(gameObject);
+        Debug.Log("Destroying ship: " + name);
+        Explode();
     }
 
     /// <summary>
@@ -276,6 +339,7 @@ public class NetworkedPlayer : MonoBehaviour
             stream.SendNext(m_mouseCursorAngle);
             stream.SendNext(m_firedCannonsLeft);
             stream.SendNext(m_firedCannonsRight);
+            stream.SendNext(m_visible);
 
             m_firedCannonsRight = false;
             m_firedCannonsLeft = false;
@@ -307,6 +371,12 @@ public class NetworkedPlayer : MonoBehaviour
             if(firedCannonsRight)
             {
                 m_firedCannonsRight = true;
+            }
+
+            bool isVisible = (bool)stream.ReceiveNext();
+            if(isVisible != m_visible)
+            {
+                SetVisible(isVisible, !isVisible);
             }
 
             // On first recieve valid data

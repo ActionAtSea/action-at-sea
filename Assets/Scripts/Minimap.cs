@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -13,6 +14,7 @@ class MapItem
     public Transform parentTransform;
     public SpriteRenderer parentRenderer;
     public bool updatesColor = false;
+    public Func<bool> isActive = null;
 };
 
 public class Minimap : MonoBehaviour 
@@ -63,24 +65,24 @@ public class Minimap : MonoBehaviour
     /// <summary>
     /// Adds a new item to the minimap
     /// </summary>
-    void AddStaticItem(Transform itemTransform, 
-                       SpriteRenderer itemRenderer, 
-                       Color colour,
-                       bool updatesColor = false)
+    MapItem AddStaticItem(Transform itemTransform, 
+                          SpriteRenderer itemRenderer, 
+                          Color colour,
+                          bool updatesColor = false)
     {
-        AddItem(itemTransform, itemRenderer, colour, false, 0, 1.0f, updatesColor);
+        return AddItem(itemTransform, itemRenderer, colour, false, 0, 1.0f, updatesColor);
     }
 
     /// <summary>
     /// Adds a new item to the minimap
     /// </summary>
-    void AddItem(Transform itemTransform, 
-                 SpriteRenderer itemRenderer, 
-                 Color colour,
-                 bool isMarker,
-                 int orderOffset,
-                 float scale, 
-                 bool updatesColor)
+    MapItem AddItem(Transform itemTransform, 
+                    SpriteRenderer itemRenderer, 
+                    Color colour,
+                    bool isMarker,
+                    int orderOffset,
+                    float scale, 
+                    bool updatesColor)
     {
         MapItem item = null;
 
@@ -135,6 +137,8 @@ public class Minimap : MonoBehaviour
             item.parentTransform.localScale.x * scale,
             item.parentTransform.localScale.y * scale,
             item.parentTransform.localScale.z * scale);
+
+        return item;
     }
 
     /// <summary>
@@ -144,11 +148,10 @@ public class Minimap : MonoBehaviour
     {
         if(!m_isInitialised)
         {
-            AddStaticItem(m_gameBoard.transform, 
-                    m_gameBoard.GetComponent<SpriteRenderer>(), 
-                    m_gameBoard.GetComponent<SpriteRenderer>().color);
+            var boardItem = AddStaticItem(m_gameBoard.transform, 
+                m_gameBoard.GetComponent<SpriteRenderer>(), 
+                m_gameBoard.GetComponent<SpriteRenderer>().color);
 
-            var boardItem = m_world[m_world.Count - 1];
             boardItem.item.transform.localRotation = Quaternion.identity;
             boardItem.item.transform.localScale = new Vector3(
                 boardItem.item.transform.localScale.x,
@@ -176,11 +179,10 @@ public class Minimap : MonoBehaviour
             }
             else
             {
-                AddStaticItem(fog.transform, 
-                              fog.GetComponent<SpriteRenderer>(),
-                              GetComponent<SpriteRenderer>().color);
+                m_fog = AddStaticItem(fog.transform, 
+                    fog.GetComponent<SpriteRenderer>(),
+                    GetComponent<SpriteRenderer>().color);
             }
-            m_fog = m_world[m_world.Count - 1];
             
             m_isInitialised = true;
         }
@@ -200,6 +202,11 @@ public class Minimap : MonoBehaviour
 
         for(int i = 0; i < m_markers.Count; ++i)
         {
+            if(m_markers[i].isActive != null)
+            {
+                m_markers[i].item.SetActive(m_markers[i].isActive());
+            }
+
             if(!UpdateMapItem(m_markers[i]))
             {
                 Destroy (m_markers[i].item);
@@ -224,10 +231,12 @@ public class Minimap : MonoBehaviour
     {
         var maxMapScale = Mathf.Max(transform.localScale.x, transform.localScale.y);
 
-        AddItem(player.transform, 
-                marker.GetComponent<SpriteRenderer>(), 
-                color, true, controlled ? 1 : 0,
-                m_shipMarkerSize / maxMapScale, false);
+        var item = AddItem(player.transform, 
+                           marker.GetComponent<SpriteRenderer>(), 
+                           color, true, controlled ? 1 : 0,
+                           m_shipMarkerSize / maxMapScale, false);
+
+        item.isActive = () => { return Utilities.IsPlayerAlive(player); };
     }
 
     /// <summary>

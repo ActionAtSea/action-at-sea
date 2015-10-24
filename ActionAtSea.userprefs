@@ -1,9 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Diagnostics.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkedPlayer.cs">
     <Files>
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="335" Column="13" />
-      <File FileName="Assets\Scripts\Diagnostics.cs" Line="49" Column="36" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="378" Column="14" />
+      <File FileName="Assets\Scripts\GameOverScript.cs" Line="195" Column="67" />
+      <File FileName="Assets\Scripts\Health.cs" Line="116" Column="82" />
+      <File FileName="Assets\Scripts\Minimap.cs" Line="248" Column="10" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="297" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

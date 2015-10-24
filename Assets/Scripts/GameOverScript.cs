@@ -27,6 +27,7 @@ public class GameOverScript : MonoBehaviour
     private bool m_toMenuRequest = false;
     private bool m_toPlayRequest = false;
     private bool m_levelComplete = false;
+    private CameraMovement m_camera = null;
 
     /// <summary>
     /// Initialises the script
@@ -34,6 +35,12 @@ public class GameOverScript : MonoBehaviour
     void Start()
     {
         m_network = NetworkMatchmaker.Get();
+
+        m_camera = FindObjectOfType<CameraMovement>();
+        if(m_camera == null)
+        {
+            Debug.LogError("Could not find camera script");
+        }
 
         if(replayGameText.color != toMenuText.color)
         {
@@ -174,18 +181,22 @@ public class GameOverScript : MonoBehaviour
     {
         m_toMenuRequest = false;
         m_toPlayRequest = false;
-        
+        var player = PlayerManager.GetControllablePlayer();
+
         if(!gameover)
         {
+            m_camera.enabled = true;
             m_isGameOver = false;
             m_hasLostGame = false;
             replayGameText.enabled = false;
             toMenuText.enabled = false;
             gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = false;
             gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            player.GetComponent<NetworkedPlayer>().SetVisible(true);
         }
         else
         {
+            m_camera.enabled = false;
             m_isGameOver = true;
             replayGameText.enabled = true;
             replayGameText.color = m_levelComplete ? disabledColour : m_textColour;
@@ -193,21 +204,12 @@ public class GameOverScript : MonoBehaviour
             toMenuText.color = m_textColour;
             gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = m_hasLostGame;
             gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = !m_hasLostGame;
+            player.GetComponent<NetworkedPlayer>().SetVisible(false, !m_levelComplete);
 
             var soundManager = SoundManager.Get();
             soundManager.StopMusic(SoundManager.MusicID.GAME_TRACK);
             soundManager.StopMusic(SoundManager.MusicID.GAME_AMBIENCE);
             soundManager.PlayMusic(SoundManager.MusicID.MENU_TRACK);
-
-            if(!m_levelComplete)
-            {
-                var player = PlayerManager.GetControllablePlayer();
-                if(player != null)
-                {
-                    player.GetComponent<Health>().SetHealthLevel(0.0f);
-                }
-                NetworkMatchmaker.Get().DestroyPlayer();
-            }
         }
     }
     
