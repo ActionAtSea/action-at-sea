@@ -12,10 +12,13 @@ using System.Collections;
 /// </summary>
 public class PlayerMovement : MonoBehaviour 
 {
-    public float m_forwardSpeed = 20.0f; // 80, 40
+    public float m_forwardSpeed = 30.0f; // 80, 40
     private float m_rotationSpeed = 165.0f;
     private Vector3 m_forwardForce = new Vector3();
     private Rigidbody m_rigidBody = null;
+    private float m_currentVelocity = 0.0f;
+    private float m_boostTimer = 0.0f;
+    public float boostTimerTrigger = 1.0f;  // Length of time boat must travel at a certain speed to trigger a boost. 
 
     /// <summary>
     /// Initialises the script
@@ -37,11 +40,40 @@ public class PlayerMovement : MonoBehaviour
 
         if(Utilities.IsPlayerControllable(gameObject))
         {
+            Debug.Log (m_rigidBody.velocity.magnitude);
+            if(m_rigidBody.velocity.magnitude > 7.0f)
+            {
+                m_boostTimer += Time.deltaTime;
+            }
+            else
+            {
+                m_boostTimer = 0.0f;
+            }
+
+            if(m_boostTimer >= boostTimerTrigger)
+            {
+                m_forwardSpeed = Mathf.Lerp(30f, 40f, m_rigidBody.velocity.magnitude*1.0f/8.0f);
+                m_rotationSpeed = 125f;
+            }
+            else
+            {
+                m_forwardSpeed = 30f;
+                m_rotationSpeed = 165f;
+            }
+
             if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow))
             {
                 m_forwardForce.x = transform.up.x * m_forwardSpeed;
                 m_forwardForce.z = transform.up.z * m_forwardSpeed;
                 m_rigidBody.AddForce(m_forwardForce, ForceMode.Impulse);
+
+                
+
+                //m_forwardSpeed = Mathf.Lerp(30f, 40f, m_rigidBody.velocity.magnitude*1.0f/8.0f);
+
+
+               
+
             }
 
             if (Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.LeftArrow))
