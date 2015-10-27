@@ -5,7 +5,7 @@ TO DO LIST:
 
 - Dead Reckoning
 - Fix firing request not reliable (UDP)
-- Improving fog/spray
+- Improving spray
 
 IF REQUIRED:
 - Convert dock to 3D

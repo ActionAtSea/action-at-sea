@@ -16,7 +16,14 @@ public class FogOfWar : MonoBehaviour
     public GameObject generatedFog = null;           /// Holds all generated fog in scene, set through inspector
     public GameObject fogTileTemplate = null;
 
-    private List<GameObject> m_fogTiles = null;      /// All generated fog tiles
+    private List<List<FogOfWarTile>> m_fogTiles = null;
+    private List<GameObject> m_staticTiles = null;
+    private float m_partitionWidth = 0.0f;
+    private float m_partitionHeight = 0.0f;
+    private int m_partitionIn = 0;
+    private List<Vector2> m_partitionPositions = null;
+    private int m_index = 0;
+
     private Color32[] m_minimapPixels = null;        /// Pixels for the minimap 
     private GameObject m_minimapTile = null;         /// Single tile for the minimap
     private SpriteRenderer m_minimapRenderer = null; /// Single tile for the minimap
@@ -24,6 +31,14 @@ public class FogOfWar : MonoBehaviour
     private float m_minimapMinReveal = 14.0f;        /// Minimum radius around the player fog is revealed on the minimap
     private float m_minimapMaxReveal = 16.0f;        /// Maximum radius around the player fog is revealed on the minimap
     private Vector2 m_minimapWorldScale;             /// Size of the minimap tile in world space
+
+    enum Partition
+    {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOT_LEFT,
+        BOT_RIGHT
+    }
 
     /// <summary>
     /// Initialises the fog of war
@@ -49,15 +64,44 @@ public class FogOfWar : MonoBehaviour
                 "Could not find Game Board in scene");
         }
 
-        m_fogTiles = new List<GameObject>();
+        // Partitioned into four lists
+        m_fogTiles = new List<List<FogOfWarTile>>();
+        m_staticTiles = new List<GameObject>();
+        m_partitionPositions = new List<Vector2>();
 
         gameBoard.GetComponent<SpriteRenderer>().enabled = false;
         var boardBounds = gameBoard.GetComponent<SpriteRenderer>().bounds;
         var boardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x);
         var boardLength = Mathf.Abs(boardBounds.max.z - boardBounds.min.z);
+        m_partitionWidth = boardWidth / 2.0f;
+        m_partitionHeight = boardLength / 2.0f;
 
-        const int border = 2;
-        float size = 2.0f;
+        for (int i = 0; i < 4; ++i)
+        {
+            float partitionX = 0.0f;
+            float partitionZ = 0.0f;
+            switch(i)
+            {
+            case (int)Partition.TOP_LEFT:
+                partitionX = -m_partitionWidth;
+                partitionZ = -m_partitionHeight;
+                break;
+            case (int)Partition.TOP_RIGHT:
+                partitionZ = -m_partitionHeight;
+                break;
+            case (int)Partition.BOT_LEFT:
+                partitionX = -m_partitionWidth;
+                break;
+            }
+            
+            m_fogTiles.Add(new List<FogOfWarTile>());
+            m_partitionPositions.Add(new Vector2(partitionX, partitionZ));
+            Debug.Log(m_partitionPositions[i]);
+        }
+
+        const int border = 4;
+        const int borderOverlap = 2;
+        float size = 3.5f;
         float scale = fogTileTemplate.transform.localScale.x;
         float height = fogTileTemplate.transform.position.y;
         int amountX = Mathf.CeilToInt(boardWidth / size);
@@ -65,13 +109,14 @@ public class FogOfWar : MonoBehaviour
         amountX += border * 2;
         amountZ += border * 2;
 
+        fogTileTemplate.SetActive(true);
+
         for(int x = 0; x < amountX; ++x)
         {
             for(int z = 0; z < amountZ; ++z)
             {
                 var fogTile = Instantiate(fogTileTemplate);
                 fogTile.transform.parent = generatedFog.transform;
-                m_fogTiles.Add(fogTile);
                 
                 float randX = UnityEngine.Random.Range(-1.0f, 1.0f);
                 float randY = UnityEngine.Random.Range(-2.0f, 2.0f);
@@ -84,11 +129,35 @@ public class FogOfWar : MonoBehaviour
                     (size * ((amountX - 1) * 0.5f)) - (x * size) + randX,
                     height + randY,
                     (size * ((amountZ - 1) * 0.5f)) - (z * size) + randZ);
-               
+
                 // Border tiles cannot be interacted with
-                if(x < border || z < border || x >= amountX-border || z >= amountZ-border)
+                if(x < border+borderOverlap || 
+                   z < border+borderOverlap ||
+                   x >= amountX-border-borderOverlap || 
+                   z >= amountZ-border-borderOverlap)
                 {
                     fogTile.GetComponent<FogOfWarTile>().IsStatic = true;
+                    m_staticTiles.Add(fogTile);
+                }
+                else
+                {
+                    // Determine which partitions the tile should be in
+                    var radius = fogTile.GetComponent<FogOfWarTile>().GetRadius();
+                    bool foundPartition = false;
+                    for(int i = 0; i < 4; ++i)
+                    {
+                        if(IsInPartition(fogTile.transform.position.x, fogTile.transform.position.z, radius, i))
+                        {
+                            m_fogTiles[i].Add(fogTile.GetComponent<FogOfWarTile>());
+                            foundPartition = true;
+                        }
+                    }
+                    
+                    if(!foundPartition)
+                    {
+                        Debug.LogError("Could not find partition for fog tile");   
+                        fogTile.SetActive(false);
+                    }
                 }
             }
         }
@@ -96,6 +165,31 @@ public class FogOfWar : MonoBehaviour
         fogTileTemplate.SetActive(false);
 
         CreateMinimapFog(boardWidth, boardLength);
+    }
+
+    bool IsInPartition(float x, float z, float radius, int partition)
+    {
+        Vector2 partitionCenter = new Vector2(
+            m_partitionPositions[partition].x + (m_partitionWidth / 2.0f),
+            m_partitionPositions[partition].y + (m_partitionHeight / 2.0f));
+
+        Vector2 tile = new Vector2(x, z);
+        Vector2 tileToPartition = partitionCenter - tile;
+        float distance = Vector2.Distance(partitionCenter, tile);
+
+        if(distance < radius)
+        {
+            return true;
+        }
+
+        tileToPartition /= distance;
+        tileToPartition *= radius;
+
+        Vector2 closestPoint = new Vector2(x + tileToPartition.x, z + tileToPartition.y);
+        return closestPoint.x <= m_partitionPositions[partition].x + m_partitionWidth &&
+               closestPoint.x >= m_partitionPositions[partition].x &&
+               closestPoint.y <= m_partitionPositions[partition].y + m_partitionHeight &&
+               closestPoint.y >= m_partitionPositions[partition].y;
     }
 
     /// <summary>
@@ -185,7 +279,10 @@ public class FogOfWar : MonoBehaviour
         GameObject.Destroy(m_minimapTile);
         for(int i = 0; i < m_fogTiles.Count; ++i)
         {
-            m_fogTiles[i].SetActive(false);
+            for(int j = 0; j < m_fogTiles[i].Count; ++i)
+            {
+                m_fogTiles[i][j].gameObject.SetActive(false);
+            }
         }
     }
 
@@ -197,17 +294,56 @@ public class FogOfWar : MonoBehaviour
         if(Diagnostics.IsActive())
         {
             Diagnostics.Add("Fog Tiles", m_fogTiles.Count);
+            Diagnostics.Add("Partition In", m_partitionIn);
+            Diagnostics.Add("Partition Static", m_staticTiles.Count);
+
+            for(int i = 0; i < 4; ++i)
+            {
+                Diagnostics.Add(((Partition)i).ToString(), m_fogTiles[i].Count);
+            }
         }
 
-        if(m_minimapTile != null)
+        var player = PlayerManager.GetControllablePlayer();
+        if(player != null && Utilities.IsPlayerInitialised(player))
         {
-            var player = PlayerManager.GetControllablePlayer();
-            if(player != null && Utilities.IsPlayerInitialised(player))
+            Vector2 position = new Vector2(
+                player.transform.position.x, 
+                player.transform.position.z);
+            
+            // Check where the player is
+            if(position.x < m_partitionPositions[(int)Partition.TOP_RIGHT].x)
             {
-                Vector2 position = new Vector2(
-                    player.transform.position.x, 
-                    player.transform.position.z);
-               
+                if(position.y < m_partitionPositions[(int)Partition.BOT_RIGHT].y)
+                {
+                    m_partitionIn = (int)Partition.TOP_LEFT;
+                }
+                else
+                {
+                    m_partitionIn = (int)Partition.BOT_LEFT;
+                }
+            }
+            else
+            {
+                if(position.y < m_partitionPositions[(int)Partition.BOT_RIGHT].y)
+                {
+                    m_partitionIn = (int)Partition.TOP_RIGHT;
+                }
+                else
+                {
+                    m_partitionIn = (int)Partition.BOT_RIGHT;
+                }
+            }
+
+            // Update the fog of war
+            for(int i = 0; i < 250; ++i)
+            {
+                m_index = m_index >= m_fogTiles[m_partitionIn].Count-1 ? 0 : m_index + 1;
+                m_fogTiles[m_partitionIn][m_index].CheckFadeOut();
+            }
+
+            // Update the minimap
+            if(m_minimapTile != null)
+            {
                 float pixelSizeX = m_minimapWorldScale.x / (float)m_minimapSize;
                 float pixelSizeZ = m_minimapWorldScale.y / (float)m_minimapSize;
                 float halfSizeX = m_minimapWorldScale.x / 2.0f;

@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if(Diagnostics.IsActive())
             {
-                Diagnostics.Add("Player Speed", m_rigidBody.velocity.magnitude);
+                Debug.Log(m_rigidBody.velocity.magnitude);
             }
             
             if(m_rigidBody.velocity.magnitude > 7.0f)
