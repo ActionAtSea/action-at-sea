@@ -182,24 +182,6 @@ public class PlayerManager : MonoBehaviour
         sm_playerIDs.Remove(id);
         Debug.Log("Removing ship " + id + " from manager");
     }
-
-    /// <summary>
-    /// Utility function to determine if the given position is roughly visible to the player
-    /// </summary>
-    static public bool IsFogCloseToPlayer(float x, float z, float distance)
-    {
-        var player = GetControllablePlayer();
-        if(player != null)
-        {
-            var fogTrigger = PlayerMovement.IsMoving(player) ?
-                player.transform.FindChild("FogTrigger").gameObject : player;
-
-            float xToPlayer = x - fogTrigger.transform.position.x;
-            float zToPlayer = z - fogTrigger.transform.position.z;
-            return ((xToPlayer * xToPlayer) + (zToPlayer * zToPlayer)) <= distance * distance;
-        }
-        return false;
-    }
     
     /// <summary>
     /// Utility function to determine if the given position is roughly visible to the player

@@ -40,7 +40,11 @@ public class PlayerMovement : MonoBehaviour
 
         if(Utilities.IsPlayerControllable(gameObject))
         {
-            Debug.Log (m_rigidBody.velocity.magnitude);
+            if(Diagnostics.IsActive())
+            {
+                Diagnostics.Add("Player Speed", m_rigidBody.velocity.magnitude);
+            }
+            
             if(m_rigidBody.velocity.magnitude > 7.0f)
             {
                 m_boostTimer += Time.deltaTime;
