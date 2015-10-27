@@ -16,6 +16,7 @@ public class FogOfWar : MonoBehaviour
     public GameObject generatedFog = null;           /// Holds all generated fog in scene, set through inspector
     public GameObject fogTileTemplate = null;
 
+    private int m_totalTiles = 0;
     private List<List<FogOfWarTile>> m_fogTiles = null;
     private List<GameObject> m_staticTiles = null;
     private float m_partitionWidth = 0.0f;
@@ -141,6 +142,8 @@ public class FogOfWar : MonoBehaviour
                 }
                 else
                 {
+                    m_totalTiles++;
+
                     // Determine which partitions the tile should be in
                     var radius = fogTile.GetComponent<FogOfWarTile>().GetRadius();
                     bool foundPartition = false;
@@ -293,7 +296,7 @@ public class FogOfWar : MonoBehaviour
     {
         if(Diagnostics.IsActive())
         {
-            Diagnostics.Add("Fog Tiles", m_fogTiles.Count);
+            Diagnostics.Add("Fog Tiles", m_totalTiles);
             Diagnostics.Add("Partition In", m_partitionIn);
             Diagnostics.Add("Partition Static", m_staticTiles.Count);
 

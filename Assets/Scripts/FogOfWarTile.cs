@@ -15,7 +15,7 @@ public class FogOfWarTile : MonoBehaviour
     private Material m_material = null;
     private float m_alpha = 1.0f;
     private bool m_fade = false;   
-    private bool m_static = false;  
+    private bool m_static = false;
     private float m_radius = 10.0f;                      
 
     void Start()
