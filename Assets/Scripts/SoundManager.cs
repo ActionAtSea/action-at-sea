@@ -76,8 +76,10 @@ public class SoundManager : MonoBehaviour
     private static List<SharedSound> sm_sharedSound;    /// Shared sounds across scenes
     private static bool sm_initialised = false;         /// Whether the manager is initialised
     private float m_fadeSpeed = 0.75f;                  /// Speed to fade the music
-    private float m_overallMusicMultiplier = 0.75f;
-    private float m_overallSoundMultiplier = 0.65f;
+    [Range(0.0f, 0.75f)] 
+    public float m_overallMusicMultiplier = 0.75f;
+    [Range(0.0f, 0.65f)] 
+    public float m_overallSoundMultiplier = 0.65f;
 
     /// <summary>
     /// Initialises the manager if needed
