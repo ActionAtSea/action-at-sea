@@ -10,6 +10,14 @@ public class MainMenuScript : MonoBehaviour
 {
     public Canvas optionsMenu = null;
 
+    void Start()
+    {
+        if(optionsMenu != null)
+        {
+            optionsMenu.enabled = false;
+        }
+    }
+
     public void PlayGameButton ()
     {
         SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
@@ -24,6 +32,7 @@ public class MainMenuScript : MonoBehaviour
 
     public void OptionsButton()
     {
+        SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
         //TODO: Fix this. Atm it only works if the scene starts with the options menu enabled.
         if(optionsMenu != null)
         {

@@ -22,7 +22,7 @@ public class SoundManager : MonoBehaviour
     public AudioSource islandNode = null;
     public AudioSource ramSound = null;
     public AudioSource splashSound = null;
-    
+
     /// <summary>
     /// Avaliable music IDs
     /// </summary>
@@ -171,6 +171,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     void Update () 
     {
+
         foreach(var music in sm_sharedMusic)
         {
             if(music.fadeState != FadeState.NO_FADE)
@@ -269,5 +270,10 @@ public class SoundManager : MonoBehaviour
             }
         }
         return sm_soundManager;
+    }
+
+    public void SetMasterVolume(float volume)
+    {
+        AudioListener.volume = volume;    
     }
 }
