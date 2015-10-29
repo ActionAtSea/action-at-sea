@@ -149,6 +149,7 @@
      <Compile Include="Assets\Scripts\Placeable Items\ObjectPlacement.cs" />
      <Compile Include="Assets\Scripts\Placeable Items\ObjectPlacementManager.cs" />
      <Compile Include="Assets\Scripts\Placeable Items\PlaceableObject.cs" />
+     <Compile Include="Assets\Scripts\Placeable Items\SeaMine.cs" />
      <Compile Include="Assets\Scripts\PlayerAiming.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />

@@ -1,9 +1,12 @@
 ﻿// Based on Code by Sebastian Lague
 // https://www.youtube.com/watch?v=OuqThz4Zc9c
+
+/*
+ * Class to be inherited from for placeable objects.
+ */
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
 
 public class PlaceableObject : MonoBehaviour {
 
@@ -42,6 +45,7 @@ public class PlaceableObject : MonoBehaviour {
 
     void OnTriggerEnter(Collider c)
     {
+        //TODO: Add collision recognition with non-placeable objects (e.g. islands and players).
         if(!placed)
         {
             if(c.tag == "PlaceableObject")
@@ -106,11 +110,6 @@ public class PlaceableObject : MonoBehaviour {
             break;
         }
         }
-    }
-
-    public void ResetMaterial()
-    {
-        meshRenderer.material = originalMaterial;
     }
 
     public bool Placed {

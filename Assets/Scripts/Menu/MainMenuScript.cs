@@ -33,7 +33,7 @@ public class MainMenuScript : MonoBehaviour
     public void OptionsButton()
     {
         SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-        //TODO: Fix this. Atm it only works if the scene starts with the options menu enabled.
+        //NOTE: This only works if the options menu starts enabled.
         if(optionsMenu != null)
         {
             if(!optionsMenu.enabled)
