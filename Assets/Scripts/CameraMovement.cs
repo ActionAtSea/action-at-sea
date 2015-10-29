@@ -31,15 +31,6 @@ public class CameraMovement : MonoBehaviour
     /// 
     void CameraZoom()
     {
-        if(Input.mouseScrollDelta.y < 0.0f)
-        {
-            gameObject.transform.position = new Vector3(transform.position.x, transform.position.y +1.0f, transform.position.z);
-        }
-        else if(Input.mouseScrollDelta.y > 0.0f)
-        {
-            gameObject.transform.position = new Vector3(transform.position.x, transform.position.y -1.0f, transform.position.z);
-        }
-
         if (player != null)
         {
             float velocity = player.GetComponent<Rigidbody>().velocity.magnitude;

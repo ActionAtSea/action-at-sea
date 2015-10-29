@@ -37,6 +37,7 @@ public class ObjectPlacement : MonoBehaviour
                 if(IsLegalPosition())
                 {
                     hasPlaced = true;
+                    placeableObject.SetMaterial(PlaceableObject.PlaceableItemMaterial.ORIGINAL);
                     placeableObject.Placed = true;
                 }
             }
@@ -64,5 +65,9 @@ public class ObjectPlacement : MonoBehaviour
         hasPlaced = false;
         currentObject = Instantiate(item).transform;
         placeableObject = currentObject.gameObject.GetComponent<PlaceableObject>();
+        if(placeableObject != null)
+        {
+            placeableObject.SetMaterial(PlaceableObject.PlaceableItemMaterial.IS_PLACEABLE);
+        }
     }
 }
