@@ -1,14 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CameraMovement.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Placeable Items\PlaceableObject.cs">
     <Files>
-      <File FileName="Assets\Scripts\Placeable Items\PlaceableObject.cs" Line="106" Column="42" />
+      <File FileName="Assets\Scripts\Placeable Items\PlaceableObject.cs" Line="64" Column="18" />
       <File FileName="Assets\Scripts\Menu\MainMenuScript.cs" Line="36" Column="63" />
-      <File FileName="Assets\Scripts\SoundManager.cs" Line="164" Column="44" />
       <File FileName="Assets\Scripts\Utilities.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Placeable Items\ObjectPlacement.cs" Line="70" Column="13" />
-      <File FileName="Assets\Scripts\Placeable Items\ObjectPlacementManager.cs" Line="12" Column="5" />
-      <File FileName="Assets\Scripts\CameraMovement.cs" Line="34" Column="28" />
+      <File FileName="Assets\Scripts\Placeable Items\ObjectPlacement.cs" Line="49" Column="10" />
+      <File FileName="Assets\Scripts\Placeable Items\ObjectPlacementManager.cs" Line="31" Column="32" />
+      <File FileName="Assets\Scripts\CameraMovement.cs" Line="78" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

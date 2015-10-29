@@ -28,6 +28,10 @@ public class PlaceableObject : MonoBehaviour {
     {
         meshRenderer = GetComponentInChildren<MeshRenderer>();
         originalMaterial = meshRenderer.material; 
+        if(!placed)
+        {
+        meshRenderer.material = itemIsPlacableMat;
+        }
 	}
 	
 	// Update is called once per frame
@@ -56,7 +60,10 @@ public class PlaceableObject : MonoBehaviour {
             {
                 colliders.Remove(c);
                 //meshRenderer.material = originalMaterial;
+                if(colliders.Count == 0)
+                {
                 meshRenderer.material = itemIsPlacableMat;
+                }
             }
         }
     }
