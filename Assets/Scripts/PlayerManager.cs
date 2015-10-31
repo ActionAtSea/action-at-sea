@@ -36,12 +36,7 @@ public class PlayerManager : MonoBehaviour
     {
         sm_allplayers = new List<GameObject>();
         sm_playerIDs = new Dictionary<int, GameObject>();
-
-        m_gameboard = GameObject.FindGameObjectWithTag("GameBoard");
-        if(m_gameboard == null)
-        {
-            Debug.LogError("Could not find game board");
-        }
+        m_gameboard = GameBoard.Get();
 
         m_spawns = Utilities.GetOrderedList("Spawn");
         if(!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()) && m_spawns.Count == 0)
