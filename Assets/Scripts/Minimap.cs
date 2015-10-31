@@ -39,6 +39,7 @@ public class Minimap : MonoBehaviour
             Debug.LogError("Could not find game board");
         }
 
+        m_gameBoard.GetComponent<SpriteRenderer>().enabled = false;
         var boardRenderer = m_gameBoard.GetComponent<SpriteRenderer>();
 
         var boardWidth = ((float)boardRenderer.sprite.texture.width / 
