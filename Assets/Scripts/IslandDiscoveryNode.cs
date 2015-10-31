@@ -9,11 +9,20 @@ using System.Collections.Generic;
 public class IslandDiscoveryNode : MonoBehaviour
 { 
     private string m_nodeID;
+    private IslandDiscoveryTrigger m_trigger = null;
     private int m_ownerID = 0;
     private GameObject m_owner = null;
     private double m_timestamp = 0.0;
     private SpriteRenderer m_renderer = null;
     private Color m_unownedColor = new Color(1.0f, 1.0f, 1.0f);
+
+    /// <summary>
+    /// Setst the associated trigger
+    /// </summary>
+    public void SetTrigger(IslandDiscoveryTrigger trigger)
+    {
+        m_trigger = trigger;   
+    }
 
     /// <summary>
     /// Initialises the node
@@ -65,7 +74,13 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// </summary>
     void OnTriggerEnter(Collider other)
     {
-        SetOwner(other.gameObject);
+        // Prevent this player from taking nodes on an already discovered island
+        // We don't try to prevent any node taking given from the network
+        var state = Utilities.GetGameState();
+        if((!m_trigger.IsDiscovered() && state == GameState.STAGE_1) || state != GameState.STAGE_1)
+        {
+            SetOwner(other.gameObject, NetworkMatchmaker.Get().GetTime());
+        }
     }
 
     /// <summary>
@@ -90,8 +105,7 @@ public class IslandDiscoveryNode : MonoBehaviour
             GameObject player = PlayerManager.GetPlayerWithID(ownerID);
             if(player != null)
             {
-                SetOwner(player);
-                m_timestamp = timestamp;
+                SetOwner(player, timestamp);
             }
         }
     }
@@ -99,12 +113,11 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// <summary>
     /// Sets the owner of this node
     /// </summary>
-    private void SetOwner(GameObject owner)
+    private void SetOwner(GameObject owner, double timestamp)
     {
         // If a valid owner to set
         if(owner != null && PlayerManager.IsPlayer(owner) && Utilities.IsPlayerInitialised(owner))
         {
-            // If doesn't have an owner or is a different owner
             if(m_owner == null || m_owner.name != owner.name)
             {
                 if(PlayerManager.IsCloseToPlayer(owner.transform.position, 30.0f))
@@ -115,7 +128,7 @@ public class IslandDiscoveryNode : MonoBehaviour
                 m_owner = owner;
                 m_renderer.color = Utilities.GetPlayerColor(owner);
                 m_ownerID = Utilities.GetPlayerID(owner);
-                m_timestamp = NetworkMatchmaker.Get().GetTime();
+                m_timestamp = timestamp;
 
                 Debug.Log(m_owner.name + " grabbed a new node");
             }

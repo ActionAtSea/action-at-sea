@@ -23,6 +23,10 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     void Start()
     {
         m_nodes = transform.parent.GetComponentsInChildren<IslandDiscoveryNode>();
+        foreach(var node in m_nodes)
+        {
+            node.SetTrigger(this);
+        }
 
         var islands = transform.parent.GetComponentsInChildren<SpriteRenderer>();
         foreach(var island in islands)
