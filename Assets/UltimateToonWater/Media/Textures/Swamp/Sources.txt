@@ -1,0 +1,14 @@
+Sources of the textures.
+
+At the moment of obtaining those textures they were freely available.
+If this changes in the future please contact the UTW developer so these
+can be removed.
+
+===========================================================================
+===========================================================================
+swamp_texture_by_tanorax-d4u680t.png
+http://tanorax.deviantart.com/art/Swamp-texture-292543517
+===========================================================================
+Water_Seamless_Texture_Tile_02_by_FantasyStock.jpg
+http://fantasystock.deviantart.com/art/Water-Seamless-Texture-Tile-02-87743405
+===========================================================================

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 87d17392eeb48d047977fd22e2fe136b
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - baseMaterial: {fileID: 2100000, guid: e52856d364e4bd54bbcdfee5239b39c4, type: 2}
+  - target: {instanceID: 0}
+  - floaterParticles: {instanceID: 0}
+  - waveParticles: {instanceID: 0}
+  - detailTexture: {instanceID: 0}
+  - mainTexture: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

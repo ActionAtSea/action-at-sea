@@ -1,0 +1,14 @@
+Sources of the textures.
+
+At the moment of obtaining those textures they were freely available.
+If this changes in the future please contact the UTW developer so these
+can be removed.
+
+===========================================================================
+===========================================================================
+lava_texture_stock_by_mavrosh_stock-d39o7zp.jpg
+http://mavrosh-stock.deviantart.com/art/Lava-Texture-Stock-197645173
+===========================================================================
+seamless_fire_texture_by_hhh316-d5isg37.jpg
+http://hhh316.deviantart.com/art/Seamless-Fire-Texture-333891187
+===========================================================================
