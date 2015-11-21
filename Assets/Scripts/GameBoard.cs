@@ -12,6 +12,12 @@ public class GameBoard : MonoBehaviour
 	void Start () 
     {
         GetComponent<SpriteRenderer>().enabled = false;
+
+        if(transform.position.x != 0 ||
+           transform.position.z != 0)
+        {
+            Debug.LogError("Game board must be centered around 0");
+        }
 	}
 
     static public Bounds GetBounds()
