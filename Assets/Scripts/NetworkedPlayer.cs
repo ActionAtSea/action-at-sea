@@ -29,6 +29,8 @@ public class NetworkedPlayer : MonoBehaviour
     private PlayerScore m_score = null;
     private Rigidbody m_rigidBody = null;
     private GameObject m_networkDiagnostics = null;
+    private bool m_usePrediction = false;
+    private PlayerPrediction m_playerPrediction = new PlayerPrediction();
 
     /// <summary>
     /// Information networked peer-to-peer
@@ -41,21 +43,8 @@ public class NetworkedPlayer : MonoBehaviour
     private float m_mouseCursorAngle = 0.0f;
     private bool m_firedCannonsLeft = false;
     private bool m_firedCannonsRight = false;
-
-    /// <summary>
-    /// Player positional information
-    /// </summary>
-    class MotionState
-    {
-        public Vector3 position = Vector3.zero;
-        public Vector3 velocity = Vector3.zero;
-        public Vector3 acceleration = Vector3.zero;
-    }
-
-    private MotionState m_recievedState = new MotionState();
-    private MotionState m_currentState = new MotionState();
-    private MotionState m_previousState = new MotionState();
-    private Quaternion m_rotation = Quaternion.identity;
+    private Vector3 m_networkedPosition;
+    private Quaternion m_networkedRotation;
 
     /// <summary>
     /// Initilaises the networked player
@@ -243,7 +232,6 @@ public class NetworkedPlayer : MonoBehaviour
         else if(m_recievedValidData)
         {
             PositionNonClientPlayer();
-
             m_cannonController.MouseCursorAngle = m_mouseCursorAngle;
 
             if(m_firedCannonsLeft)
@@ -295,8 +283,8 @@ public class NetworkedPlayer : MonoBehaviour
             if(m_networkDiagnostics.activeSelf)
             {
                 m_networkDiagnostics.GetComponent<SpriteRenderer>().color = m_playerColor;
-                m_networkDiagnostics.transform.position = m_recievedState.position;
-                m_networkDiagnostics.transform.rotation = m_rotation;
+                m_networkDiagnostics.transform.position = m_networkedPosition;
+                m_networkDiagnostics.transform.rotation = m_networkedRotation;
             }
 
             string playerConnection;
@@ -349,11 +337,10 @@ public class NetworkedPlayer : MonoBehaviour
             m_requiresPositionUpdate = true;
 
             var velocity = (Vector3)stream.ReceiveNext();
-            m_recievedState.acceleration = velocity - m_recievedState.velocity;
-            m_recievedState.velocity = velocity;
+            m_networkedPosition = (Vector3)stream.ReceiveNext();
+            m_networkedRotation = (Quaternion)stream.ReceiveNext();
+            m_playerPrediction.OnNetworkUpdate(m_networkedPosition, m_networkedRotation, velocity);
 
-            m_recievedState.position = (Vector3)stream.ReceiveNext();
-            m_rotation = (Quaternion)stream.ReceiveNext();
             m_playerName = (string)stream.ReceiveNext();
             m_playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
@@ -385,8 +372,8 @@ public class NetworkedPlayer : MonoBehaviour
                 m_recievedValidData = true;
                 name = m_playerID.ToString();
                 m_rigidBody.velocity = Vector3.zero;
-                transform.rotation = m_rotation;
-                transform.position = m_recievedState.position;
+                transform.rotation = m_networkedRotation;
+                transform.position = m_networkedPosition;
                 NotifyPlayerCreation();
             }
         }
@@ -397,57 +384,19 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void PositionNonClientPlayer()
     {
-        bool usePrediction = false;
-        if(!usePrediction)
+        if(!m_usePrediction)
         {
             transform.position = Vector3.Lerp(
-                transform.position, m_recievedState.position, Time.deltaTime * 5);
+                transform.position, m_networkedPosition, Time.deltaTime * 5);
             
             transform.rotation = Quaternion.Lerp(
-                transform.rotation, m_rotation, Time.deltaTime * 5);
+                transform.rotation, m_networkedRotation, Time.deltaTime * 5);
         }
         else
         {
-            const float interpolationPeriod = 0.5f; // Must be [0, 1]
-
-            if(m_requiresPositionUpdate)
-            {
-                // Recieved a position update from the network. This position will be 
-                // back in time and requires blending with the predictive position
-                float recievedAmount = 1.0f - interpolationPeriod;
-                float currentAmount = interpolationPeriod;
-
-                m_currentState.position = 
-                    (recievedAmount * m_recievedState.position) + 
-                    (currentAmount * m_currentState.position);
-
-                m_currentState.velocity = 
-                    (recievedAmount * m_recievedState.velocity) + 
-                    (currentAmount * m_currentState.velocity);
-
-                m_currentState.acceleration = 
-                    (recievedAmount * m_recievedState.acceleration) + 
-                    (currentAmount * m_currentState.acceleration);
-
-                m_requiresPositionUpdate = false;
-            }
-
-            // Euler integration to predict the future
-            // P(t) = P + Vt + (1/2)At^2
-            m_previousState.position = m_currentState.position;
-            m_previousState.velocity = m_currentState.velocity;
-            m_previousState.acceleration = m_currentState.velocity - m_previousState.velocity;
-
-            m_currentState.position = m_previousState.position + 
-                (m_previousState.velocity * Time.deltaTime) + 
-                (0.5f * m_previousState.acceleration * (Time.deltaTime * Time.deltaTime));
-
-            // Interpolate to create a smooth motion
-            transform.position = Vector3.Lerp(
-                transform.position, m_currentState.position, interpolationPeriod);
-            
-            transform.rotation = Quaternion.Lerp(
-                transform.rotation, m_rotation, interpolationPeriod);
+            m_playerPrediction.Update();
+            transform.position = m_playerPrediction.GetPosition();
+            transform.rotation = m_playerPrediction.GetRotation();
         }
     }
 
