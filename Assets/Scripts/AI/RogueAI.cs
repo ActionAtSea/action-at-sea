@@ -3,9 +3,11 @@ using System.Collections;
 
 public class RogueAI : MonoBehaviour 
 {
-  
+    private CannonController cannonController = null;
     private NavMeshAgent navAgent = null;
     private Rigidbody body = null;
+    
+
 
     /// <summary>
     /// The maximum change of heading added in each update.
@@ -25,15 +27,16 @@ public class RogueAI : MonoBehaviour
     [RangeAttribute(0, 100)]
     public float wanderDistance = 80.0f;
 
-    float wanderTheta = 0.0f;
-    Vector3 circleCentre = Vector3.zero;
-    Vector3 previousWanderTarget = Vector3.zero;
+    private float wanderTheta = 0.0f;
+    private Vector3 circleCentre = Vector3.zero;
+    private Vector3 previousWanderTarget = Vector3.zero;
 
 	// Use this for initialization
 	void Start () 
     {
         navAgent = GetComponent<NavMeshAgent>();
         body = GetComponent<Rigidbody>();
+        cannonController = GetComponentInChildren<AICannonController>();
         if(navAgent != null)
         {
             navAgent.SetDestination(new Vector3(10, 1, 100));
@@ -41,9 +44,8 @@ public class RogueAI : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void Update() 
     {
-
         navAgent.SetDestination(Wander());
 	}
 

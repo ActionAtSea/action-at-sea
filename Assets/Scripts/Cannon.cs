@@ -24,6 +24,8 @@ public class Cannon : MonoBehaviour
     void Start()
     {
         m_fireScript = GetComponent<BulletFireScript>();
+
+        //TODO: figure out if cannons need to know about their cannon controller.
         m_controller = GetComponentInParent<CannonController>();
         m_swivelRangeDegrees = m_controller.SwivelRangeDegrees;
     }

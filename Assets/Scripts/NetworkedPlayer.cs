@@ -17,6 +17,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// <summary>
     /// Information required which is not networked
     /// </summary>
+    #region infonotnetworked
     public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
     private int m_playerIndex = -1;
     private bool m_initialised = false;
@@ -31,10 +32,12 @@ public class NetworkedPlayer : MonoBehaviour
     private GameObject m_networkDiagnostics = null;
     private bool m_usePrediction = false;
     private PlayerPrediction m_playerPrediction = new PlayerPrediction();
+    #endregion
 
     /// <summary>
     /// Information networked peer-to-peer
     /// </summary>
+    #region infonetworkedp2p
     private int m_playerHue = 0;
     private string m_playerName = "";
     private int m_playerID = -1;
@@ -45,6 +48,7 @@ public class NetworkedPlayer : MonoBehaviour
     private bool m_firedCannonsRight = false;
     private Vector3 m_networkedPosition;
     private Quaternion m_networkedRotation;
+    #endregion
 
     /// <summary>
     /// Initilaises the networked player

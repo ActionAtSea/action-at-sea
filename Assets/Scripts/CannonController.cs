@@ -7,6 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
+/// Controls and aims the cannons on a ship. 
+/// Needs to be inherited from to be used properly.
+/// 
 /// NOTE: Instantiated by Photon Networking
 /// Start() cannot include any code relying on the world/level as 
 /// this object can be instantiated before the level is created
@@ -35,13 +38,21 @@ public class CannonController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        StartUp();
+    }
+
+    /// <summary>
+    /// Initialises cannon variables. To be called in the Start function.
+    /// </summary>
+    protected void StartUp()
+    {
         m_currentReloadTimeRight = m_reloadTime;
         m_currentReloadTimeLeft = m_reloadTime;
-
+        
         m_cannonList = Utilities.GetOrderedListInChildren<Cannon>(gameObject);
         m_rightSideCannons = new List<Cannon>(MAX_CANNONS/2);
         m_leftSideCannons = new List<Cannon>(MAX_CANNONS/2);
-
+        
         foreach (Cannon c in m_cannonList)
         {
             if (c.rightSideCannon)

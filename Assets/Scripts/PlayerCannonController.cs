@@ -7,24 +7,7 @@ public class PlayerCannonController : CannonController
 	// Use this for initialization
 	void Start () 
     {
-        m_currentReloadTimeRight = m_reloadTime;
-        m_currentReloadTimeLeft = m_reloadTime;
-        
-        m_cannonList = Utilities.GetOrderedListInChildren<Cannon>(gameObject);
-        m_rightSideCannons = new List<Cannon>(MAX_CANNONS/2);
-        m_leftSideCannons = new List<Cannon>(MAX_CANNONS/2);
-        
-        foreach (Cannon c in m_cannonList)
-        {
-            if (c.rightSideCannon)
-            {
-                m_rightSideCannons.Add(c);
-            }
-            else
-            {
-                m_leftSideCannons.Add(c);
-            }
-        }
+        StartUp();
 	}
 	
 	// Update is called once per frame

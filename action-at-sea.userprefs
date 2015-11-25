@@ -1,18 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\NetworkedPlayer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameModeManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerCannonController.cs" Line="21" Column="43" />
-      <File FileName="Assets\Scripts\Health.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\AI\RogueAI.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Utilities.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="62" Column="79" />
-      <File FileName="Assets\Scripts\PlayerManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameModeManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CannonController.cs" Line="12" Column="32" />
-      <File FileName="Assets\Scripts\PlayerAiming.cs" Line="25" Column="18" />
-      <File FileName="Assets\Scripts\Cannon.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CannonController.cs" Line="230" Column="18" />
+      <File FileName="Assets\Scripts\PlayerCannonController.cs" Line="10" Column="19" />
+      <File FileName="Assets\Scripts\Health.cs" Line="20" Column="32" />
+      <File FileName="Assets\Scripts\AI\RogueAI.cs" Line="13" Column="46" />
+      <File FileName="Assets\Scripts\Utilities.cs" Line="303" Column="1" />
+      <File FileName="Assets\Scripts\NetworkedPlayer.cs" Line="72" Column="44" />
+      <File FileName="Assets\Scripts\PlayerManager.cs" Line="40" Column="9" />
+      <File FileName="Assets\Scripts\NetworkMatchmaker.cs" Line="12" Column="41" />
+      <File FileName="Assets\Scripts\GameModeManager.cs" Line="26" Column="5" />
+      <File FileName="Assets\Scripts\Cannon.cs" Line="33" Column="18" />
+      <File FileName="Assets\Scripts\AI\AICannonController.cs" Line="6" Column="14" />
+      <File FileName="Assets\Scripts\AI\AIAiming.cs" Line="12" Column="16" />
+      <File FileName="Assets\Scripts\PlayerPrediction.cs" Line="28" Column="40" />
+      <File FileName="Assets\Scripts\GameBoard.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
