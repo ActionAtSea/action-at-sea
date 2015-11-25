@@ -19,7 +19,7 @@ public class PlayerAiming : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_controller = GetComponentInChildren<CannonController>();
+        m_controller = GetComponentInChildren<PlayerCannonController>();
     }
 
     /// <summary>

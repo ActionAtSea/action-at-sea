@@ -59,7 +59,7 @@ public class NetworkedPlayer : MonoBehaviour
         m_healthBar = GetComponent<Health>();
         m_score = GetComponent<PlayerScore>();
         m_rigidBody = GetComponent<Rigidbody>();
-        m_cannonController = GetComponentInChildren<CannonController>();
+        m_cannonController = GetComponentInChildren<PlayerCannonController>();
         m_networkDiagnostics = parent.FindChild("NetworkDiagnostics").gameObject;
     }
 

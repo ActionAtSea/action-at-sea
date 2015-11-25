@@ -15,20 +15,20 @@ public class CannonController : MonoBehaviour
 {
     public static int MAX_CANNONS = 8;
 
-    private float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
-    private float m_swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
-    private float m_aimingRangeDegrees = 90.0f;       //The range within which which side's cannons can be fired is determined.
-    private float m_reloadTime = 2.0f;                //The time in seconds that it takes to reload.
-    private float m_currentReloadTimeRight = 0.0f;
-    private float m_currentReloadTimeLeft = 0.0f;
-    private Vector3 m_startPosition;                  //Contains the parent's position for use in aiming calculations.
-    private Vector3 m_mousePositionWorld;             //Contains the mousePosition in world space.
-    private List<Cannon> m_cannonList;                //Array of all the cannons on the ship.
-    private List<Cannon> m_rightSideCannons;
-    private List<Cannon> m_leftSideCannons;
-    private bool m_fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
-    private bool m_firedCannonRight = false;          //Whether the right cannons were recently fired
-    private bool m_firedCannonLeft = false;          //Whether the left cannons were recently fired
+    protected float m_mouseCursorAngle = 0.0f;          //The angle of the mouse cursor relative to the ship.
+    protected float m_swivelRangeDegrees = 45.0f;       //The range that the cannons can swivel.
+    protected float m_aimingRangeDegrees = 90.0f;       //The range within which which side's cannons can be fired is determined.
+    protected float m_reloadTime = 2.0f;                //The time in seconds that it takes to reload.
+    protected float m_currentReloadTimeRight = 0.0f;
+    protected float m_currentReloadTimeLeft = 0.0f;
+    protected Vector3 m_startPosition;                  //Contains the parent's position for use in aiming calculations.
+    protected Vector3 m_mousePositionWorld;             //Contains the mousePosition in world space.
+    protected List<Cannon> m_cannonList;                //Array of all the cannons on the ship.
+    protected List<Cannon> m_rightSideCannons;
+    protected List<Cannon> m_leftSideCannons;           
+    protected bool m_fireGuns = false;                  //Determines whether the cannons will be fire in the current frame.
+    protected bool m_firedCannonRight = false;          //Whether the right cannons were recently fired
+    protected bool m_firedCannonLeft = false;           //Whether the left cannons were recently fired
 
     /// <summary>
     /// Initialises the script
@@ -56,9 +56,9 @@ public class CannonController : MonoBehaviour
     }
 
     /// <summary>
-    /// Aims the cannons at the direction
+    /// Aims the cannons in the fireDirection.
     /// </summary>  
-    public void AimWeapon(Vector3 fireDirection)
+    public virtual void AimWeapon(Vector3 fireDirection)
     {
         m_mousePositionWorld = fireDirection;
     }
@@ -90,7 +90,7 @@ public class CannonController : MonoBehaviour
     /// <summary>
     /// Renders the diagnostics
     /// </summary>  
-    void RenderDiagnostics()
+    protected virtual void RenderDiagnostics()
     {
         if(Diagnostics.IsActive())
         {
@@ -103,7 +103,7 @@ public class CannonController : MonoBehaviour
     /// <summary>
     /// Updates the cannons according to the mouse position
     /// </summary>  
-    private void UpdateMouseCursorAngle()
+    protected void UpdateMouseCursorAngle()
     {
         m_startPosition = transform.parent.position;
 
@@ -135,7 +135,7 @@ public class CannonController : MonoBehaviour
     }
 
     /// <summary>
-    /// Fires the cannons
+    /// Fires the left side cannons.
     /// </summary>  
     public void FireWeaponLeft()
     {
@@ -146,7 +146,7 @@ public class CannonController : MonoBehaviour
     }
 
     /// <summary>
-    /// Fires the cannons
+    /// Fires the right side cannons.
     /// </summary>  
     public void FireWeaponRight()
     {
@@ -159,7 +159,7 @@ public class CannonController : MonoBehaviour
     /// <summary>
     /// Fires the cannones
     /// </summary>  
-    private void FireCannons()
+    protected virtual void FireCannons()
     {
         m_currentReloadTimeRight += Time.deltaTime;
         m_currentReloadTimeLeft += Time.deltaTime;
