@@ -12,16 +12,16 @@ using System.Collections;
 /// </summary>
 public class Health : MonoBehaviour
 {
-    private GameObject m_healthBar = null;
-    private UnityEngine.UI.Text m_floatingHealthBarText = null;
-    private float m_minBarWidth = 0.0f;
-    private float m_maxBarWidth = 0.0f;
-    private float m_barHeight = 0.0f;
-    private float m_healthMax = 100.0f;
-    private float m_healthMin = 0.0f;
-    private float m_healthLevel = 100.0f;
-    private bool m_isAlive = true;
-    private bool m_initialised = false;
+    protected GameObject m_healthBar = null;
+    protected UnityEngine.UI.Text m_floatingHealthBarText = null;
+    protected float m_minBarWidth = 0.0f;
+    protected float m_maxBarWidth = 0.0f;
+    protected float m_barHeight = 0.0f;
+    protected float m_healthMax = 100.0f;
+    protected float m_healthMin = 0.0f;
+    protected float m_healthLevel = 100.0f;
+    protected bool m_isAlive = true;
+    protected bool m_initialised = false;
 
     /// <summary>
     /// Initialises the health
@@ -36,21 +36,14 @@ public class Health : MonoBehaviour
     /// Initialises the health
     /// Code relying on the world goes here
     /// </summary>
-    void Initialise()
+    protected virtual void Initialise()
     {
-        if(Utilities.IsPlayerControllable(gameObject))
-        {
-            m_healthBar = GameObject.FindWithTag("PlayerHealth");
-            m_healthBar.GetComponent<UnityEngine.UI.Image>().enabled = true;
-        }
-        else
-        {
-            var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
-            var canvas = floatingHealthBar.FindChild("Canvas").transform;
-            m_healthBar = canvas.FindChild("HealthBar").gameObject;
-            var playerName = canvas.FindChild("PlayerName").gameObject;
-            m_floatingHealthBarText = playerName.GetComponent<UnityEngine.UI.Text>();
-        }
+        var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
+        var canvas = floatingHealthBar.FindChild("Canvas").transform;
+        m_healthBar = canvas.FindChild("HealthBar").gameObject;
+        var playerName = canvas.FindChild("PlayerName").gameObject;
+        m_floatingHealthBarText = playerName.GetComponent<UnityEngine.UI.Text>();
+
 
         if(m_healthBar == null)
         {

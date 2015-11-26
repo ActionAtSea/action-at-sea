@@ -107,6 +107,7 @@
      <Compile Include="Assets\Photon Unity Networking\UtilityScripts\TimeKeeper.cs" />
      <Compile Include="Assets\Scripts\AI\AIAiming.cs" />
      <Compile Include="Assets\Scripts\AI\AICannonController.cs" />
+     <Compile Include="Assets\Scripts\AI\AIHealth.cs" />
      <Compile Include="Assets\Scripts\AI\RogueAI.cs" />
      <Compile Include="Assets\Scripts\AnimationGenerator.cs" />
      <Compile Include="Assets\Scripts\Bullet.cs" />
@@ -154,7 +155,9 @@
      <Compile Include="Assets\Scripts\Placeable Items\PlaceableObject.cs" />
      <Compile Include="Assets\Scripts\Placeable Items\SeaMine.cs" />
      <Compile Include="Assets\Scripts\PlayerAiming.cs" />
+     <Compile Include="Assets\Scripts\PlayerBulletImpact.cs" />
      <Compile Include="Assets\Scripts\PlayerCannonController.cs" />
+     <Compile Include="Assets\Scripts\PlayerHealth.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\PlayerPrediction.cs" />

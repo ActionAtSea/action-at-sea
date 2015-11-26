@@ -17,7 +17,7 @@ public class RepairDock : MonoBehaviour
     {
         if (PlayerManager.IsControllablePlayer(other.gameObject))
         {
-            var health = other.gameObject.GetComponent<Health>();
+            var health = other.gameObject.GetComponent<PlayerHealth>();
             if (health.HealthLevel < health.HealthMax)
             {
                 var score = other.gameObject.GetComponent<PlayerScore>();

@@ -60,7 +60,7 @@ public class NetworkedPlayer : MonoBehaviour
         var parent = transform.parent;
         DontDestroyOnLoad(parent);
 
-        m_healthBar = GetComponent<Health>();
+        m_healthBar = GetComponent<PlayerHealth>();
         m_score = GetComponent<PlayerScore>();
         m_rigidBody = GetComponent<Rigidbody>();
         m_cannonController = GetComponentInChildren<PlayerCannonController>();
