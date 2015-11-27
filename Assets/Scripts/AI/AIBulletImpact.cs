@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerBulletImpact : BulletImpact 
-{
+public class AIBulletImpact : BulletImpact {
+
 	// Use this for initialization
 	void Start () 
     {
-        m_parentHealth = GetComponentInParent<PlayerHealth>();
+        m_parentHealth = GetComponentInParent<AIHealth>();
 	}
-
+	
     /// <summary>
     /// Collision detection between the bullet and player
     /// </summary>

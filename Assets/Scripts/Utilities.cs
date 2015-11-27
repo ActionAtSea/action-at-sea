@@ -309,7 +309,7 @@ class Utilities
     static public bool IsPlayerAlive(GameObject obj)
     {
         
-        return obj.GetComponentInParent<Health>().IsAlive;
+        return obj.GetComponentInParent<PlayerHealth>().IsAlive;
     }
     
     /// <summary>

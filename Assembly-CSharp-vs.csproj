@@ -106,6 +106,7 @@
      <Compile Include="Assets\Photon Unity Networking\UtilityScripts\SupportLogger.cs" />
      <Compile Include="Assets\Photon Unity Networking\UtilityScripts\TimeKeeper.cs" />
      <Compile Include="Assets\Scripts\AI\AIAiming.cs" />
+     <Compile Include="Assets\Scripts\AI\AIBulletImpact.cs" />
      <Compile Include="Assets\Scripts\AI\AICannonController.cs" />
      <Compile Include="Assets\Scripts\AI\AIHealth.cs" />
      <Compile Include="Assets\Scripts\AI\RogueAI.cs" />
