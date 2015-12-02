@@ -10,7 +10,7 @@ public class AIBulletImpact : BulletImpact {
 	}
 	
     /// <summary>
-    /// Collision detection between the bullet and player
+    /// Collision detection between the bullet and ai
     /// </summary>
     void OnTriggerEnter(Collider other)
     {

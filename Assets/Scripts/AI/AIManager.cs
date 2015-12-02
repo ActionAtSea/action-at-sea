@@ -1,5 +1,5 @@
 ﻿////////////////////////////////////////////////////////////////////////////////////////
-// Action At Sea - PlayerManager.cs
+// Action At Sea - AIManager.cs
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
@@ -8,8 +8,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-public class PlayerManager : MonoBehaviour 
+public class AIManager : MonoBehaviour
 {
+
     private static GameObject sm_player = null;
     private static Dictionary<int, GameObject> sm_playerIDs = null;
     private static List<GameObject> sm_allplayers = null;
@@ -38,15 +39,15 @@ public class PlayerManager : MonoBehaviour
         sm_playerIDs = new Dictionary<int, GameObject>();
         m_gameboard = GameBoard.Get();
 
-        m_spawns = Utilities.GetOrderedList("Spawn");
-        if(!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()) && m_spawns.Count == 0)
+        m_spawns = Utilities.GetOrderedList("AISpawn");
+        if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()) && m_spawns.Count == 0)
         {
             Debug.LogError("Could not find any spawns");
         }
 
-        foreach(var spawn in m_spawns)
+        foreach (var spawn in m_spawns)
         {
-            if(Colour.HasSaturationValue(spawn.GetComponent<SpriteRenderer>().color))
+            if (Colour.HasSaturationValue(spawn.GetComponent<SpriteRenderer>().color))
             {
                 Debug.LogError(spawn.name + " colour has saturation and/or value which will not translate in-game");
             }
@@ -58,9 +59,9 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(Diagnostics.IsActive())
+        if (Diagnostics.IsActive())
         {
-            Diagnostics.Add("Player Manager Count", sm_allplayers.Count);
+            Diagnostics.Add("AI Manager Count", sm_allplayers.Count);
         }
     }
 
@@ -106,7 +107,7 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static GameObject GetPlayerWithID(int ID)
     {
-        if(!sm_playerIDs.ContainsKey(ID))
+        if (!sm_playerIDs.ContainsKey(ID))
         {
             // This can sometimes be null if the player hasn't been networked yet
             Debug.Log("Could not find player with ID " + ID);
@@ -137,24 +138,24 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static void AddPlayer(GameObject player)
     {
-        if(IsControllablePlayer(player))
+        if (IsControllablePlayer(player))
         {
             sm_player = player;
         }
 
-        if(sm_allplayers.Exists(x => x == player))
+        if (sm_allplayers.Exists(x => x == player))
         {
             sm_allplayers.Remove(player);
         }
         sm_allplayers.Add(player);
 
         int id = player.GetComponent<NetworkedPlayer>().PlayerID;
-        if(id == -1)
+        if (id == -1)
         {
             Debug.LogError("Adding ship with invalid ID");
         }
 
-        if(sm_playerIDs.ContainsKey(id))
+        if (sm_playerIDs.ContainsKey(id))
         {
             sm_playerIDs.Remove(id);
         }
@@ -167,7 +168,7 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static void RemovePlayer(GameObject player)
     {
-        if(player.CompareTag("Player"))
+        if (player.CompareTag("Player"))
         {
             sm_player = null;
         }
@@ -177,14 +178,14 @@ public class PlayerManager : MonoBehaviour
         sm_playerIDs.Remove(id);
         Debug.Log("Removing ship " + id + " from manager");
     }
-    
+
     /// <summary>
     /// Utility function to determine if the given position is roughly visible to the player
     /// </summary>
     static public bool IsCloseToPlayer(Vector3 position, float distance)
     {
         var player = GetControllablePlayer();
-        if(player != null)
+        if (player != null)
         {
             return (player.transform.position - position).magnitude <= distance;
         }
@@ -197,7 +198,7 @@ public class PlayerManager : MonoBehaviour
     static public bool IsCloseToPlayer(float x, float z, float distance)
     {
         var player = GetControllablePlayer();
-        if(player != null)
+        if (player != null)
         {
             float xToPlayer = x - player.transform.position.x;
             float zToPlayer = z - player.transform.position.z;
@@ -205,18 +206,18 @@ public class PlayerManager : MonoBehaviour
         }
         return false;
     }
-    
+
     /// <summary>
     /// Retrieves a new position on the map
     /// </summary>
     public Placement GetNewPosition(int index, GameObject player)
     {
         Placement place = null;
-        
-        if(m_spawns != null && m_spawns.Count > 0)
+
+        if (m_spawns != null && m_spawns.Count > 0)
         {
             int playersAllowed = Utilities.GetMaximumPlayers();
-            if(m_spawns.Count < playersAllowed)
+            if (m_spawns.Count < playersAllowed)
             {
                 Debug.LogError("Spawn amount does not equal number of accepted players for level");
             }
@@ -236,46 +237,46 @@ public class PlayerManager : MonoBehaviour
             place = GetRandomPosition();
             place.hue = Random.Range(0, 360);
         }
-        
+
         // Flip the ship to be upwards
         place.rotation.x = 90.0f;
         return place;
     }
-    
+
     /// <summary>
     /// Retrieves a new position on the map that doesn't collide
     /// </summary>
     public Placement GetRandomPosition()
     {
         List<GameObject> players = GetAllPlayers();
-        
+
         Vector2 position = new Vector2();
         bool foundPosition = false;
-        
+
         var boardBounds = m_gameboard.GetComponent<SpriteRenderer>().bounds;
         var halfBoardWidth = Mathf.Abs(boardBounds.max.x - boardBounds.min.x) / 2.0f;
         var halfBoardLength = Mathf.Abs(boardBounds.max.y - boardBounds.min.y) / 2.0f;
-        
-        while (!foundPosition) 
+
+        while (!foundPosition)
         {
             foundPosition = true;
-            position.x = Random.Range(-halfBoardWidth + m_gameboardOffset, 
+            position.x = Random.Range(-halfBoardWidth + m_gameboardOffset,
                                       halfBoardWidth - m_gameboardOffset);
-            
-            position.y = Random.Range(-halfBoardLength + m_gameboardOffset, 
+
+            position.y = Random.Range(-halfBoardLength + m_gameboardOffset,
                                       halfBoardLength - m_gameboardOffset);
-            
-            
+
+
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
-            if(terrain == null)
+            if (terrain == null)
             {
                 Debug.LogError("Could not find any terrain");
             }
-            
-            for(int i = 0; i < terrain.Length; ++i)
+
+            for (int i = 0; i < terrain.Length; ++i)
             {
                 var islandBounds = terrain[i].GetComponent<SpriteRenderer>().bounds;
-                if(position.x > islandBounds.center.x - islandBounds.extents.x &&
+                if (position.x > islandBounds.center.x - islandBounds.extents.x &&
                    position.x < islandBounds.center.x + islandBounds.extents.x &&
                    position.y > islandBounds.center.z - islandBounds.extents.z &&
                    position.y < islandBounds.center.z + islandBounds.extents.z)
@@ -284,16 +285,16 @@ public class PlayerManager : MonoBehaviour
                     break;
                 }
             }
-            
-            if(foundPosition && players != null)
+
+            if (foundPosition && players != null)
             {
-                foreach(GameObject player in players)
+                foreach (GameObject player in players)
                 {
-                    if(player != null)
+                    if (player != null)
                     {
                         Vector2 playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
                         Vector2 difference = position - playerPosition;
-                        if(difference.magnitude <= m_playerRadious)
+                        if (difference.magnitude <= m_playerRadious)
                         {
                             foundPosition = false;
                             break;
@@ -302,7 +303,7 @@ public class PlayerManager : MonoBehaviour
                 }
             }
         }
-        
+
         Placement place = new Placement();
         place.position.x = position.x;
         place.position.z = position.y;
@@ -312,12 +313,12 @@ public class PlayerManager : MonoBehaviour
     /// <summary>
     /// Gets the Player Manager instance from the scene
     /// </summary>
-    public static PlayerManager Get()
+    public static AIManager Get()
     {
-        var obj = FindObjectOfType<PlayerManager>();
-        if(obj == null)
+        var obj = FindObjectOfType<AIManager>();
+        if (obj == null)
         {
-            Debug.LogError("Could not find PlayerManager in scene");
+            Debug.LogError("Could not find AIManager in scene");
         }
         return obj;
     }

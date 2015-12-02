@@ -109,6 +109,9 @@
      <Compile Include="Assets\Scripts\AI\AIBulletImpact.cs" />
      <Compile Include="Assets\Scripts\AI\AICannonController.cs" />
      <Compile Include="Assets\Scripts\AI\AIHealth.cs" />
+     <Compile Include="Assets\Scripts\AI\AIManager.cs" />
+     <Compile Include="Assets\Scripts\AI\AISpawn.cs" />
+     <Compile Include="Assets\Scripts\AI\NetworkedAI.cs" />
      <Compile Include="Assets\Scripts\AI\RogueAI.cs" />
      <Compile Include="Assets\Scripts\AnimationGenerator.cs" />
      <Compile Include="Assets\Scripts\Bullet.cs" />
@@ -326,6 +329,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ProjectExtensions xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><MonoDevelop><Properties><Policies><TextStylePolicy FileWidth="120" EolMarker="Unix" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" /><CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" /></Policies></Properties></MonoDevelop></ProjectExtensions>
-
+  
 </Project>

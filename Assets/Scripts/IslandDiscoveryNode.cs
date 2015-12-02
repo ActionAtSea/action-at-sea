@@ -79,7 +79,11 @@ public class IslandDiscoveryNode : MonoBehaviour
         var state = Utilities.GetGameState();
         if((!m_trigger.IsDiscovered() && state == GameState.STAGE_1) || state != GameState.STAGE_1)
         {
-            SetOwner(other.gameObject, NetworkMatchmaker.Get().GetTime());
+            //Checks if object is a player.
+            if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("EnemyPlayer"))
+            {
+                SetOwner(other.gameObject, NetworkMatchmaker.Get().GetTime());
+            }
         }
     }
 

@@ -32,7 +32,7 @@ public class AIAiming : MonoBehaviour
             if(cannonController != null)
             {
                 cannonController.AimWeapon(targetPosition);
-                cannonController.FireWeapon();
+                //cannonController.FireWeapon(); Uncomment once cannonball firing by ai has been fixed.
             }
         }
     }
