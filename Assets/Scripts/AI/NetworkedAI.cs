@@ -145,8 +145,8 @@ public class NetworkedAI : MonoBehaviour
     void ShowShip(bool show)
     {
         m_visible = show;
-        GetComponent<PlayerMovement>().enabled = show;
-        GetComponent<PlayerAiming>().enabled = show;
+        //GetComponent<PlayerMovement>().enabled = show;
+        GetComponent<AIAiming>().enabled = show;
         GetComponent<CapsuleCollider>().enabled = show;
         m_floatingHealthBar.SetActive(show && !photonView.isMine);
         

@@ -138,6 +138,7 @@ public class AIManager : MonoBehaviour
     /// </summary>
     public static void AddPlayer(GameObject player)
     {
+       //Figure out what to do with this.
         if (IsControllablePlayer(player))
         {
             sm_player = player;
