@@ -84,15 +84,6 @@ public class AIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets all the players in the game ordered by score
-    /// </summary>
-    public static List<GameObject> GetAllPlayersByScore()
-    {
-        return GetAllPlayers().OrderByDescending(
-            x => Utilities.GetPlayerScore(x)).ToList();
-    }
-
-    /// <summary>
     /// Finds the controllable player and returns
     /// @note is possible to be null until the network has initialised
     /// </summary>

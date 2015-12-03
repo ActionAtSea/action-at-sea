@@ -223,6 +223,7 @@ public class NetworkedAI : MonoBehaviour
             Initialise();
         }
         
+        //checks if owns thingy
         if(photonView.isMine)
         {
             m_health = m_healthBar.HealthLevel;

@@ -19,7 +19,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     #region infonotnetworked
     public Color m_playerColor = new Color(1.0f, 1.0f, 1.0f);
-    private int m_playerIndex = -1; //what is this?
+    private int m_playerIndex = -1; // based on players in room. helps assign spawn spots. not networked.
     private bool m_initialised = false;
     private bool m_visible = true;
     private bool m_recievedValidData = false;
@@ -40,7 +40,7 @@ public class NetworkedPlayer : MonoBehaviour
     #region infonetworkedp2p
     private int m_playerHue = 0;
     private string m_playerName = "";
-    private int m_playerID = -1; //what is this?
+    private int m_playerID = -1; // photon creates one to uniquely identify this. 
     private int m_playerScore = 0;
     private float m_health = -1.0f;
     private float m_mouseCursorAngle = 0.0f;
