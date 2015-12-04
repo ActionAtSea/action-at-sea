@@ -18,9 +18,12 @@ public class AIBulletImpact : BulletImpact {
         {
             var bullet = other.gameObject.GetComponent<Bullet>();
             
-            // Ensure the owner is not colliding with their own bullet
-            if(bullet.Owner != Utilities.GetPlayerID(gameObject))
-            {
+            //TODO: Ensure the owner is not colliding with their own bullet
+            // also make sure that owned AIs can't be hurt by their owners
+            // bullets.
+
+            // Also store the owner of the last bullet that hits so the player to add score to is known.
+
                 m_parentHealth.InflictDamage(bullet.Damage);
                 other.gameObject.GetComponent<Bullet>().DestroyOnImpact();
                 
@@ -29,7 +32,7 @@ public class AIBulletImpact : BulletImpact {
                 {
                     player.GetComponent<PlayerScore>().AddScore(1.0f);
                 }
-            }
+            
         }
     }
 }

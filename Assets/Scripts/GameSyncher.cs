@@ -104,6 +104,7 @@ public class GameSyncher : MonoBehaviour
             return;
         }
 
+        //TODO: Optimise this with RPCs (remote procedure calls)
         if (stream.isWriting)
         {
             for(int i = 0; i < m_nodes.Count; ++i)

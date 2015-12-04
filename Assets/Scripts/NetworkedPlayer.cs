@@ -32,6 +32,7 @@ public class NetworkedPlayer : MonoBehaviour
     private GameObject m_networkDiagnostics = null;
     private bool m_usePrediction = false;
     private PlayerPrediction m_playerPrediction = new PlayerPrediction();
+    private TrailRenderer m_trailRenderer = null;
     #endregion
 
     /// <summary>
@@ -56,6 +57,7 @@ public class NetworkedPlayer : MonoBehaviour
     /// </summary>
     void Start()
     {
+        
         // Photon Networking will destroy the object
         var parent = transform.parent;
         DontDestroyOnLoad(parent);
@@ -64,6 +66,7 @@ public class NetworkedPlayer : MonoBehaviour
         m_score = GetComponent<PlayerScore>();
         m_rigidBody = GetComponent<Rigidbody>();
         m_cannonController = GetComponentInChildren<PlayerCannonController>();
+        m_trailRenderer = GetComponent<TrailRenderer>();
         m_networkDiagnostics = parent.FindChild("NetworkDiagnostics").gameObject;
     }
 
@@ -144,6 +147,7 @@ public class NetworkedPlayer : MonoBehaviour
         GetComponent<PlayerMovement>().enabled = show;
         GetComponent<PlayerAiming>().enabled = show;
         GetComponent<CapsuleCollider>().enabled = show;
+        m_trailRenderer.enabled = show;
         m_floatingHealthBar.SetActive(show && !photonView.isMine);
 
         foreach(var child in children)

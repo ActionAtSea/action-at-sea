@@ -8,9 +8,13 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+/// <summary>
+/// Spawns and handles AI ships.
+/// </summary>
 public class AIManager : MonoBehaviour
 {
 
+    private NetworkMatchmaker networkMatchmaker = null;
     private static GameObject sm_player = null;
     private static Dictionary<int, GameObject> sm_playerIDs = null;
     private static List<GameObject> sm_allplayers = null;
@@ -19,7 +23,8 @@ public class AIManager : MonoBehaviour
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
     private List<GameObject> m_spawns = null;
-
+    private bool rogueAISpawned = false;
+    
     /// <summary> 
     /// Position/rotation/color information
     /// </summary>
@@ -35,6 +40,7 @@ public class AIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
+        
         sm_allplayers = new List<GameObject>();
         sm_playerIDs = new Dictionary<int, GameObject>();
         m_gameboard = GameBoard.Get();
@@ -59,6 +65,16 @@ public class AIManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if (Utilities.IsLevelLoaded() && networkMatchmaker == null)
+        {
+            networkMatchmaker = NetworkMatchmaker.Get();
+        }
+
+        if (!rogueAISpawned)
+        {
+            //Disabled in game until fully implemented.
+            //SpawnAI();
+        }
         if (Diagnostics.IsActive())
         {
             Diagnostics.Add("AI Manager Count", sm_allplayers.Count);
@@ -313,5 +329,18 @@ public class AIManager : MonoBehaviour
             Debug.LogError("Could not find AIManager in scene");
         }
         return obj;
+    }
+
+    private void SpawnAI()
+    {
+        if (networkMatchmaker != null)
+        {
+            if (networkMatchmaker.IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver())
+            {
+                var tempAI = PhotonNetwork.InstantiateSceneObject("RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                tempAI.tag = "AIShip";
+                rogueAISpawned = true;
+            }
+        }
     }
 }

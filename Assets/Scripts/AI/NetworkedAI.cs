@@ -76,23 +76,25 @@ public class NetworkedAI : MonoBehaviour
     {
         if(photonView.isMine)
         {
-            gameObject.tag = "Player";
+            gameObject.tag = "AIShip";
+            //AI is mistaken for the player if this is uncommented.
+
+            //var matchMaker = NetworkMatchmaker.Get();
+            ////m_playerIndex = matchMaker.GetPlayerIndex();
+            //m_playerID = matchMaker.GetPlayerID();
             
-            var matchMaker = NetworkMatchmaker.Get();
-            //m_playerIndex = matchMaker.GetPlayerIndex();
-            m_playerID = matchMaker.GetPlayerID();
+            //PlaceOnSpawn();
             
-            PlaceOnSpawn();
+            //m_playerName = Utilities.GetPlayerName();
+            //if(m_playerName.Length == 0)
+            //{
+            //    // Name is used to determine when successful
+            //    // data is recieved and cannot be null
+            //    m_playerName = Utilities.GetPlayerDefaultName();
+            //}
             
-            m_playerName = Utilities.GetPlayerName();
-            if(m_playerName.Length == 0)
-            {
-                // Name is used to determine when successful
-                // data is recieved and cannot be null
-                m_playerName = Utilities.GetPlayerDefaultName();
-            }
-            
-            NotifyPlayerCreation();
+            //NotifyPlayerCreation();
+            m_playerName = "Rogue";
         }
         else
         {
@@ -100,7 +102,7 @@ public class NetworkedAI : MonoBehaviour
         }
         
         m_floatingHealthBar = transform.parent.FindChild("FloatingHealthBar").gameObject;
-        m_floatingHealthBar.SetActive(!photonView.isMine);
+        m_floatingHealthBar.SetActive(true);
         
         Debug.Log("Created " + gameObject.tag);
         m_initialised = true;
@@ -254,7 +256,14 @@ public class NetworkedAI : MonoBehaviour
                 m_cannonController.FireWeaponRight();
                 m_firedCannonsRight = false;
             }
-            
+
+            if (m_health <= 0)
+            {
+                //TODO: implement this properly.
+                PhotonNetwork.Destroy(photonView);
+                Debug.Log("AI is dead");
+            }
+
             if(m_health >= 0)
             {
                 // Only update health if networked version is lower
