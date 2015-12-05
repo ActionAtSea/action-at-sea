@@ -11,7 +11,9 @@ using System.Collections.ObjectModel;
 public class PlayerManager : MonoBehaviour 
 {
     private static GameObject sm_player = null;
+    private static GameObject sm_ai = null;
     private static Dictionary<int, GameObject> sm_playerIDs = null;
+    private static Dictionary<int, GameObject> sm_aiIDs = null;
     private static List<GameObject> sm_allplayers = null;
 
     private GameObject m_gameboard = null;
@@ -36,6 +38,7 @@ public class PlayerManager : MonoBehaviour
     {
         sm_allplayers = new List<GameObject>();
         sm_playerIDs = new Dictionary<int, GameObject>();
+        sm_aiIDs = new Dictionary<int, GameObject>();
         m_gameboard = GameBoard.Get();
 
         m_spawns = Utilities.GetOrderedList("Spawn");
@@ -69,9 +72,11 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     void OnDestroy()
     {
+        sm_aiIDs.Clear();
         sm_playerIDs.Clear();
         sm_allplayers.Clear();
         sm_player = null;
+        sm_ai = null;
     }
 
     /// <summary>
@@ -89,6 +94,15 @@ public class PlayerManager : MonoBehaviour
     {
         return GetAllPlayers().OrderByDescending(
             x => Utilities.GetPlayerScore(x)).ToList();
+    }
+
+    /// <summary>
+    /// Finds the controllable ai and returns
+    /// @note is possible to be null until the network has initialised
+    /// </summary>
+    public static GameObject GetControllableAI()
+    {
+        return sm_ai;
     }
 
     /// <summary>
@@ -130,6 +144,36 @@ public class PlayerManager : MonoBehaviour
     public static bool IsControllablePlayer(GameObject obj)
     {
         return obj.CompareTag("Player");
+    }
+
+    /// <summary>
+    /// Adds a new ai to the manager
+    /// </summary>
+    public static void AddAI(GameObject ai)
+    {
+        var networkedAI = ai.GetComponent<NetworkedAI>();
+        if(networkedAI.IsControllable())
+        {
+            sm_ai = ai;
+        }
+
+        int id = networkedAI.AiID;
+        sm_aiIDs[id] = ai;
+    }
+
+    /// <summary>
+    /// Removes an ai from the manager
+    /// </summary>
+    public static void RemoveAI(GameObject ai)
+    {
+        var networkedAI = ai.GetComponent<NetworkedAI>();
+        if (networkedAI.IsControllable())
+        {
+            sm_ai = null;
+        }
+
+        int id = networkedAI.AiID;
+        sm_aiIDs.Remove(id);
     }
 
     /// <summary>

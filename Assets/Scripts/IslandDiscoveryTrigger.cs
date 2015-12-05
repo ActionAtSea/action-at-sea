@@ -8,10 +8,12 @@ using System.Collections.Generic;
 
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
-    public float scoreValue = 20.0f;
+    public float onCaptureScore = 20.0f;
+    public float scorePerSecond = 1.0f;
     public UnityEngine.UI.Image tickImage = null;
     public UnityEngine.UI.Text ownerText = null;
 
+    private float m_timePassed = 0.0f;
     private Canvas m_canvas = null;
     private IslandDiscoveryNode[] m_nodes;
     private GameObject m_owner = null;
@@ -56,28 +58,36 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     void Update()
     {
         GameObject owner = m_nodes[0].Owner;
-        for(int i = 1; i < m_nodes.Length; ++i)
+        for (int i = 1; i < m_nodes.Length; ++i)
         {
-            if(owner == null || 
+            if (owner == null ||
                m_nodes[i].Owner == null ||
                owner.name != m_nodes[i].Owner.name)
             {
-                if(m_canvas.enabled)
-                {
-                    SetCaptured(null);
-                }
-                return;
+                // Island was captured but is no longer
+                owner = null;
+                break;
             }
         }
 
-        if(owner == null)
+        if (owner == null)
         {
             SetCaptured(null);
         }
-        else if(m_owner == null || m_owner.name != owner.name)
+        else if (m_owner == null || m_owner.name != owner.name)
         {
             Debug.Log("Setting new owner of island: " + owner.name);
             SetCaptured(owner);
+        }
+
+        if (m_owner != null && PlayerManager.IsControllablePlayer(m_owner))
+        {
+            m_timePassed += Time.deltaTime;
+            if (m_timePassed >= 1.0f)
+            {
+                m_owner.GetComponent<PlayerScore>().AddScore(scorePerSecond);
+                m_timePassed = 0.0f;
+            }
         }
 
         if(Diagnostics.IsActive())
@@ -107,7 +117,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             var player = PlayerManager.GetControllablePlayer();
             if(player != null && player.name == owner.name)
             {
-                owner.GetComponent<PlayerScore>().AddScore(scoreValue);
+                owner.GetComponent<PlayerScore>().AddScore(onCaptureScore);
             }
         }
         else
@@ -121,6 +131,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             island.color = tickImage.color;
         }
 
+        m_timePassed = 0.0f;
         m_owner = owner;
     }
 

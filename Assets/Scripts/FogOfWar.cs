@@ -247,10 +247,26 @@ public class FogOfWar : MonoBehaviour
     /// </summary>
     void Update()
     {
+        bool updatedMinimap = false;
+
         var player = PlayerManager.GetControllablePlayer();
-        if(player != null && Utilities.IsPlayerInitialised(player))
+        if (player != null && Utilities.IsPlayerInitialised(player))
         {
+            updatedMinimap = true;
             UpdateMinimap(player);
+        }
+
+        var ai = PlayerManager.GetControllableAI();
+        if (ai != null && Utilities.IsPlayerInitialised(ai))
+        {
+            updatedMinimap = true;
+            UpdateMinimap(ai);
+        }
+
+        if (updatedMinimap)
+        {
+            m_minimapRenderer.sprite.texture.SetPixels32(m_minimapPixels);
+            m_minimapRenderer.sprite.texture.Apply();
         }
 
         UpdateFog();
@@ -368,9 +384,6 @@ public class FogOfWar : MonoBehaviour
                     }
                 }
             }
-            
-            m_minimapRenderer.sprite.texture.SetPixels32(m_minimapPixels);
-            m_minimapRenderer.sprite.texture.Apply();
         }
     }
 }

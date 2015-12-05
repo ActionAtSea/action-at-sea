@@ -268,7 +268,7 @@ class Utilities
     /// </summary>
     static public bool IsPlayerInitialised(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedPlayer>().IsInitialised();
+        return obj.GetComponentInParent<NetworkedEntity>().IsInitialised();
     }
     
     /// <summary>
@@ -292,7 +292,7 @@ class Utilities
     /// </summary>
     static public Color GetPlayerColor(GameObject obj)
     {
-        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerColor : new Color();
+        return obj != null ? obj.GetComponentInParent<NetworkedEntity>().PlayerColor : new Color();
     }
     
     /// <summary>
@@ -308,8 +308,7 @@ class Utilities
     /// </summary>
     static public bool IsPlayerAlive(GameObject obj)
     {
-        
-        return obj.GetComponentInParent<PlayerHealth>().IsAlive;
+        return obj.GetComponentInParent<Health>().IsAlive;
     }
     
     /// <summary>
@@ -317,6 +316,6 @@ class Utilities
     /// </summary>
     static public bool IsPlayerControllable(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedPlayer>().IsControllable();
+        return obj.GetComponentInParent<NetworkedEntity>().IsControllable();
     }
 }

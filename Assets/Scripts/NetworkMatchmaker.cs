@@ -17,6 +17,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Current level the player has joined
     DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
     GameObject m_player = null;                /// Current client player instantiated
+    GameObject m_playerAI = null;              /// AI controlled helper of the player
     GameObject m_syncher = null;               /// Current client game syncher instantiated
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
     string m_networkStatus = "";               /// Public description of the network connection
@@ -339,6 +340,12 @@ public class NetworkMatchmaker : Photon.PunBehaviour
             m_player = null;
         }
 
+        if(m_playerAI != null)
+        {
+            PhotonNetwork.Destroy(m_playerAI);
+            m_playerAI = null;
+        }
+
         if(m_syncher != null)
         {
             PhotonNetwork.Destroy(m_syncher);
@@ -358,6 +365,13 @@ public class NetworkMatchmaker : Photon.PunBehaviour
 
         m_syncher = PhotonNetwork.Instantiate(
             "GameSyncher", Vector3.zero, Quaternion.identity, 0);
+
+        // AI not supported for open levels
+        if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        {
+            m_playerAI = PhotonNetwork.Instantiate(
+                "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+        }
     }
 
     /// <summary>

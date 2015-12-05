@@ -16,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     private float m_rotationSpeed = 165.0f;
     private Vector3 m_forwardForce = new Vector3();
     private Rigidbody m_rigidBody = null;
-    private float m_currentVelocity = 0.0f;
     private float m_boostTimer = 0.0f;
     public float boostTimerTrigger = 1.0f;  // Length of time boat must travel at a certain speed to trigger a boost. 
 
