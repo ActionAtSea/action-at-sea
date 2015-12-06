@@ -360,13 +360,21 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         SetDiagnostic("Creating client player");
 
+        CreateAI();
+
         m_player = PhotonNetwork.Instantiate(
             "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
 
         m_syncher = PhotonNetwork.Instantiate(
             "GameSyncher", Vector3.zero, Quaternion.identity, 0);
+    }
 
-        // AI not supported for open levels
+    /// <summary>
+    /// Creates AI on all connected clients
+    /// AI not supported for open levels
+    /// </summary>
+    void CreateAI()
+    {
         if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
             m_playerAI = PhotonNetwork.Instantiate(

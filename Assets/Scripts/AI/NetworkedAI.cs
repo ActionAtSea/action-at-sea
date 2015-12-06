@@ -21,7 +21,6 @@ public class NetworkedAI : NetworkedEntity
     /// Information networked peer-to-peer
     /// </summary>
     #region infonetworkedp2p
-    private int m_aiID = 0; // ID of the player who owns this AI
     #endregion
     
     /// <summary>
@@ -30,6 +29,8 @@ public class NetworkedAI : NetworkedEntity
     /// </summary>
     void Start()
     {
+        m_isAI = true;
+
         m_cannonController = GetComponentInChildren<AICannonController>();
         m_healthBar = GetComponent<AIHealth>();
 
@@ -42,6 +43,7 @@ public class NetworkedAI : NetworkedEntity
     /// </summary>
     protected override void InitialiseAtWorld()
     {
+        m_spawnIndex = 0;
         gameObject.tag = "AIShip";
 
         // Name is used to determine when successful
@@ -59,17 +61,9 @@ public class NetworkedAI : NetworkedEntity
         transform.parent.name = m_name;
         name = m_name;
 
-        base.AddToMinimap();
-
         PlayerManager.AddAI(gameObject);
-    }
 
-    /// <summary>
-    /// Positions the ship on a reset
-    /// </summary>
-    protected override void ResetPosition()
-    {
-        // AI positioned by navmesh
+        base.NotifyPlayerCreation();
     }
 
     /// <summary>
@@ -128,16 +122,9 @@ public class NetworkedAI : NetworkedEntity
     /// Note not called if only player in the room
     /// Note not called every tick or at regular intervals
     /// </summary>
-    protected override void Serialise(PhotonStream stream)
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.isWriting)
-        {
-            stream.SendNext(m_aiID);
-        }
-        else
-        {
-            m_aiID = (int)stream.ReceiveNext();
-        }
+        base.Serialize(stream);
     }
 
     /// <summary>
@@ -146,13 +133,5 @@ public class NetworkedAI : NetworkedEntity
     protected override void PositionNonClientPlayer()
     {
         base.PositionNonClientPlayer();
-    }
-
-    /// <summary>
-    /// Gets the ai ID
-    /// </summary>
-    public int AiID
-    {
-        get { return m_aiID; }
     }
 }

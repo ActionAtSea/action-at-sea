@@ -29,6 +29,12 @@ class Colour
     /// </summary>
     static public int RGBToHue(Color color)
     {
+        // Return no hue if the colour is white
+        if(color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)
+        {
+            return -1;
+        }
+
         float max = Mathf.Max(Mathf.Max(color.r, color.b), color.g);
         float min = Mathf.Min(Mathf.Min(color.r, color.b), color.g);
         float difference = max - min;
@@ -73,6 +79,11 @@ class Colour
     /// </summary>
     static public Color HueToRGB(int hue)
     {
+        if(hue > 360 || hue < 0)
+        {
+            return new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+
         // This is a hack as the colours we want for the player 
         // Cannot be close to black or they will not read well
         // Any hue between 220-270 we decrease the saturation

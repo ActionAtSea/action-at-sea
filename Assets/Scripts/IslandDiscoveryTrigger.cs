@@ -90,11 +90,11 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             }
         }
 
-        if(Diagnostics.IsActive())
-        {
-            Diagnostics.Add(name + " Owner",
-                m_owner == null ? "NONE" : m_owner.name);
-        }
+        //if(Diagnostics.IsActive())
+        //{
+        //    Diagnostics.Add(name + " Owner",
+        //        m_owner == null ? "NONE" : m_owner.name);
+        //}
     }
 
     /// <summary>

@@ -13,7 +13,6 @@ using System.Collections;
 public class ParticleSpray : MonoBehaviour 
 {    
     public float minSpeedForEmission = 1.0f;
-    public GameObject parent = null;
     private Rigidbody m_rigidBody = null;
     private ParticleSystem m_particles;
 
@@ -25,7 +24,7 @@ public class ParticleSpray : MonoBehaviour
         m_particles = GetComponent<ParticleSystem> ();
         m_particles.GetComponent<Renderer>().sortingLayerName = "World";
         m_particles.GetComponent<Renderer>().sortingOrder = 4;
-        m_rigidBody = parent.GetComponent<Rigidbody>();
+        m_rigidBody = transform.parent.GetComponent<Rigidbody>();
     }
 
     /// <summary>

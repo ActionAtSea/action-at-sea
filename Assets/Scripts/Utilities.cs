@@ -276,7 +276,7 @@ class Utilities
     /// </summary>
     static public string GetPlayerName(GameObject obj)
     {
-        return obj != null ? obj.GetComponentInParent<NetworkedPlayer>().PlayerName : "";
+        return obj != null ? obj.GetComponentInParent<NetworkedEntity>().PlayerName : "";
     }
     
     /// <summary>
@@ -300,7 +300,7 @@ class Utilities
     /// </summary>
     static public int GetPlayerID(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedPlayer>().PlayerID;
+        return obj.GetComponentInParent<NetworkedEntity>().PlayerID;
     }
 
     /// <summary>

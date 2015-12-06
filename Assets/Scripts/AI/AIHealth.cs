@@ -24,7 +24,8 @@ public class AIHealth : Health
         
         if(m_floatingHealthBarText != null)
         {
-            //m_floatingHealthBarText.Utilities.GetPlayerName(gameObject);
+            m_floatingHealthBarText.text =
+                Utilities.GetPlayerName(gameObject);
         }
         
         if (m_healthLevel > m_healthMax)

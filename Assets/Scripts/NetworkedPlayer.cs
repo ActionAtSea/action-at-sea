@@ -15,7 +15,6 @@ public class NetworkedPlayer : NetworkedEntity
     /// Information required which is not networked
     /// </summary>
     #region infonotnetworked
-    private int m_playerIndex = -1; // based on players in room. helps assign spawn spots. not networked.
     private PlayerScore m_score = null;
     private GameObject m_networkDiagnostics = null;
     private bool m_usePrediction = false;
@@ -26,8 +25,6 @@ public class NetworkedPlayer : NetworkedEntity
     /// Information networked peer-to-peer
     /// </summary>
     #region infonetworkedp2p
-    private int m_playerHue = 0;
-    private int m_playerID = -1; // photon creates one to uniquely identify this. 
     private int m_playerScore = 0;
     #endregion
 
@@ -37,6 +34,8 @@ public class NetworkedPlayer : NetworkedEntity
     /// </summary>
     void Start()
     {
+        m_isAI = false;
+
         m_cannonController = GetComponentInChildren<PlayerCannonController>();
         m_healthBar = GetComponent<PlayerHealth>();
         m_score = GetComponent<PlayerScore>();
@@ -56,8 +55,7 @@ public class NetworkedPlayer : NetworkedEntity
             gameObject.tag = "Player";
 
             var matchMaker = NetworkMatchmaker.Get();
-            m_playerIndex = matchMaker.GetPlayerIndex();
-            m_playerID = matchMaker.GetPlayerID();
+            m_spawnIndex = matchMaker.GetPlayerIndex();
 
             m_name = Utilities.GetPlayerName();
             if(m_name.Length == 0)
@@ -72,6 +70,9 @@ public class NetworkedPlayer : NetworkedEntity
             gameObject.tag = "EnemyPlayer";
         }
 
+        m_floatingHealthBar = transform.parent.FindChild("FloatingHealthBar").gameObject;
+        m_floatingHealthBar.SetActive(!photonView.isMine);
+
         base.InitialiseAtWorld();
     }
 
@@ -80,27 +81,12 @@ public class NetworkedPlayer : NetworkedEntity
     /// </summary>
     protected override void NotifyPlayerCreation()
     {
-        gameObject.name = m_playerID.ToString();
+        gameObject.name = m_ID.ToString();
         transform.parent.name = m_name;
-        m_colour = Colour.HueToRGB(m_playerHue);
-
-        AddToMinimap();
 
         PlayerManager.AddPlayer(gameObject);
-    }
 
-    /// <summary>
-    /// Positions the ship on a spawn
-    /// </summary>
-    protected override void ResetPosition()
-    {
-        var playerManager = PlayerManager.Get();
-        var place = playerManager.GetNewPosition(m_playerIndex, gameObject);
-        m_playerHue = place.hue;
-        
-        m_rigidBody.velocity = Vector3.zero;
-        gameObject.transform.position = place.position;
-        gameObject.transform.localEulerAngles = place.rotation;
+        base.NotifyPlayerCreation();
     }
 
     /// <summary>
@@ -162,7 +148,7 @@ public class NetworkedPlayer : NetworkedEntity
             string playerConnection;
             if(photonView.isMine)
             {
-                Diagnostics.Add("Player Client Index", m_playerIndex);
+                Diagnostics.Add("Player Spawn Index", m_spawnIndex);
                 playerConnection = "Client";
             }
             else
@@ -170,10 +156,10 @@ public class NetworkedPlayer : NetworkedEntity
                 playerConnection = "Enemy [" + (m_recievedValidData ? "x" : " ") + "]";
             }
 
-            Diagnostics.Add("Player" + m_playerID, m_name + 
+            Diagnostics.Add("Player" + m_ID, m_name + 
                 "|" + m_playerScore + 
                 "|" + m_health + 
-                "|" + m_playerHue + 
+                "|" + m_hue + 
                 "|" + m_initialised + 
                 "|" + playerConnection);
         }
@@ -184,13 +170,13 @@ public class NetworkedPlayer : NetworkedEntity
     /// Note not called if only player in the room
     /// Note not called every tick or at regular intervals
     /// </summary>
-    protected override void Serialise(PhotonStream stream)
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+        base.Serialize(stream);
+
         if (stream.isWriting)
         {
-            stream.SendNext(m_playerID);
             stream.SendNext(m_playerScore);
-            stream.SendNext(m_playerHue);
         }
         else
         {
@@ -200,9 +186,7 @@ public class NetworkedPlayer : NetworkedEntity
                     m_networkedPosition, m_networkedRotation, m_networkedVelocity);
             }
 
-            m_playerID = (int)stream.ReceiveNext();
             m_playerScore = (int)stream.ReceiveNext();
-            m_playerHue = (int)stream.ReceiveNext();
         }
     }
 
@@ -224,26 +208,10 @@ public class NetworkedPlayer : NetworkedEntity
     }
 
     /// <summary>
-    /// Gets the player name
-    /// </summary>
-    public string PlayerName
-    {
-        get { return m_name; }
-    }
-
-    /// <summary>
     /// Gets the player score
     /// </summary>
     public float PlayerScore
     {
         get { return m_playerScore; }
-    }
-
-    /// <summary>
-    /// Gets the player ID
-    /// </summary>
-    public int PlayerID
-    {
-        get { return m_playerID; }
     }
 }

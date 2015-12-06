@@ -15,9 +15,11 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// Information required which is not networked
     /// </summary>
     #region infonotnetworked
+    protected int m_spawnIndex = -1; // based on players in room. helps assign spawn spots. not networked.
     public Color m_colour = new Color(1.0f, 1.0f, 1.0f);
     protected bool m_initialised = false;
     protected bool m_visible = true;
+    protected bool m_isAI = false;
     protected bool m_recievedValidData = false;
     protected Health m_healthBar = null;
     protected GameObject m_floatingHealthBar = null;
@@ -31,7 +33,9 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// Information networked peer-to-peer
     /// </summary>
     #region infonetworkedp2p
+    protected int m_ID = -1; // photon creates one to uniquely identify this. 
     protected string m_name = "";
+    protected int m_hue = 0;
     protected float m_health = -1.0f;
     protected float m_mouseCursorAngle = 0.0f;
     protected bool m_firedCannonsLeft = false;
@@ -52,8 +56,22 @@ public abstract class NetworkedEntity : MonoBehaviour
         DontDestroyOnLoad(parent);
 
         m_collider = GetComponent<CapsuleCollider>();
+        if(m_collider == null)
+        {
+            Debug.LogError("Could not find capsule collider");
+        }
+
         m_rigidBody = GetComponent<Rigidbody>();
-        m_trailRenderer = GetComponent<TrailRenderer>();
+        if (m_rigidBody == null)
+        {
+            Debug.LogError("Could not find rigid body");
+        }
+
+        m_trailRenderer = GetComponentInChildren<TrailRenderer>();
+        if (m_trailRenderer == null)
+        {
+            Debug.LogError("Could not find trail renderer");
+        }
     }
 
     /// <summary>
@@ -64,12 +82,12 @@ public abstract class NetworkedEntity : MonoBehaviour
     {
         if(photonView.isMine)
         {
+            var matchMaker = NetworkMatchmaker.Get();
+            m_ID = matchMaker.GetPlayerID();
+
             ResetPosition();
             NotifyPlayerCreation();
         }
-
-        m_floatingHealthBar = transform.parent.FindChild("FloatingHealthBar").gameObject;
-        m_floatingHealthBar.SetActive(!photonView.isMine);
 
         Debug.Log("Created " + gameObject.tag);
         m_initialised = true;
@@ -78,21 +96,27 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// <summary>
     /// Adds the entity to the minimap
     /// </summary>
-    protected void AddToMinimap()
+    protected virtual void NotifyPlayerCreation()
     {
+        m_colour = Colour.HueToRGB(m_hue);
+
         var minimap = GameObject.FindObjectOfType<Minimap>();
         minimap.AddPlayer(gameObject, photonView.isMine, m_colour);
     }
 
     /// <summary>
-    /// Adds the entity to the minimap and notifies the entity manager of creation
+    /// Positions the ship on a spawn
     /// </summary>
-    protected abstract void NotifyPlayerCreation();
+    private void ResetPosition()
+    {
+        var playerManager = PlayerManager.Get();
+        var place = playerManager.GetNewPosition(m_spawnIndex, m_isAI);
+        m_hue = place.hue;
 
-    /// <summary>
-    /// Positions the ship on reset
-    /// </summary>
-    protected abstract void ResetPosition();
+        m_rigidBody.velocity = Vector3.zero;
+        gameObject.transform.position = place.position;
+        gameObject.transform.localEulerAngles = place.rotation;
+    }
 
     /// <summary>
     /// Hides/shows the ship. Keep the networked entity active 
@@ -236,12 +260,12 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// Note not called if only entity in the room
     /// Note not called every tick or at regular intervals
     /// </summary>
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    public void Serialize(PhotonStream stream)
     {
-        Serialise(stream);
-
         if (stream.isWriting)
         {
+            stream.SendNext(m_ID);
+            stream.SendNext(m_hue);
             stream.SendNext(m_name);
             stream.SendNext(m_rigidBody.velocity);
             stream.SendNext(transform.position);
@@ -257,10 +281,14 @@ public abstract class NetworkedEntity : MonoBehaviour
         }
         else
         {
+            m_ID = (int)stream.ReceiveNext();
+            m_hue = (int)stream.ReceiveNext();
             m_name = (string)stream.ReceiveNext();
+
             m_networkedVelocity = (Vector3)stream.ReceiveNext();
             m_networkedPosition = (Vector3)stream.ReceiveNext();
             m_networkedRotation = (Quaternion)stream.ReceiveNext();
+
             m_health = (float)stream.ReceiveNext();
             m_mouseCursorAngle = (float)stream.ReceiveNext();
 
@@ -293,13 +321,6 @@ public abstract class NetworkedEntity : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// Serialises entity data to each entity
-    /// Note not called if only entity in the room
-    /// Note not called every tick or at regular intervals
-    /// </summary>
-    protected abstract void Serialise(PhotonStream stream);
 
     /// <summary>
     /// Attempts to predict where the non-client entity would be to reduce network latency
@@ -336,5 +357,21 @@ public abstract class NetworkedEntity : MonoBehaviour
     {
         return IsControllable() ? m_initialised :
             m_initialised && m_recievedValidData;
+    }
+
+    /// <summary>
+    /// Gets the player ID
+    /// </summary>
+    public int PlayerID
+    {
+        get { return m_ID; }
+    }
+
+    /// <summary>
+    /// Gets the player name
+    /// </summary>
+    public string PlayerName
+    {
+        get { return m_name; }
     }
 }

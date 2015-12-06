@@ -20,6 +20,7 @@ public class PlayerManager : MonoBehaviour
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
     private List<GameObject> m_spawns = null;
+    private List<GameObject> m_aispawns = null;
 
     /// <summary> 
     /// Position/rotation/color information
@@ -41,7 +42,21 @@ public class PlayerManager : MonoBehaviour
         sm_aiIDs = new Dictionary<int, GameObject>();
         m_gameboard = GameBoard.Get();
 
-        m_spawns = Utilities.GetOrderedList("Spawn");
+        m_spawns = new List<GameObject>();
+        m_aispawns = new List<GameObject>();
+        var spawns = Utilities.GetOrderedList("Spawn");
+        foreach(var spawn in spawns)
+        {
+            if(spawn.GetComponent<PlayerSpawn>().isAISpawn)
+            {
+                m_aispawns.Add(spawn);
+            }
+            else
+            {
+                m_spawns.Add(spawn);
+            }
+        }
+
         if(!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()) && m_spawns.Count == 0)
         {
             Debug.LogError("Could not find any spawns");
@@ -157,7 +172,7 @@ public class PlayerManager : MonoBehaviour
             sm_ai = ai;
         }
 
-        int id = networkedAI.AiID;
+        int id = networkedAI.PlayerID;
         sm_aiIDs[id] = ai;
     }
 
@@ -172,8 +187,11 @@ public class PlayerManager : MonoBehaviour
             sm_ai = null;
         }
 
-        int id = networkedAI.AiID;
-        sm_aiIDs.Remove(id);
+        int id = networkedAI.PlayerID;
+        if (sm_aiIDs.ContainsKey(id))
+        {
+            sm_aiIDs.Remove(id);
+        }
     }
 
     /// <summary>
@@ -249,15 +267,15 @@ public class PlayerManager : MonoBehaviour
         }
         return false;
     }
-    
+
     /// <summary>
     /// Retrieves a new position on the map
     /// </summary>
-    public Placement GetNewPosition(int index, GameObject player)
+    public Placement GetNewPosition(int index, bool aiSpawn)
     {
         Placement place = null;
-        
-        if(m_spawns != null && m_spawns.Count > 0)
+
+        if(!aiSpawn && m_spawns != null && m_spawns.Count > 0)
         {
             int playersAllowed = Utilities.GetMaximumPlayers();
             if(m_spawns.Count < playersAllowed)
@@ -273,6 +291,16 @@ public class PlayerManager : MonoBehaviour
             place.rotation.y = 0.0f;
             place.rotation.z = -m_spawns[index].transform.localEulerAngles.y;
             place.hue = Colour.RGBToHue(m_spawns[index].GetComponent<SpriteRenderer>().color);
+        }
+        else if(aiSpawn && m_aispawns != null && m_aispawns.Count > 0)
+        {
+            place = new Placement();
+            place.position.x = m_aispawns[index].transform.position.x;
+            place.position.z = m_aispawns[index].transform.position.z;
+            place.rotation.x = 0.0f;
+            place.rotation.y = 0.0f;
+            place.rotation.z = -m_aispawns[index].transform.localEulerAngles.y;
+            place.hue = Colour.RGBToHue(m_aispawns[index].GetComponent<SpriteRenderer>().color);
         }
         else
         {
