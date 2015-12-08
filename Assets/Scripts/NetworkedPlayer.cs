@@ -70,10 +70,9 @@ public class NetworkedPlayer : NetworkedEntity
             gameObject.tag = "EnemyPlayer";
         }
 
-        m_floatingHealthBar = transform.parent.FindChild("FloatingHealthBar").gameObject;
-        m_floatingHealthBar.SetActive(!photonView.isMine);
-
         base.InitialiseAtWorld();
+
+        m_floatingHealthBar.SetActive(!photonView.isMine);
     }
 
     /// <summary>
@@ -99,6 +98,7 @@ public class NetworkedPlayer : NetworkedEntity
 
         GetComponent<PlayerAiming>().enabled = show;
         GetComponent<PlayerMovement>().enabled = show;
+        m_floatingHealthBar.SetActive(show && !photonView.isMine);
     }
 
     /// <summary>

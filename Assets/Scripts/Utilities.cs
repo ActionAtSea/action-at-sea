@@ -310,7 +310,25 @@ class Utilities
     {
         return obj.GetComponentInParent<Health>().IsAlive;
     }
-    
+
+    /// <summary>
+    /// Returns whether the AI is assigned to the player
+    /// </summary>
+    static public bool IsAssignedAI(GameObject obj)
+    {
+        var entity = obj.GetComponentInParent<NetworkedEntity>();
+        return entity.IsControllable() && entity.IsInitialised() && entity.name != "Rogue";
+    }
+
+    /// <summary>
+    /// Returns whether the AI is controlled by the client
+    /// </summary>
+    static public bool IsControllableAI(GameObject obj)
+    {
+        var entity = obj.GetComponentInParent<NetworkedEntity>();
+        return entity.IsControllable() && entity.IsInitialised();
+    }
+
     /// <summary>
     /// Returns whether the player can control this
     /// </summary>

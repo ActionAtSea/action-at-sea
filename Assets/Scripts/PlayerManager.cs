@@ -11,10 +11,10 @@ using System.Collections.ObjectModel;
 public class PlayerManager : MonoBehaviour 
 {
     private static GameObject sm_player = null;
-    private static GameObject sm_ai = null;
     private static Dictionary<int, GameObject> sm_playerIDs = null;
     private static Dictionary<int, GameObject> sm_aiIDs = null;
     private static List<GameObject> sm_allplayers = null;
+    private static List<GameObject> sm_allAI = null;
 
     private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
@@ -37,6 +37,7 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     void Start()
     {
+        sm_allAI = new List<GameObject>();
         sm_allplayers = new List<GameObject>();
         sm_playerIDs = new Dictionary<int, GameObject>();
         sm_aiIDs = new Dictionary<int, GameObject>();
@@ -90,8 +91,8 @@ public class PlayerManager : MonoBehaviour
         sm_aiIDs.Clear();
         sm_playerIDs.Clear();
         sm_allplayers.Clear();
+        sm_allAI.Clear();
         sm_player = null;
-        sm_ai = null;
     }
 
     /// <summary>
@@ -112,12 +113,11 @@ public class PlayerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Finds the controllable ai and returns
-    /// @note is possible to be null until the network has initialised
+    /// Finds all AI
     /// </summary>
-    public static GameObject GetControllableAI()
+    public static List<GameObject> GetAllAI()
     {
-        return sm_ai;
+        return sm_allAI;
     }
 
     /// <summary>
@@ -166,14 +166,25 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static void AddAI(GameObject ai)
     {
-        var networkedAI = ai.GetComponent<NetworkedAI>();
-        if(networkedAI.IsControllable())
+        if (sm_allAI.Exists(x => x == ai))
         {
-            sm_ai = ai;
+            sm_allAI.Remove(ai);
+        }
+        sm_allAI.Add(ai);
+
+        var networkedAI = ai.GetComponent<NetworkedAI>();
+        int id = networkedAI.PlayerID;
+        if (id == -1)
+        {
+            Debug.LogError("Adding AI with invalid ID");
         }
 
-        int id = networkedAI.PlayerID;
-        sm_aiIDs[id] = ai;
+        if (sm_aiIDs.ContainsKey(id))
+        {
+            sm_aiIDs.Remove(id);
+        }
+        sm_aiIDs.Add(id, ai);
+        Debug.Log("Adding AI " + id + " to manager");
     }
 
     /// <summary>
@@ -181,17 +192,12 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     public static void RemoveAI(GameObject ai)
     {
-        var networkedAI = ai.GetComponent<NetworkedAI>();
-        if (networkedAI.IsControllable())
-        {
-            sm_ai = null;
-        }
+        sm_allplayers.Remove(ai);
 
+        var networkedAI = ai.GetComponent<NetworkedAI>();
         int id = networkedAI.PlayerID;
-        if (sm_aiIDs.ContainsKey(id))
-        {
-            sm_aiIDs.Remove(id);
-        }
+        sm_aiIDs.Remove(id);
+        Debug.Log("Removing AI " + id + " from manager");
     }
 
     /// <summary>

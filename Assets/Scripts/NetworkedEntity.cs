@@ -9,7 +9,6 @@ using System.Collections.Generic;
 public abstract class NetworkedEntity : MonoBehaviour
 {
     public PhotonView photonView = null;
-    public GameObject[] children = null;
 
     /// <summary>
     /// Information required which is not networked
@@ -96,6 +95,12 @@ public abstract class NetworkedEntity : MonoBehaviour
             NotifyPlayerCreation();
         }
 
+        m_floatingHealthBar = transform.parent.FindChild("FloatingHealthBar").gameObject;
+        if (m_floatingHealthBar == null)
+        {
+            Debug.LogError("Could not find floating health bar");
+        }
+
         Debug.Log("Created " + gameObject.tag);
         m_initialised = true;
     }
@@ -134,18 +139,18 @@ public abstract class NetworkedEntity : MonoBehaviour
         m_visible = show;
         m_collider.enabled = show;
         m_trailRenderer.enabled = show;
-        m_floatingHealthBar.SetActive(show && !photonView.isMine);
+        m_floatingHealthBar.SetActive(show);
 
-        foreach (var child in children)
+        for(int i = 0; i < transform.childCount; ++i)
         {
-            child.SetActive(show);
+            transform.GetChild(i).gameObject.SetActive(show);
         }
     }
 
     /// <summary>
     /// Callback when game over is set
     /// </summary>
-    public void SetVisible(bool isVisible, bool shouldExplode = false)
+    public void SetVisible(bool isVisible, bool shouldExplode)
     {
         if (isVisible)
         {

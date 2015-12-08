@@ -15,6 +15,7 @@ public class NetworkedAI : NetworkedEntity
     /// Information required which is not networked
     /// </summary>
     #region infonotnetworked
+    GameObject m_assignedPlayer = null;
     #endregion
 
     /// <summary>
@@ -74,7 +75,7 @@ public class NetworkedAI : NetworkedEntity
     {
         base.ShowShip(show);
 
-        GetComponent<AIAiming>().enabled = show;
+        GetComponent<NavMeshAgent>().enabled = show;
     }
     
     /// <summary>
@@ -97,13 +98,6 @@ public class NetworkedAI : NetworkedEntity
         }
 
         base.OnUpdate();
-        
-        if (m_health <= 0)
-        {
-            //TODO: implement this properly.
-            PhotonNetwork.Destroy(photonView);
-            Debug.Log("AI is dead");
-        }
     }
     
     /// <summary>
@@ -134,4 +128,21 @@ public class NetworkedAI : NetworkedEntity
     {
         base.PositionNonClientPlayer();
     }
+
+    /// <summary>
+    /// Gets the assigned player of the ai
+    /// </summary>    
+    public GameObject GetAssignedPlayer()
+    {
+        return m_assignedPlayer;
+    }
+
+    /// <summary>
+    /// Gets the assigned player's health of the ai
+    /// </summary>    
+    public bool IsAssignedPlayerIsAlive()
+    {
+        return Utilities.IsPlayerAlive(m_assignedPlayer);
+    }
 }
+

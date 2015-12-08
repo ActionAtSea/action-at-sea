@@ -10,7 +10,7 @@ using System.Collections;
 /// Start() cannot include any code relying on the world/level as 
 /// this object can be instantiated before the level is created
 /// </summary>
-public class Health : MonoBehaviour
+public abstract class Health : MonoBehaviour
 {
     protected GameObject m_healthBar = null;
     protected UnityEngine.UI.Text m_floatingHealthBarText = null;
@@ -38,12 +38,14 @@ public class Health : MonoBehaviour
     /// </summary>
     protected virtual void Initialise()
     {
-        var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
-        var canvas = floatingHealthBar.FindChild("Canvas").transform;
-        m_healthBar = canvas.FindChild("HealthBar").gameObject;
-        var playerName = canvas.FindChild("PlayerName").gameObject;
-        m_floatingHealthBarText = playerName.GetComponent<UnityEngine.UI.Text>();
-
+        if(m_healthBar == null)
+        {
+            var floatingHealthBar = transform.parent.transform.FindChild("FloatingHealthBar");
+            var canvas = floatingHealthBar.FindChild("Canvas").transform;
+            m_healthBar = canvas.FindChild("HealthBar").gameObject;
+            var playerName = canvas.FindChild("PlayerName").gameObject;
+            m_floatingHealthBarText = playerName.GetComponent<UnityEngine.UI.Text>();
+        }
 
         if(m_healthBar == null)
         {
@@ -76,7 +78,7 @@ public class Health : MonoBehaviour
         {
             return;
         }
-        
+
         if(!m_initialised)
         {
             Initialise();
@@ -109,7 +111,14 @@ public class Health : MonoBehaviour
             m_healthBar.GetComponent<UnityEngine.UI.Image>().enabled = barWidth > m_minBarWidth;
             m_healthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(barWidth, m_barHeight);
         }
+
+        OnUpdate();
     }
+
+    /// <summary>
+    /// Called on update
+    /// </summary>
+    protected abstract void OnUpdate();
 
     /// <summary>
     /// Inflicts damage to the health

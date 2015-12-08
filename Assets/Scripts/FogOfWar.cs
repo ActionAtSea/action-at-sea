@@ -22,15 +22,15 @@ public class FogOfWar : MonoBehaviour
     private List<FogOfWarTile> m_activeTiles = null;        /// Tiles that can be interacted with
     private List<FogOfWarTile> m_staticTiles = null;        /// Tiles around the game board border
     private float m_partitionSize = 0.0f;                   /// Width/height of the partitions
-    private float m_halfBoardSize = 0.0f;
+    private float m_halfBoardSize = 0.0f;                   /// Size of half of the game board
     private float[] m_fogAlpha = null;                      /// Pixels for the minimap 
     private Color32[] m_minimapPixels = null;               /// Pixels for the minimap 
     private GameObject m_minimapTile = null;                /// Single tile for the minimap
     private SpriteRenderer m_minimapRenderer = null;        /// Single tile for the minimap
     private const int m_minimapSize = 128;                  /// Dimensions of the minimap tile texture
-    private float m_fogMinReveal = 8.0f;
-    private float m_minimapMinReveal = 14.0f;               /// Minimum radius around the player fog is revealed
-    private float m_minimapMaxReveal = 16.0f;               /// Maximum radius around the player fog is revealed
+    private float m_fogMinReveal = 8.0f;                    /// Minimum radius around the player fog is revealed
+    private float m_minimapMinReveal = 14.0f;               /// Minimum radius around the player minimap is revealed
+    private float m_minimapMaxReveal = 16.0f;               /// Maximum radius around the player minimap is revealed
     private Vector2 m_minimapWorldScale;                    /// Size of the minimap tile in world space
 
     /// <summary>
@@ -256,11 +256,14 @@ public class FogOfWar : MonoBehaviour
             UpdateMinimap(player);
         }
 
-        var ai = PlayerManager.GetControllableAI();
-        if (ai != null && Utilities.IsPlayerInitialised(ai))
+        var allAI = PlayerManager.GetAllAI();
+        foreach(var ai in allAI)
         {
-            updatedMinimap = true;
-            UpdateMinimap(ai);
+            if(Utilities.IsAssignedAI(ai))
+            {
+                updatedMinimap = true;
+                UpdateMinimap(ai);
+            }
         }
 
         if (updatedMinimap)

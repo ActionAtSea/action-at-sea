@@ -126,11 +126,59 @@ public class GameOverScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Updates the game over ai logic
+    /// </summary>
+    void UpdateAI()
+    {
+        // Must do this here as health component gets turned off when it dies
+        var ai = PlayerManager.GetAllAI();
+        for (int i = 0; i < ai.Count; ++i)
+        {
+            if (Utilities.IsControllableAI(ai[i]))
+            {
+                // This includes all AI contolled by the client (including Rogues)
+                var health = ai[i].GetComponent<AIHealth>();
+                var network = ai[i].GetComponent<NetworkedAI>();
+
+                bool assignedPlayerDead = network.GetAssignedPlayer() != null &&
+                    !network.IsAssignedPlayerIsAlive();
+
+                if (health.IsAlive && assignedPlayerDead)
+                {
+                    health.AssignedPlayerDead = true;
+                    network.SetVisible(false, true);
+                }
+
+                if (!health.IsAlive)
+                {
+                    if (health.AssignedPlayerDead)
+                    {
+                        // Wait until assigned player is no longer dead to respawn
+                        if (!assignedPlayerDead)
+                        {
+                            health.AssignedPlayerDead = false;
+                            network.SetVisible(true, false);
+                        }
+                    }
+                    else
+                    {
+                        // No assigned player, immediate respawn
+                        network.SetVisible(false, true);
+                        network.SetVisible(true, false);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Updates the game over logic
     /// </summary>
     void Update () 
     {
-        if(m_isGameOver)
+        UpdateAI();
+
+        if (m_isGameOver)
         {
             UpdateOnGameOver();
         }
@@ -192,7 +240,7 @@ public class GameOverScript : MonoBehaviour
             toMenuText.enabled = false;
             gameLostImage.GetComponent<UnityEngine.UI.Image>().enabled = false;
             gameWonImage.GetComponent<UnityEngine.UI.Image>().enabled = false;
-            player.GetComponent<NetworkedPlayer>().SetVisible(true);
+            player.GetComponent<NetworkedPlayer>().SetVisible(true, false);
         }
         else
         {
