@@ -83,7 +83,14 @@ public abstract class NetworkedEntity : MonoBehaviour
         if(photonView.isMine)
         {
             var matchMaker = NetworkMatchmaker.Get();
-            m_ID = matchMaker.GetPlayerID();
+
+            //NOTE: I switched the ID to be using the photonView id instead of the actor ID
+            //      as the view ID is unique to each object with a photonView. Whilst
+            //      the actor ID is only unique to each user within the game. 
+            m_ID = photonView.viewID;
+            
+            //OLD CODE: Used actorID to identify players. m_ID implementation not yet finalised. Don't remove.
+            //m_ID = matchMaker.GetPlayerID();
 
             ResetPosition();
             NotifyPlayerCreation();

@@ -21,7 +21,7 @@ public class AIAiming : MonoBehaviour
 	}
 
 
-    //Currently targets just player
+    //Currently targets just player. In the future will need to target player owned AI as well.
     //TODO: Either create base class for AI aiming or create enums for different AI types.
     void OnTriggerStay(Collider other)
     {
@@ -32,7 +32,7 @@ public class AIAiming : MonoBehaviour
             if(cannonController != null)
             {
                 cannonController.AimWeapon(targetPosition);
-                //cannonController.FireWeapon(); Uncomment once cannonball firing by ai has been fixed.
+                cannonController.FireWeapon();// Uncomment once cannonball firing by ai has been fixed.
             }
         }
     }

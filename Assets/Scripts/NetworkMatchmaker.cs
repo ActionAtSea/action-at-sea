@@ -377,8 +377,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
-            m_playerAI = PhotonNetwork.Instantiate(
-                "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+            m_playerAI = PhotonNetwork.InstantiateSceneObject(
+                "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
         }
     }
 
