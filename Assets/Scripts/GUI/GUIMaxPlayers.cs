@@ -14,6 +14,10 @@ public class GUIMaxPlayers : MonoBehaviour
     void Start()
     {
         m_slider = GetComponent<UnityEngine.UI.Slider>();
+        if (m_slider == null)
+        {
+            Debug.LogError("Could not find slider");
+        }
     }
 
     void Update()

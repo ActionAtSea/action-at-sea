@@ -20,6 +20,7 @@ public class LobbyScript : MonoBehaviour
     private int m_dots = 0;
     private int m_maxDots = 4;
     private float m_dotSpeed = 0.25f;
+    private bool m_initialised = false;
 
     /// <summary>
     /// Initialises the lobby
@@ -27,7 +28,6 @@ public class LobbyScript : MonoBehaviour
     void Start () 
     {
         m_network = NetworkMatchmaker.Get();
-        SelectNewLevel(selectedLevel);
     }
 
     /// <summary>
@@ -133,6 +133,12 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(!m_initialised)
+        {
+            SelectNewLevel(selectedLevel);
+            m_initialised = true;
+        }
+
         if(Diagnostics.IsActive())
         {
             Diagnostics.Add("Max Players Chosen", Utilities.GetMaximumPlayers());
