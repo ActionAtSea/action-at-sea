@@ -23,7 +23,7 @@ public class AIBulletImpact : BulletImpact {
             // bullets.
 
             // Also store the owner of the last bullet that hits so the player to add score to is known.
-            Debug.Log("AI player ID: " + Utilities.GetPlayerID(gameObject));
+            //Debug.Log("AI player ID: " + Utilities.GetPlayerID(gameObject));
             if (bullet.Owner != Utilities.GetPlayerID(gameObject))
             {
                 m_parentHealth.InflictDamage(bullet.Damage);

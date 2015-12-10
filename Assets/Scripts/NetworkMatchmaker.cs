@@ -19,6 +19,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     GameObject m_player = null;                /// Current client player instantiated
     GameObject m_playerAI = null;              /// AI controlled helper of the player
     GameObject m_syncher = null;               /// Current client game syncher instantiated
+    int m_noOfAI = 4;                          /// Temp value to hold the number of AI ships spawned. Should perhaps be placed in a more relavent class?
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
     string m_networkStatus = "";               /// Public description of the network connection
     string m_networkDiagnostic = "";           /// Diagnostic description of the network connection
@@ -360,6 +361,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         SetDiagnostic("Creating client player");
 
+        
         CreateAI();
 
         m_player = PhotonNetwork.Instantiate(
@@ -379,8 +381,18 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         {
             if (PhotonNetwork.isMasterClient)
             {
-                m_playerAI = PhotonNetwork.InstantiateSceneObject(
-                    "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                for (int i = 0; i < m_noOfAI; ++i)
+                {
+                  // Spawning multiple AIs
+                    //TODO: Setup so that one is spawned for each AI spawn point.
+                    PhotonNetwork.InstantiateSceneObject(
+                        "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                   
+                    /*
+                    m_playerAI = PhotonNetwork.InstantiateSceneObject
+                        ("RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                    */
+                }
             }
         }
     }

@@ -17,9 +17,7 @@ public class PlayerBulletImpact : BulletImpact
         if (other.gameObject.CompareTag("Bullet"))
         {
             var bullet = other.gameObject.GetComponent<Bullet>();
-            Debug.Log("Collision Detected 1");
             // Ensure the owner is not colliding with their own bullet
-            Debug.Log("Controlled player ID: " + Utilities.GetPlayerID(gameObject));
             if(bullet.Owner != Utilities.GetPlayerID(gameObject))
             {
                 Debug.Log("Collision Detected 2");
