@@ -11,10 +11,19 @@ using System.Collections.Generic;
 /// </summary>
 public class NetworkedAI : NetworkedEntity
 {
+
+    public enum AIType
+    {
+        ROGUE,
+        FLEET,
+        PATROL
+    };
+    
     /// <summary>
     /// Information required which is not networked
     /// </summary>
     #region infonotnetworked
+    public AIType m_aiType;
     GameObject m_assignedPlayer = null;
     #endregion
 
@@ -49,7 +58,21 @@ public class NetworkedAI : NetworkedEntity
 
         // Name is used to determine when successful
         // data is recieved and cannot be null
-        m_name = "Rogue";
+        switch (m_aiType)
+        {
+            case AIType.ROGUE:
+                m_name = "Rogue";
+                break;
+            case AIType.FLEET:
+                m_name = "Fleet";
+                break;
+            case AIType.PATROL:
+                m_name = "Patrol";
+                break;
+            default:
+                break;
+        }
+        
 
         base.InitialiseAtWorld();
     }

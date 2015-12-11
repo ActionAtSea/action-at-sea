@@ -39,6 +39,7 @@ public class RogueAI : MonoBehaviour
         cannonController = GetComponentInChildren<AICannonController>();
         if(navAgent != null)
         {
+            //Test destination to see if navigation works.
             navAgent.SetDestination(new Vector3(10, 1, 100));
         }
 	}

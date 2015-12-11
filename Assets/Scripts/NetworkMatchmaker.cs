@@ -17,7 +17,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Current level the player has joined
     DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
     GameObject m_player = null;                /// Current client player instantiated
-    GameObject m_playerAI = null;              /// AI controlled helper of the player
+    GameObject m_playerAI = null;              /// AI controlled helper of the player (fleet ship).
+    GameObject[] m_fleetAI = new GameObject[3];/// AI controlled fleet ships owned by the player.
     GameObject m_syncher = null;               /// Current client game syncher instantiated
     int m_noOfAI = 4;                          /// Temp value to hold the number of AI ships spawned. Should perhaps be placed in a more relavent class?
     float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
@@ -381,6 +382,9 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         {
             if (PhotonNetwork.isMasterClient)
             {
+                //Fleet AI
+                m_playerAI = PhotonNetwork.Instantiate("FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+
                 for (int i = 0; i < m_noOfAI; ++i)
                 {
                   // Spawning multiple AIs

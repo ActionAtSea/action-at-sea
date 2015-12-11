@@ -109,6 +109,7 @@
      <Compile Include="Assets\Scripts\AI\AIBulletImpact.cs" />
      <Compile Include="Assets\Scripts\AI\AICannonController.cs" />
      <Compile Include="Assets\Scripts\AI\AIHealth.cs" />
+     <Compile Include="Assets\Scripts\AI\FleetAI.cs" />
      <Compile Include="Assets\Scripts\AI\NetworkedAI.cs" />
      <Compile Include="Assets\Scripts\AI\RogueAI.cs" />
      <Compile Include="Assets\Scripts\AnimationGenerator.cs" />
@@ -187,6 +188,7 @@
      <Compile Include="Assets\UltimateToonWater\Scripts\Water\UltimateToonWater.cs" />
      <Compile Include="Assets\UltimateToonWater\Scripts\Water\UltimateToonWaterC.cs" />
      <Compile Include="Assets\UltimateToonWater\Scripts\Water\WaterConfig.cs" />
+     <Compile Include="Assets\Water\MirrorReflection.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\UltimateToonWater\Media\Shaders\Particle Add Water.shader" />
@@ -200,8 +202,10 @@
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\ColorCorrectionCurves.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\ScreenSpaceAmbientObscurance.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_Antialiasing\NFAA.shader" />
+     <None Include="Assets\Water\TFP_Water_backface.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\TiltShiftHdrLensBlur.shader" />
      <None Include="Assets\ShaderForge\Editor\InternalResources\Shader Presets\PresetCustomLighting.shader" />
+     <None Include="Assets\Water\TFP_Water.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\VignetteShader.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
      <None Include="Assets\Standard Assets\Effects\TessellationShaders\Shaders\BumpedSpecularSmooth.shader" />
