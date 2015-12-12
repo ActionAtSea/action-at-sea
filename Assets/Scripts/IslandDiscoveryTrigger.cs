@@ -142,4 +142,12 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     {
         return m_canvas.enabled;
     }
+
+    /// <summary>
+    /// Returns the owner of this island
+    /// </summary>
+    public GameObject GetOwner()
+    {
+        return m_owner;
+    }
 }

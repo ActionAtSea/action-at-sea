@@ -12,12 +12,15 @@ public class FillScoreBoard : MonoBehaviour
     public GameObject scoreText;
     private List<UnityEngine.UI.Text> m_scoreFront = new List<UnityEngine.UI.Text>();
     private List<UnityEngine.UI.Text> m_scoreBack = new List<UnityEngine.UI.Text>();
+    private IslandDiscoveryTrigger[] m_islandList = null;
 
     /// <summary>
     /// Instantiates player text
     /// </summary>
     void Start()
     {
+        m_islandList = GameObject.FindObjectsOfType<IslandDiscoveryTrigger>();
+
         AddText(scoreText);
         scoreText.SetActive(false);
         float xPosition = scoreText.GetComponent<RectTransform>().localPosition.x;
@@ -63,8 +66,26 @@ public class FillScoreBoard : MonoBehaviour
             obj.gameObject.SetActive(false);
         }
 
+        Dictionary<int, int> islandsOwned = new Dictionary<int, int>();
         List<GameObject> players = PlayerManager.GetAllPlayersByScore();
         int maxShown = Mathf.Min(players.Count, Utilities.GetMaxLevels());
+
+        for(int i = 0; i < m_islandList.Length; ++i)
+        {
+            var island = m_islandList[i];
+            if (island.IsDiscovered() && island.GetOwner() != null)
+            {
+                int ID = Utilities.GetPlayerID(island.GetOwner());
+                if(islandsOwned.ContainsKey(ID))
+                {
+                    islandsOwned[ID] += 1;
+                }
+                else
+                {
+                    islandsOwned[ID] = 1;
+                }
+            }
+        }
 
         for(int i = 0; i < maxShown; ++i)
         {
@@ -72,11 +93,25 @@ public class FillScoreBoard : MonoBehaviour
             if(obj != null)
             {
                 m_scoreBack[i].gameObject.SetActive(true);
-
                 m_scoreFront[i].color = Utilities.GetPlayerColor(obj);
-                m_scoreBack[i].text = Utilities.GetPlayerScore(obj).ToString() + ": " +
-                    Utilities.GetPlayerName(obj);
-                m_scoreFront[i].text = m_scoreBack[i].text;
+
+                int ID = Utilities.GetPlayerID(obj);
+                string text = Utilities.GetPlayerScore(obj).ToString() +
+                    ": " + Utilities.GetPlayerName(obj) + " [";
+
+                if(islandsOwned.ContainsKey(ID))
+                {
+                    text += islandsOwned[ID].ToString();
+                }
+                else
+                {
+                    text += "0";
+                }
+
+                text += "]";
+
+                m_scoreBack[i].text = text;
+                m_scoreFront[i].text = text;
             }
 
         }

@@ -197,20 +197,19 @@ public class Minimap : MonoBehaviour
 
         for(int i = 0; i < m_markers.Count; ++i)
         {
-            if(m_markers[i].isActive != null)
-            {
-                m_markers[i].item.SetActive(m_markers[i].isActive());
-            }
-
             if(!UpdateMapItem(m_markers[i]))
             {
                 Destroy (m_markers[i].item);
                 m_markers.Remove(m_markers[i]);
                 --i;
             }
+            else
+            {
+                m_markers[i].item.SetActive(m_markers[i].isActive());
+            }
         }
 
-        foreach(var item in m_world)
+        foreach (var item in m_world)
         {
             if(item.updatesColor)
             {

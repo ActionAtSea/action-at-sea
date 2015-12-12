@@ -8,4 +8,4 @@
 *.vcxproj.user
 Library/
 obj/
-
+Temp/

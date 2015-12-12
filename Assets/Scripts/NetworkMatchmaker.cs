@@ -373,14 +373,13 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void CreateAI()
     {
-        if (PhotonNetwork.isMasterClient)
+        if (PhotonNetwork.isMasterClient && !Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
-            if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
-            {
-                m_playerAI = PhotonNetwork.Instantiate(
-                    "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
-            }
+            Debug.Log(Utilities.GetLoadedLevel());
 
+            m_playerAI = PhotonNetwork.Instantiate(
+                "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+        
             for (int i = 0; i < Utilities.GetAICount(); ++i)
             {
                 PhotonNetwork.InstantiateSceneObject(
