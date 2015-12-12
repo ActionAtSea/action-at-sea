@@ -5,6 +5,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LobbyScript : MonoBehaviour 
 {
@@ -14,13 +15,14 @@ public class LobbyScript : MonoBehaviour
     public GameObject selectedLevel = null;
     private bool m_playGameRequest = false;
     private bool m_joinGameRequest = false;
-    private LevelID m_selectedLevel = LevelID.LEVEL1;
+    public LevelID m_selectedLevel = LevelID.LEVEL1;
     private NetworkMatchmaker m_network = null;
     private float m_timer = 0.0f;
     private int m_dots = 0;
     private int m_maxDots = 4;
     private float m_dotSpeed = 0.25f;
     private bool m_initialised = false;
+    private ConnectedPlayersList m_playersList = null;
 
     /// <summary>
     /// Initialises the lobby
@@ -28,6 +30,7 @@ public class LobbyScript : MonoBehaviour
     void Start () 
     {
         m_network = NetworkMatchmaker.Get();
+        m_playersList = GameObject.FindObjectOfType<ConnectedPlayersList>();
     }
 
     /// <summary>
@@ -129,6 +132,32 @@ public class LobbyScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Updates the list of connected players
+    /// </summary>
+    void UpdatePlayersList()
+    {
+        string text = "";
+        if (m_network.IsConnected() && m_network.IsInRoom())
+        {
+            PhotonNetwork.player.name = Utilities.GetPlayerName();
+
+            List<string> players = new List<string>();
+            PhotonPlayer[] photonPlayers = PhotonNetwork.playerList;
+            foreach (var player in photonPlayers)
+            {
+                players.Add(player.name + "\n");
+            }
+            players.Sort();
+
+            foreach (string player in players)
+            {
+                text += player;
+            }
+        }
+        m_playersList.SetText(text);
+    }
+
+    /// <summary>
     /// Updates the play game request
     /// </summary>
     void Update()
@@ -139,7 +168,9 @@ public class LobbyScript : MonoBehaviour
             m_initialised = true;
         }
 
-        if(Diagnostics.IsActive())
+        UpdatePlayersList();
+
+        if (Diagnostics.IsActive())
         {
             Diagnostics.Add("Max Players Chosen", Utilities.GetMaximumPlayers());
         }

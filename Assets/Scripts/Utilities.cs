@@ -155,6 +155,38 @@ class Utilities
     }
 
     /// <summary>
+    /// Returns the number of AI for the level
+    /// </summary>
+    static public int GetAICount()
+    {
+        switch (Utilities.GetLoadedLevel())
+        {
+            case LevelID.LEVEL1:
+                return 0;
+            case LevelID.LEVEL2:
+                return 4;
+            default:
+                throw new ArgumentException("Unknown level ID");
+        }
+    }
+
+    /// <summary>
+    /// Returns the name for the level
+    /// </summary>
+    static public string GetLevelName(LevelID level)
+    {
+        switch (level)
+        {
+            case LevelID.LEVEL1:
+                return "Free For All";
+            case LevelID.LEVEL2:
+                return "Structured Level";
+            default:
+                throw new ArgumentException("Unknown level ID");
+        }
+    }
+
+    /// <summary>
     /// Returns the current level
     /// </summary>
     static public LevelID GetLevelFromSceneID(int sceneID)

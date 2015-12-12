@@ -13,17 +13,15 @@ using UnityEngine;
 /// </summary>
 public class NetworkMatchmaker : Photon.PunBehaviour
 {
-    List<TypedLobby> m_lobbys = null;          /// Holds one lobby per game type
-    LevelID m_levelJoined = LevelID.NO_LEVEL;  /// Current level the player has joined
-    DisconnectCause? m_disconnectCause = null; /// Why the client disconnected or null if connected
-    GameObject m_player = null;                /// Current client player instantiated
-    GameObject m_playerAI = null;              /// AI controlled helper of the player (fleet ship).
-    GameObject[] m_fleetAI = new GameObject[3];/// AI controlled fleet ships owned by the player.
-    GameObject m_syncher = null;               /// Current client game syncher instantiated
-    int m_noOfAI = 4;                          /// Temp value to hold the number of AI ships spawned. Should perhaps be placed in a more relavent class?
-    float m_reconnectTimer = 0.0f;             /// Timer to count down for reconnection attempts
-    string m_networkStatus = "";               /// Public description of the network connection
-    string m_networkDiagnostic = "";           /// Diagnostic description of the network connection
+    List<TypedLobby> m_lobbys = null;           /// Holds one lobby per game type
+    LevelID m_levelJoined = LevelID.NO_LEVEL;   /// Current level the player has joined
+    DisconnectCause? m_disconnectCause = null;  /// Why the client disconnected or null if connected
+    float m_reconnectTimer = 0.0f;              /// Timer to count down for reconnection attempts
+    string m_networkStatus = "";                /// Public description of the network connection
+    string m_networkDiagnostic = "";            /// Diagnostic description of the network connection
+    GameObject m_player = null;                 /// Current client player instantiated
+    GameObject m_playerAI = null;               /// AI controlled helper of the player (fleet ship).
+    GameObject m_syncher = null;                /// Current client game syncher instantiated
 
     /// <summary>
     /// Initialises the matchmaker
@@ -36,7 +34,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         m_lobbys = (from i in Enumerable.Range(0, maxLevels)
                     select new TypedLobby()).ToList();
 
-        if(!IsConnected())
+        if (!IsConnected())
         {
             SetStatus("Connecting to server");
             ConnectToMatchmaker();
@@ -362,9 +360,6 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         SetDiagnostic("Creating client player");
 
-        
-        CreateAI();
-
         m_player = PhotonNetwork.Instantiate(
             "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
 
@@ -378,25 +373,18 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void CreateAI()
     {
-        if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        if (PhotonNetwork.isMasterClient)
         {
-            if (PhotonNetwork.isMasterClient)
+            if (!Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
             {
-                //Fleet AI
-                m_playerAI = PhotonNetwork.Instantiate("FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+                m_playerAI = PhotonNetwork.Instantiate(
+                    "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+            }
 
-                for (int i = 0; i < m_noOfAI; ++i)
-                {
-                  // Spawning multiple AIs
-                    //TODO: Setup so that one is spawned for each AI spawn point.
-                    PhotonNetwork.InstantiateSceneObject(
-                        "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
-                   
-                    /*
-                    m_playerAI = PhotonNetwork.InstantiateSceneObject
-                        ("RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
-                    */
-                }
+            for (int i = 0; i < Utilities.GetAICount(); ++i)
+            {
+                PhotonNetwork.InstantiateSceneObject(
+                    "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
             }
         }
     }
@@ -449,6 +437,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
            Utilities.IsLevelLoaded() && 
            !Utilities.IsGameOver())
         {
+            CreateAI();
             CreatePlayer();
         }
     }
