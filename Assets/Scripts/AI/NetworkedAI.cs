@@ -167,5 +167,10 @@ public class NetworkedAI : NetworkedEntity
     {
         return Utilities.IsPlayerAlive(m_assignedPlayer);
     }
+
+    public AIType aiType
+    {
+        get { return m_aiType; }
+    }
 }
 
