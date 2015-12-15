@@ -23,6 +23,8 @@ public class RepairDock : MonoBehaviour
                 var score = other.gameObject.GetComponent<PlayerScore>();
                 if (score.Score > 0.0f)
                 {
+                    //TODO: Make it so that repairing occurs automatically.
+                    //      Also create sprite representation on the mini-map.
                     if (Input.GetKey("e"))
                     {
                         health.RepairDamage(repairAmountPerSecond * Time.deltaTime);
