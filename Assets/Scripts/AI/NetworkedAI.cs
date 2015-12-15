@@ -24,6 +24,8 @@ public class NetworkedAI : NetworkedEntity
     /// </summary>
     #region infonotnetworked
     public AIType m_aiType;
+
+    //NOTE: Is never set atm.
     GameObject m_assignedPlayer = null;
     #endregion
 
