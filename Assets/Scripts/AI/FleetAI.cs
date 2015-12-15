@@ -8,7 +8,14 @@ public class FleetAI : MonoBehaviour
     private NavMeshAgent navAgent = null;
     private Rigidbody body = null;
     private GameObject player = null;
+    private int ownerPlayerID = -1;
     private bool gameInitialised = false;
+
+    public int OwnerPlayerID
+    {
+        get { return ownerPlayerID; }
+    }
+
 
     // Use this for initialization
     void Start()
@@ -33,6 +40,7 @@ public class FleetAI : MonoBehaviour
 
             if (player != null)
             {
+                ownerPlayerID = player.GetComponent<NetworkedPlayer>().PlayerID;
                 navAgent.SetDestination(player.transform.position);
             }
         }

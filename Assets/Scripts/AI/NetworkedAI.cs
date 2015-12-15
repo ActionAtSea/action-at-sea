@@ -24,6 +24,8 @@ public class NetworkedAI : NetworkedEntity
     /// </summary>
     #region infonotnetworked
     public AIType m_aiType;
+
+    //NOTE: Is never set atm.
     GameObject m_assignedPlayer = null;
     #endregion
 
@@ -166,6 +168,11 @@ public class NetworkedAI : NetworkedEntity
     public bool IsAssignedPlayerIsAlive()
     {
         return Utilities.IsPlayerAlive(m_assignedPlayer);
+    }
+
+    public AIType aiType
+    {
+        get { return m_aiType; }
     }
 }
 
