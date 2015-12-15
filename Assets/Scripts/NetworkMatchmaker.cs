@@ -20,8 +20,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     string m_networkStatus = "";                /// Public description of the network connection
     string m_networkDiagnostic = "";            /// Diagnostic description of the network connection
     GameObject m_player = null;                 /// Current client player instantiated
-    GameObject m_playerAI = null;               /// AI controlled helper of the player (fleet ship).
-    GameObject m_syncher = null;                /// Current client game syncher instantiated
+    GameObject m_playerAI = null;               /// AI controlled helper of the client
+    GameObject m_syncher = null;                /// Allows synching to other clients the game state
 
     /// <summary>
     /// Initialises the matchmaker
@@ -373,17 +373,18 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     void CreateAI()
     {
-        if (PhotonNetwork.isMasterClient && !Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
+        if (!Utilities.IsOpenLeveL())
         {
-            Debug.Log(Utilities.GetLoadedLevel());
-
             m_playerAI = PhotonNetwork.Instantiate(
                 "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
-        
-            for (int i = 0; i < Utilities.GetAICount(); ++i)
+
+            if (PhotonNetwork.isMasterClient)
             {
-                PhotonNetwork.InstantiateSceneObject(
-                    "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                for (int i = 0; i < Utilities.GetAICount(); ++i)
+                {
+                    PhotonNetwork.InstantiateSceneObject(
+                        "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                }
             }
         }
     }

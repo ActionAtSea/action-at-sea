@@ -212,6 +212,15 @@ class Utilities
     }
 
     /// <summary>
+    /// Returns whether the level is an open level
+    /// This means anyone can connect/disconnect at any time
+    /// </summary>
+    static public bool IsOpenLeveL()
+    {
+        return IsOpenLeveL(GetLoadedLevel());
+    }
+
+    /// <summary>
     /// Returns how many players are allowed the selected level
     /// </summary>
     static public int GetMaximumPlayers()
@@ -235,7 +244,7 @@ class Utilities
         switch(level)
         {
         case LevelID.LEVEL1:
-            return 20;
+            return 8;
         case LevelID.LEVEL2:
             return 8;
         default:

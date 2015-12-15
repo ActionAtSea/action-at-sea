@@ -31,7 +31,7 @@ public class GUITimer : MonoBehaviour
 
         if(Utilities.IsOpenLeveL(Utilities.GetLoadedLevel()))
         {
-            gameObject.SetActive(false);
+            gameObject.transform.parent.gameObject.SetActive(false);
         }
     }
 

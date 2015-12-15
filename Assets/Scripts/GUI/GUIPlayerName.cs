@@ -11,31 +11,37 @@ using System.Collections;
 /// </summary>
 public class GUIPlayerName : MonoBehaviour
 {
-    public UnityEngine.UI.Text placeholder = null;
+    private UnityEngine.UI.Text m_text = null;
+    private UnityEngine.UI.Text m_backtext = null;
+    private string m_name = "";
+    private Color m_colour;
 
-    void Start() 
+    void Start()
     {
-        string name = Utilities.GetPlayerName();
-
-        if(Utilities.IsLevelLoaded())
-        {
-            GetComponent<UnityEngine.UI.Text>().text = name;
-        }
-        else if(name != Utilities.GetPlayerDefaultName())
-        {
-            GetComponent<UnityEngine.UI.Text>().text = name;
-            placeholder.text = name;
-        }
+        m_backtext = transform.parent.gameObject.GetComponent<UnityEngine.UI.Text>();
+        m_text = GetComponent<UnityEngine.UI.Text>();
+        m_text.text = "";
+        m_backtext.text = m_text.text;
     }
 
     void Update()
     {
-        if(!Utilities.IsLevelLoaded())
+        var player = PlayerManager.GetControllablePlayer();
+        if (player != null)
         {
-            string text = GetComponent<UnityEngine.UI.Text>().text;
-            if(text.Length > 0)
+            string name = Utilities.GetPlayerName();
+            if (m_name != name)
             {
-                Utilities.SetPlayerName(text);
+                m_name = name;
+                m_text.text = m_name;
+                m_backtext.text = m_name;
+            }
+
+            Color color = Utilities.GetPlayerColor(player);
+            if (m_colour != color)
+            {
+                m_colour = color;
+                m_text.color = color;
             }
         }
     }

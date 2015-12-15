@@ -9,9 +9,18 @@ using System.Collections.Generic;
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
     public float onCaptureScore = 20.0f;
-    public float scorePerSecond = 1.0f;
+    public float scorePerTime = 1.0f;
+    public float timePassedForScore = 2.0f;
+    private float m_scoreToAdd = 0.0f;
     public UnityEngine.UI.Image tickImage = null;
     public UnityEngine.UI.Text ownerText = null;
+    public UnityEngine.UI.Text scoreText = null;
+    public float m_scoreSpeed = 1.0f;
+    public float m_minScoreSize = 1.0f;
+    public float m_maxScoreSize = 2.0f;
+
+    private RectTransform m_scoreTransform = null;
+    private Vector3 m_scoreScale;
 
     private float m_timePassed = 0.0f;
     private Canvas m_canvas = null;
@@ -24,6 +33,9 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Start()
     {
+        m_scoreTransform = scoreText.GetComponent<RectTransform>();
+        scoreText.gameObject.SetActive(false);
+
         m_nodes = transform.parent.GetComponentsInChildren<IslandDiscoveryNode>();
         foreach(var node in m_nodes)
         {
@@ -83,18 +95,46 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         if (m_owner != null && PlayerManager.IsControllablePlayer(m_owner))
         {
             m_timePassed += Time.deltaTime;
-            if (m_timePassed >= 1.0f)
+            if (m_timePassed >= timePassedForScore)
             {
-                m_owner.GetComponent<PlayerScore>().AddScore(scorePerSecond);
+                m_scoreToAdd += scorePerTime;
                 m_timePassed = 0.0f;
+
+                if ((int)m_scoreToAdd > 0)
+                {
+                    ShowScore(m_scoreToAdd);
+                    m_owner.GetComponent<PlayerScore>().AddScore(m_scoreToAdd);
+                    m_scoreToAdd = 0.0f;
+                }
             }
         }
 
-        //if(Diagnostics.IsActive())
-        //{
-        //    Diagnostics.Add(name + " Owner",
-        //        m_owner == null ? "NONE" : m_owner.name);
-        //}
+        if(scoreText.gameObject.activeSelf)
+        {
+            m_scoreScale.x += Time.deltaTime * m_scoreSpeed;
+            m_scoreScale.x = Mathf.Min(Mathf.Max(0.0f, m_scoreScale.x), m_maxScoreSize);
+            m_scoreScale.y = m_scoreScale.x;
+            m_scoreScale.z = m_scoreScale.x;
+            m_scoreTransform.localScale = m_scoreScale;
+
+            if (m_scoreScale.x == m_maxScoreSize)
+            {
+                scoreText.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Shows the score text score
+    /// </summary>
+    void ShowScore(float score)
+    {
+        scoreText.gameObject.SetActive(true);
+        m_scoreScale.x = m_minScoreSize;
+        m_scoreScale.y = m_minScoreSize;
+        m_scoreScale.z = m_minScoreSize;
+        m_scoreTransform.localScale = m_scoreScale;
+        scoreText.text = "+" + ((int)score).ToString();
     }
 
     /// <summary>
@@ -108,8 +148,10 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         {
             tickImage.color = Utilities.GetPlayerColor(owner);
             ownerText.text = Utilities.GetPlayerName(owner);
+            ShowScore(onCaptureScore);
+            scoreText.color = tickImage.color;
 
-            if(PlayerManager.IsCloseToPlayer(owner.transform.position, 30.0f))
+            if (PlayerManager.IsCloseToPlayer(owner.transform.position, 30.0f))
             {
                 SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_FIND);
             }
@@ -131,6 +173,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             island.color = tickImage.color;
         }
 
+        m_scoreToAdd = 0.0f;
         m_timePassed = 0.0f;
         m_owner = owner;
     }

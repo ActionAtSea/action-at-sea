@@ -19,7 +19,6 @@ public class AICannonController : CannonController
             
             UpdateMouseCursorAngle();
             FireCannons();
-            RenderDiagnostics();
         }
 	}
 }

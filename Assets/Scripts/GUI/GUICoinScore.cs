@@ -8,11 +8,14 @@ using System.Collections;
 public class GUICoinScore : MonoBehaviour 
 {
     private UnityEngine.UI.Text m_text = null;
+    private UnityEngine.UI.Text m_backtext = null;
 
     void Start()
     {
+        m_backtext = transform.parent.gameObject.GetComponent<UnityEngine.UI.Text>();
         m_text = GetComponent<UnityEngine.UI.Text>();
         m_text.text = "0";
+        m_backtext.text = m_text.text;
     }
 
     void Update () 
@@ -21,6 +24,7 @@ public class GUICoinScore : MonoBehaviour
         if(player != null)
         {
             m_text.text = player.GetComponent<PlayerScore>().RoundedScore.ToString();
+            m_backtext.text = m_text.text;
         }
     }
 }
