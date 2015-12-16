@@ -54,11 +54,18 @@ public class AIBulletImpact : BulletImpact
                         {
                             if (bullet.Owner == GetComponentInParent<FleetAI>().OwnerPlayerID)
                             {
-                                Debug.Log("It worked");
+                                if (Diagnostics.IsActive())
+                                {
+                                    Debug.Log("It worked");
+                                }
                             }
                             else
                             {
-                                Debug.Log("Non-player attacked fleet ship");
+                                if (Diagnostics.IsActive())
+                                {
+                                    Debug.Log("Non-player attacked fleet ship");
+                                }
+
                                 m_parentHealth.InflictDamage(bullet.Damage);
                                 other.gameObject.GetComponent<Bullet>().DestroyOnImpact();
 

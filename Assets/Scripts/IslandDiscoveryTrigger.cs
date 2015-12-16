@@ -15,10 +15,12 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     public UnityEngine.UI.Image tickImage = null;
     public UnityEngine.UI.Text ownerText = null;
     public UnityEngine.UI.Text scoreText = null;
-    public float m_scoreSpeed = 1.0f;
+    public float m_scaleSpeed = 1.0f;
+    public float m_fadeSpeed = 4.0f;
     public float m_minScoreSize = 1.0f;
-    public float m_maxScoreSize = 2.0f;
+    public float m_scaleToFade = 1.5f;
 
+    private UnityEngine.UI.Outline m_scoreOutline = null;
     private RectTransform m_scoreTransform = null;
     private Vector3 m_scoreScale;
 
@@ -33,6 +35,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Start()
     {
+        m_scoreOutline = scoreText.GetComponent<UnityEngine.UI.Outline>();
         m_scoreTransform = scoreText.GetComponent<RectTransform>();
         scoreText.gameObject.SetActive(false);
 
@@ -111,15 +114,27 @@ public class IslandDiscoveryTrigger : MonoBehaviour
 
         if(scoreText.gameObject.activeSelf)
         {
-            m_scoreScale.x += Time.deltaTime * m_scoreSpeed;
-            m_scoreScale.x = Mathf.Min(Mathf.Max(0.0f, m_scoreScale.x), m_maxScoreSize);
+            m_scoreScale.x += Time.deltaTime * m_scaleSpeed;
             m_scoreScale.y = m_scoreScale.x;
             m_scoreScale.z = m_scoreScale.x;
             m_scoreTransform.localScale = m_scoreScale;
 
-            if (m_scoreScale.x == m_maxScoreSize)
+            if(m_scoreScale.x > m_scaleToFade)
             {
-                scoreText.gameObject.SetActive(false);
+                float alpha = scoreText.color.a - (Time.deltaTime * m_fadeSpeed);
+                alpha = Mathf.Min(Mathf.Max(0.0f, alpha), 1.0f);
+                m_scoreOutline.effectColor = new Color(0.0f, 0.0f, 0.0f, alpha);
+
+                scoreText.color = new Color(
+                    scoreText.color.r, 
+                    scoreText.color.g, 
+                    scoreText.color.b, 
+                    alpha);
+
+                if (alpha == 0.0f)
+                {
+                    scoreText.gameObject.SetActive(false);
+                }
             }
         }
     }
@@ -135,6 +150,13 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         m_scoreScale.z = m_minScoreSize;
         m_scoreTransform.localScale = m_scoreScale;
         scoreText.text = "+" + ((int)score).ToString();
+        m_scoreOutline.effectColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+
+        scoreText.color = new Color(
+            scoreText.color.r, 
+            scoreText.color.g, 
+            scoreText.color.b, 
+            1.0f);
     }
 
     /// <summary>
@@ -149,7 +171,11 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             tickImage.color = Utilities.GetPlayerColor(owner);
             ownerText.text = Utilities.GetPlayerName(owner);
             ShowScore(onCaptureScore);
-            scoreText.color = tickImage.color;
+            scoreText.color = new Color(
+                tickImage.color.r,
+                tickImage.color.g,
+                tickImage.color.b,
+                1.0f);
 
             if (PlayerManager.IsCloseToPlayer(owner.transform.position, 30.0f))
             {
