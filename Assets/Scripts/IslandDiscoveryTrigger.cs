@@ -30,6 +30,8 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     private GameObject m_owner = null;
     private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
 
+    private bool m_ownerWithinRange = false;
+
     /// <summary>
     /// Initialises the script
     /// </summary>
@@ -204,6 +206,63 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         m_owner = owner;
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            if (m_owner != null)
+            {
+                int ownerPlayerID = Utilities.GetPlayerID(m_owner);
+                NetworkedPlayer nearbyPlayer = other.gameObject.GetComponent<NetworkedPlayer>();
+                if (ownerPlayerID == nearbyPlayer.PlayerID)
+                {
+                    m_ownerWithinRange = true;
+                    nearbyPlayer.IslandWithinRange = this.gameObject;
+                    Debug.Log("Owner entered island range.");
+                }
+            }
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (m_owner != null)
+            {
+                //Makes sure that after island has been captured m_ownerWithinRange is set to true.
+                if (!m_ownerWithinRange)
+                {
+                    int ownerPlayerID = Utilities.GetPlayerID(m_owner);
+                    NetworkedPlayer nearbyPlayer = other.gameObject.GetComponent<NetworkedPlayer>();
+                    if (ownerPlayerID == nearbyPlayer.PlayerID)
+                    {
+                        m_ownerWithinRange = true;
+                        nearbyPlayer.IslandWithinRange = this.gameObject;
+                    }
+                }
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (m_owner != null)
+            {
+                int ownerPlayerID = Utilities.GetPlayerID(m_owner);
+                NetworkedPlayer nearbyPlayer = other.gameObject.GetComponent<NetworkedPlayer>();
+                if (ownerPlayerID == nearbyPlayer.PlayerID)
+                {
+                    m_ownerWithinRange = false;
+                    nearbyPlayer.IslandWithinRange = null;
+                    Debug.Log("Owner exited island range.");
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Returns whether this island has been discovered
     /// </summary>
@@ -218,5 +277,12 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     public GameObject GetOwner()
     {
         return m_owner;
+    }
+    /// <summary>
+    /// Whether the current owner of the island is within range.
+    /// </summary>
+    public bool OwnerWithinRange
+    {
+        get { return m_ownerWithinRange; }
     }
 }

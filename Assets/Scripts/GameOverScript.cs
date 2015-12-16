@@ -170,17 +170,60 @@ public class GameOverScript : MonoBehaviour
                     else
                     {
                         //Handles ai respawning and showing on game start.
-                        // No assigned player, immediate respawn
+                        //TODO: Add individual respawn functionality for different AI types.
                         network.SetVisible(false, true);
-                        if (network.AlreadySpawned)
+
+                        switch (network.aiType)
                         {
-                            StartCoroutine(RespawnAI(network, 5.0f));
+                            case NetworkedAI.AIType.ROGUE:
+                                if (network.AlreadySpawned)
+                                {
+                                    StartCoroutine(RespawnAI(network, 5.0f));
+                                }
+                                else
+                                {
+                                    network.SetVisible(true, false);
+                                    network.AlreadySpawned = true;
+                                }
+                                break;
+
+                            case NetworkedAI.AIType.FLEET:
+                                //TODO: Handle fleet ship spawning and dying. Also make sure that fleet ships a not visible on game start
+                                //      and only become visible once they have been purchased by the player. The shop manager will hold 
+                                //      a list of AI fleet ships. The FleetAI class will keep track of whether a fleet ship has been purchased.
+
+                                //temp death and spawn code
+                                if (network.AlreadySpawned)
+                                {
+                                    StartCoroutine(RespawnAI(network, 5.0f));
+                                }
+                                else
+                                {
+                                    network.SetVisible(true, false);
+                                    network.AlreadySpawned = true;
+                                }
+                                break;
+
+                            case NetworkedAI.AIType.PATROL:
+                                /* TODO: Implement patrol ship death handling.
+                                 * Patrol ships will be owned by the scene and 
+                                 * there will be one per island. 
+                                 * Once a player has captured an island and bought a 
+                                 * patrol ship for that island. The designated 
+                                 * patrol ship will be made visible and
+                                 * the ship's owning player will be set. 
+                                 * There will also be a purchased variable 
+                                 * that will be used to determine whether the 
+                                 * player has purchased the patrol ship for an island.
+                                 */
+                                break;
+
+                            default:
+                                break;
                         }
-                        else
-                        {
-                            network.SetVisible(true, false);
-                            network.AlreadySpawned = true;
-                        }
+                        // No assigned player, immediate respawn
+                       
+                       
                     }
                 }
             }

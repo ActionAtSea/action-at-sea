@@ -170,6 +170,7 @@
      <Compile Include="Assets\Scripts\PlayerSpawn.cs" />
      <Compile Include="Assets\Scripts\RepairDock.cs" />
      <Compile Include="Assets\Scripts\SetLevelName.cs" />
+     <Compile Include="Assets\Scripts\ShopManager.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\Utilities.cs" />
      <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EditorLabel.cs" />

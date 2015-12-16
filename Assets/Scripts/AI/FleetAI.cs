@@ -10,6 +10,16 @@ public class FleetAI : MonoBehaviour
     private GameObject player = null;
     private int ownerPlayerID = -1;
     private bool gameInitialised = false;
+    private bool purchased = false;
+
+    /// <summary>
+    /// Whether or not the fleet ship has been purchased yet.
+    /// </summary>
+    public bool Purchased
+    {
+        get { return purchased; }
+        set { purchased = value; }
+    }
 
     public int OwnerPlayerID
     {

@@ -170,6 +170,20 @@ public class NetworkedAI : NetworkedEntity
         return m_assignedPlayer;
     }
 
+    public bool SetAssignedPlayer(GameObject player)
+    {
+        if (m_assignedPlayer != null)
+        {
+            return false;
+        }
+        m_assignedPlayer = player;
+        if (m_assignedPlayer == null)
+        {
+            return false;
+        }
+        return true;
+    }
+
     /// <summary>
     /// Gets the assigned player's health of the ai
     /// </summary>    

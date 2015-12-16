@@ -19,6 +19,8 @@ public class NetworkedPlayer : NetworkedEntity
     private GameObject m_networkDiagnostics = null;
     private bool m_usePrediction = false;
     private PlayerPrediction m_playerPrediction = new PlayerPrediction();
+    private GameObject m_islandWithinRange = null;
+    public bool fleetShipBought = false;
     #endregion
 
     /// <summary>
@@ -213,5 +215,15 @@ public class NetworkedPlayer : NetworkedEntity
     public float PlayerScore
     {
         get { return m_playerScore; }
+    }
+
+    /// <summary>
+    /// Returns the current island within range of 
+    /// the player or null if there isn't one.
+    /// </summary>
+    public GameObject IslandWithinRange
+    {
+        get { return m_islandWithinRange; }
+        set { m_islandWithinRange = value; }
     }
 }
