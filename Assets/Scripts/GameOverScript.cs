@@ -29,6 +29,13 @@ public class GameOverScript : MonoBehaviour
     private bool m_levelComplete = false;
     private CameraMovement m_camera = null;
 
+    //Co-routine for delayed ai respawn
+    IEnumerator RespawnAI(NetworkedAI networkedAI, float timeDelay)
+    {
+        yield return new WaitForSeconds(timeDelay);
+        networkedAI.SetVisible(true, false);
+    }
+
     /// <summary>
     /// Initialises the script
     /// </summary>
@@ -139,7 +146,7 @@ public class GameOverScript : MonoBehaviour
                 // This includes all AI contolled by the client (including Rogues)
                 var health = ai[i].GetComponent<AIHealth>();
                 var network = ai[i].GetComponent<NetworkedAI>();
-
+                NetworkedAI.AIType aiType = network.aiType;
                 bool assignedPlayerDead = network.GetAssignedPlayer() != null &&
                     !network.IsAssignedPlayerIsAlive();
 
@@ -162,9 +169,18 @@ public class GameOverScript : MonoBehaviour
                     }
                     else
                     {
+                        //Handles ai respawning and showing on game start.
                         // No assigned player, immediate respawn
                         network.SetVisible(false, true);
-                        network.SetVisible(true, false);
+                        if (network.AlreadySpawned)
+                        {
+                            StartCoroutine(RespawnAI(network, 5.0f));
+                        }
+                        else
+                        {
+                            network.SetVisible(true, false);
+                            network.AlreadySpawned = true;
+                        }
                     }
                 }
             }

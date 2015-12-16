@@ -25,7 +25,10 @@ public class FleetAI : MonoBehaviour
         cannonController = GetComponentInChildren<AICannonController>();
         if (navAgent != null)
         {
-            navAgent.SetDestination(new Vector3(10, 1, 100));
+            if (navAgent.isOnNavMesh)
+            {
+                navAgent.SetDestination(new Vector3(10, 1, 100));
+            }
         }
     }
 
@@ -41,14 +44,21 @@ public class FleetAI : MonoBehaviour
             if (player != null)
             {
                 ownerPlayerID = player.GetComponent<NetworkedPlayer>().PlayerID;
-                navAgent.SetDestination(player.transform.position);
+
+                if (navAgent.isOnNavMesh)
+                {
+                    navAgent.SetDestination(player.transform.position);
+                }
             }
         }
         if (player != null)
         {
-            Vector3 formationPos = player.transform.position;
-            formationPos -= formationPositions[0];
-            navAgent.SetDestination(formationPos);
+            if (navAgent.isOnNavMesh)
+            {
+                Vector3 formationPos = player.transform.position;
+                formationPos -= formationPositions[0];
+                navAgent.SetDestination(formationPos);
+            }
         }
         else
         {

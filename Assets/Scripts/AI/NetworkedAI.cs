@@ -25,6 +25,12 @@ public class NetworkedAI : NetworkedEntity
     #region infonotnetworked
     public AIType m_aiType;
 
+    /// <summary>
+    /// Whether or not the AI has already been spawned on game start.
+    /// Used to determine whether AI is spawning on game start
+    /// or respawning after having died.
+    /// </summary>
+    private bool m_alreadySpawned = false;
     //NOTE: Is never set atm.
     GameObject m_assignedPlayer = null;
     #endregion
@@ -100,7 +106,9 @@ public class NetworkedAI : NetworkedEntity
     {
         base.ShowShip(show);
 
-        GetComponent<NavMeshAgent>().enabled = show;
+
+        NavMeshAgent temp = GetComponent<NavMeshAgent>();
+        temp.enabled = show;
     }
     
     /// <summary>
@@ -173,6 +181,17 @@ public class NetworkedAI : NetworkedEntity
     public AIType aiType
     {
         get { return m_aiType; }
+    }
+
+    /// <summary>
+    /// Whether has already been spawned initially.
+    /// Used to determine whether an AI is spawning for the first time
+    /// or respawning after having been destroyed.
+    /// </summary>
+    public bool AlreadySpawned
+    {
+        get { return m_alreadySpawned; }
+        set { m_alreadySpawned = value; }
     }
 }
 

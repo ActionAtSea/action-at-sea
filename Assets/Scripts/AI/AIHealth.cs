@@ -7,7 +7,7 @@ public class AIHealth : Health
 
     protected override void Initialise()
     {
-        m_healthMax = 20.0f;
+        m_healthMax = 50.0f;
         base.Initialise();
     }
 

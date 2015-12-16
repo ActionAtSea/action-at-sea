@@ -382,8 +382,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
             {
                 for (int i = 0; i < Utilities.GetAICount(); ++i)
                 {
-                    PhotonNetwork.InstantiateSceneObject(
-                        "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
+                    PhotonNetwork.InstantiateSceneObject("RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
                 }
             }
         }
