@@ -194,7 +194,10 @@ public class GameOverScript : MonoBehaviour
                                 //      a list of AI fleet ships. The FleetAI class will keep track of whether a fleet ship has been purchased.
 
                                 FleetAI fleet = network.GetComponent<FleetAI>();
-                                network.SetVisible(true, false);
+                                if (fleet.Purchased)
+                                {
+                                    network.SetVisible(true, false);
+                                }
 
                                 //temp death and spawn code
                                 break;

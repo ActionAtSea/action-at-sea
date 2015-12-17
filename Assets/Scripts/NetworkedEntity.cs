@@ -54,6 +54,7 @@ public abstract class NetworkedEntity : MonoBehaviour
         var parent = transform.parent;
         DontDestroyOnLoad(parent);
 
+        Debug.Log("YAAAAAAAYYYYY!!!!!!!!" + m_name);
         m_collider = GetComponent<CapsuleCollider>();
         if(m_collider == null)
         {
@@ -152,6 +153,7 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// </summary>
     public void SetVisible(bool isVisible, bool shouldExplode)
     {
+        Debug.Log("Set visible was called by " + m_name);
         if (isVisible)
         {
             ShowShip(true);

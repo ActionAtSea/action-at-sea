@@ -15,6 +15,7 @@ public class PlayerManager : MonoBehaviour
     private static Dictionary<int, GameObject> sm_aiIDs = null;
     private static List<GameObject> sm_allplayers = null;
     private static List<GameObject> sm_allAI = null;
+    private static List<GameObject> sm_fleetAI = null;
 
     private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
@@ -41,6 +42,7 @@ public class PlayerManager : MonoBehaviour
         sm_allplayers = new List<GameObject>();
         sm_playerIDs = new Dictionary<int, GameObject>();
         sm_aiIDs = new Dictionary<int, GameObject>();
+        sm_fleetAI = new List<GameObject>(2);
         m_gameboard = GameBoard.Get();
 
         m_spawns = new List<GameObject>();
@@ -92,6 +94,7 @@ public class PlayerManager : MonoBehaviour
         sm_playerIDs.Clear();
         sm_allplayers.Clear();
         sm_allAI.Clear();
+        sm_fleetAI.Clear();
         sm_player = null;
     }
 
@@ -185,6 +188,17 @@ public class PlayerManager : MonoBehaviour
         }
         sm_aiIDs.Add(id, ai);
         Debug.Log("Adding AI " + id + " to manager");
+    }
+
+    public static void AddFleetAI(GameObject ai)
+    {
+        if (ai.GetComponentInChildren<NetworkedAI>().aiType == NetworkedAI.AIType.FLEET)
+        {
+            if (!sm_fleetAI.Contains(ai))
+            {
+                sm_fleetAI.Add(ai);
+            }
+        }
     }
 
     /// <summary>
@@ -385,6 +399,19 @@ public class PlayerManager : MonoBehaviour
         place.position.x = position.x;
         place.position.z = position.y;
         return place;
+    }
+
+    public static GameObject[] GetOwnedAI()
+    {
+        List<GameObject> aiList = new List<GameObject>(2);
+
+        //TODO: Add this functionality and then test out AI spawning within the ShopManager.
+        for (int i = 0; i < sm_allAI.Count; ++i)
+        {
+            
+        }
+
+        return aiList.ToArray<GameObject>();
     }
 
     /// <summary>

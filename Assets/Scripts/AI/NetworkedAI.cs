@@ -31,7 +31,8 @@ public class NetworkedAI : NetworkedEntity
     /// or respawning after having died.
     /// </summary>
     private bool m_alreadySpawned = false;
-    //NOTE: Is never set atm.
+
+    //NOTE: Is never set atm. This be true.
     GameObject m_assignedPlayer = null;
     #endregion
 
@@ -80,9 +81,14 @@ public class NetworkedAI : NetworkedEntity
             default:
                 break;
         }
-        
+
 
         base.InitialiseAtWorld();
+
+        if(aiType == AIType.FLEET)
+        {
+            SetVisible(false, false);
+        }
     }
 
     /// <summary>

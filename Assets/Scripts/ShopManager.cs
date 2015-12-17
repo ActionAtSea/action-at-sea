@@ -21,6 +21,7 @@ public class ShopManager : MonoBehaviour
     public Button patrolButton;
     public Button cannonButton;
 
+    private GameObject fleetAI = null;
     private SoundManager soundManager = null;
     private GameObject player = null;
     private NetworkedPlayer networkedPlayer = null;
@@ -46,12 +47,13 @@ public class ShopManager : MonoBehaviour
         if (player == null & Utilities.IsLevelLoaded() && !Utilities.IsGameOver())
         {
             player = PlayerManager.GetControllablePlayer();
-
             if(player != null)
             {
                 networkedPlayer = player.GetComponent<NetworkedPlayer>();
                 playerScore = player.GetComponent<PlayerScore>();
             }
+
+            
         }
 
         if (networkedPlayer != null)
