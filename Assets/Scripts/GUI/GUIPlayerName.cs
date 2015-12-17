@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
@@ -18,6 +19,7 @@ public class GUIPlayerName : MonoBehaviour
 
     void Start()
     {
+        //TODO: remove back text as it doesn't seem to do anything?
         m_backtext = transform.parent.gameObject.GetComponent<UnityEngine.UI.Text>();
         m_text = GetComponent<UnityEngine.UI.Text>();
         m_text.text = "";

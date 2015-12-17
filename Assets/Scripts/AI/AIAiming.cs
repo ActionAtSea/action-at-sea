@@ -42,7 +42,7 @@ public class AIAiming : MonoBehaviour
         {
             case NetworkedAI.AIType.ROGUE:
                 //Rogue AI will aim prioritise firing at player ships.
-                if (other.CompareTag("Player"))
+                if (other.CompareTag("Player") || other.CompareTag("EnemyPlayer"))
                 {
                     AimAndFire(other.transform.position);
                 }
@@ -57,18 +57,34 @@ public class AIAiming : MonoBehaviour
                 break;
 
             case NetworkedAI.AIType.FLEET:
-                if (other.CompareTag("Player"))
+                if (other.CompareTag("EnemyPlayer"))
                 {
                     if (other.GetComponent<NetworkedPlayer>().PlayerID != GetComponentInParent<FleetAI>().OwnerPlayerID)
                     {
                         Debug.Log("Other player targeted");
                         AimAndFire(other.transform.position);
+                        break;
+                    }
+                }
+                if (other.CompareTag("AIShip"))
+                {
+                    NetworkedAI networkedAI = GetComponent<NetworkedAI>();
+                    if (networkAI != null)
+                    {
+                        if (networkAI.aiType == NetworkedAI.AIType.ROGUE)
+                        {
+                            AimAndFire(other.transform.position);
+                            break;
+                        }
                     }
                 }
                 break;
 
             case NetworkedAI.AIType.PATROL:
 
+                break;
+
+            default:
                 break;
         }
         //If another player is within range fire cannons in their direction.
