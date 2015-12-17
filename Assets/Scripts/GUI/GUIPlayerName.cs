@@ -19,11 +19,17 @@ public class GUIPlayerName : MonoBehaviour
 
     void Start()
     {
-        //TODO: remove back text as it doesn't seem to do anything?
+        //TODO: back text doesn't seem to be doing anything?
         m_backtext = transform.parent.gameObject.GetComponent<UnityEngine.UI.Text>();
         m_text = GetComponent<UnityEngine.UI.Text>();
         m_text.text = "";
         m_backtext.text = m_text.text;
+    }
+
+    //Used to set the player name when the input field is deselected.
+    public void SetName(string name)
+    {
+        Utilities.SetPlayerName(name);
     }
 
     void Update()
