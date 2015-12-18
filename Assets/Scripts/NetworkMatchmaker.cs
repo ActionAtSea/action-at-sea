@@ -376,9 +376,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if (!Utilities.IsOpenLeveL())
         {
-            m_playerAI = PhotonNetwork.Instantiate(
-                "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
-//            m_playerAI.GetComponentInChildren<NetworkedAI>().SetVisible(false, false);
+            //m_playerAI = PhotonNetwork.Instantiate("FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
 
             if (PhotonNetwork.isMasterClient)
             {
