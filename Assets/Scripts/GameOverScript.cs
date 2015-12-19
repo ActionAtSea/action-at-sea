@@ -172,17 +172,19 @@ public class GameOverScript : MonoBehaviour
                         //Handles ai respawning and showing on game start.
                         //TODO: Add individual respawn functionality for different AI types.
 
-                        network.SetVisible(false, true);
+                        
                         switch (network.aiType)
                         {
                             case NetworkedAI.AIType.ROGUE:
                                 if (network.AlreadySpawned)
                                 {
-                                    
+
+                                    network.SetVisible(false, true);
                                     StartCoroutine(RespawnAI(network, 5.0f));
                                 }
                                 else
                                 {
+                                    network.SetVisible(false, true);
                                     network.SetVisible(true, false);
                                     network.AlreadySpawned = true;
                                 }
@@ -196,7 +198,8 @@ public class GameOverScript : MonoBehaviour
                                 FleetAI fleet = network.GetComponent<FleetAI>();
                                 if (fleet.Purchased)
                                 {
-                                    network.SetVisible(true, false);
+                                    network.SetVisible(false, true);
+                                    fleet.Purchased = false;
                                 }
 
                                 //temp death and spawn code

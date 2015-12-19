@@ -401,16 +401,18 @@ public class PlayerManager : MonoBehaviour
         return place;
     }
 
-    public static GameObject[] GetOwnedAI()
+    public static GameObject[] GetOwnedFleetAI()
     {
         List<GameObject> aiList = new List<GameObject>(2);
 
         //TODO: Add this functionality and then test out AI spawning within the ShopManager.
         for (int i = 0; i < sm_allAI.Count; ++i)
         {
-            
+            if (Utilities.IsControllableAI(sm_allAI[i]) && sm_allAI[i].GetComponent<NetworkedAI>().aiType == NetworkedAI.AIType.FLEET)
+            {
+                aiList.Add(sm_allAI[i]);
+            }
         }
-
         return aiList.ToArray<GameObject>();
     }
 

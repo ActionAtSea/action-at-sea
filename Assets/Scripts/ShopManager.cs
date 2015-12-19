@@ -14,20 +14,42 @@ public class ShopManager : MonoBehaviour
      * is hovering over buttons.
      */
 
+    public class FleetShip
+    {
+        public FleetShip()
+        {
+            networkedAI = null;
+            aiShip = null;
+        }
+
+        public FleetShip(NetworkedAI netAI, FleetAI ai)
+        {
+            networkedAI = netAI;
+            aiShip = ai;
+
+        }
+        public NetworkedAI networkedAI = null;
+        public FleetAI aiShip = null;
+    };
+
     public float fleetShipCost;
     public float patrolShipCost;
+
+    [Range(0.0f, 1.0f)]
+    public float buttonPressCooldown = 0.4f;
 
     public Button fleetButton;
     public Button patrolButton;
     public Button cannonButton;
 
-    private GameObject fleetAI = null;
     private SoundManager soundManager = null;
     private GameObject player = null;
     private NetworkedPlayer networkedPlayer = null;
     private PlayerScore playerScore = null;
 
-    private float buttonPressCooldown = 0.4f;
+    private GameObject[] fleetShips = null;
+    private FleetShip fleetShipToSpawn = null;
+    
     private float fleetButtonTimer = 0.0f;
     private float patrolButtonTimer = 0.0f;
     private float cannonButtonTimer = 0.0f;
@@ -53,7 +75,8 @@ public class ShopManager : MonoBehaviour
                 playerScore = player.GetComponent<PlayerScore>();
             }
 
-            
+            fleetShips = PlayerManager.GetOwnedFleetAI();
+            fleetShipToSpawn = GetFleetShipToSpawn();
         }
 
         if (networkedPlayer != null)
@@ -97,8 +120,48 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+
+
     public void FleetButtonPress()
     {
+        bool success = false;
+        if (fleetShipToSpawn != null)
+        {
+            if (!fleetShipToSpawn.aiShip.Purchased)
+            {
+                if ((playerScore.RoundedScore - fleetShipCost) >= 0.0f)
+                {
+                    fleetShipToSpawn.networkedAI.SetVisible(true, false);
+                    fleetShipToSpawn.aiShip.Purchased = true;
+                    playerScore.MinusScore(fleetShipCost);
+                    fleetShipToSpawn = GetFleetShipToSpawn();
+                    success = true;
+                }
+                else
+                {
+                    success = false;
+                }
+            }
+            else
+            {
+                success = false;
+            }
+        }
+        else
+        {
+            success = false;
+        }
+
+        if (success)
+        {
+            //Play success noise / ship spawn noise.
+        }
+        else
+        {
+            //Play failure noise.
+        }
+        
+        //TODO: Remove once success and failure noises have been added.
         if (soundManager != null)
         {
             soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
@@ -122,5 +185,34 @@ public class ShopManager : MonoBehaviour
             soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
         }
         Debug.Log("CannonButtonPress");
+    }
+
+    /// <summary>
+    /// Returns an unpurchased FleetShip owned by the client that is ready to be spawned.
+    /// </summary>
+    /// <returns>
+    /// A FleetShip ready to be spawned or null if there aren't any.
+    /// </returns>
+    private FleetShip GetFleetShipToSpawn()
+    {
+        FleetShip temp = null;
+        if (fleetShips != null)
+        {
+            for (int i = 0; i < fleetShips.Length; ++i)
+            {
+                NetworkedAI ai = fleetShips[i].GetComponentInChildren<NetworkedAI>();
+                FleetAI fleet = fleetShips[i].GetComponentInChildren<FleetAI>();
+
+                if (ai != null && fleet != null)
+                {
+                    if (!fleet.Purchased)
+                    {
+                        temp = new FleetShip(ai, fleet);
+                        break;
+                    }
+                }
+            }
+        }
+        return temp;
     }
 }

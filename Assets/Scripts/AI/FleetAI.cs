@@ -3,7 +3,34 @@ using System.Collections;
 
 public class FleetAI : MonoBehaviour
 {
-    public static Vector3[] formationPositions = { new Vector3(-5.0f, 0, -5.0f), new Vector3(-10.0f, 0, -5.0f), new Vector3(-15.0f, 0, -5.0f) };  
+
+    public class FormationPosition
+    {
+        public FormationPosition()
+        {
+            position = Vector3.zero;
+            assigned = false;
+            assignedGameObject = null;
+        }
+
+        public FormationPosition(Vector3 position)
+        {
+            this.position = position;
+            assigned = false;
+            assignedGameObject = null;
+        }
+
+        Vector3 position = Vector3.zero;
+        bool assigned = false;
+        GameObject assignedGameObject = null;
+
+        public void AssignObject(GameObject objectToAssign)
+        {
+
+        }
+    };
+
+    public const Vector3[] formationPositions = { new Vector3(-5.0f, 0, -5.0f), new Vector3(-10.0f, 0, -5.0f), new Vector3(-15.0f, 0, -5.0f) };  
     private CannonController cannonController = null;
     private NavMeshAgent navAgent = null;
     private Rigidbody body = null;

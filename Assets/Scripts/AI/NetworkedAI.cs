@@ -18,6 +18,11 @@ public class NetworkedAI : NetworkedEntity
         FLEET,
         PATROL
     };
+
+    //Object names used by AIs.
+    public const string ROGUE_AI_NAME = "Rogue";
+    public const string FLEET_AI_NAME = "Fleet";
+    public const string PATROL_AI_NAME = "Patrol";
     
     /// <summary>
     /// Information required which is not networked
@@ -64,19 +69,20 @@ public class NetworkedAI : NetworkedEntity
     {
         m_spawnIndex = 0;
         gameObject.tag = "AIShip";
+        
 
         // Name is used to determine when successful
         // data is recieved and cannot be null
         switch (m_aiType)
         {
             case AIType.ROGUE:
-                m_name = "Rogue";
+                m_name = ROGUE_AI_NAME;
                 break;
             case AIType.FLEET:
-                m_name = "Fleet";
+                m_name = FLEET_AI_NAME;  
                 break;
             case AIType.PATROL:
-                m_name = "Patrol";
+                m_name = PATROL_AI_NAME;
                 break;
             default:
                 break;
