@@ -20,17 +20,43 @@ public class FleetAI : MonoBehaviour
             assignedGameObject = null;
         }
 
-        Vector3 position = Vector3.zero;
-        bool assigned = false;
-        GameObject assignedGameObject = null;
+        private Vector3 position = Vector3.zero;
+        private bool assigned = false;
+        private GameObject assignedGameObject = null;
 
         public void AssignObject(GameObject objectToAssign)
         {
 
         }
+
+        public void RemoveAssignedObject()
+        {
+            assigned = false;
+            assignedGameObject = null;
+        }
+
+        public Vector3 Position
+        {
+            get { return position; }
+        }
+
+        public bool Assigned
+        {
+            get { return assigned; }
+        }
+
+        public GameObject AssignedGameObject
+        {
+            get { return assignedGameObject; }
+        }
     };
 
-    public const Vector3[] formationPositions = { new Vector3(-5.0f, 0, -5.0f), new Vector3(-10.0f, 0, -5.0f), new Vector3(-15.0f, 0, -5.0f) };  
+    public static readonly Vector3[] formationPositions = { new Vector3(-5.0f, 0, -5.0f), new Vector3(-10.0f, 0, -5.0f), new Vector3(-15.0f, 0, -5.0f) };  
+    public static FormationPosition[] formationSlots = { 
+                                                           new FormationPosition(formationPositions[0]), 
+                                                           new FormationPosition(formationPositions[1]), 
+                                                           new FormationPosition(formationPositions[2])
+                                                       }; 
     private CannonController cannonController = null;
     private NavMeshAgent navAgent = null;
     private Rigidbody body = null;
