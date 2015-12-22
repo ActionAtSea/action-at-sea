@@ -23,6 +23,9 @@ public class LobbyScript : MonoBehaviour
     private float m_dotSpeed = 0.25f;
     private bool m_initialised = false;
     private ConnectedPlayersList m_playersList = null;
+    private bool m_firstSelection = true;
+    public Color m_selectedColour;
+    private Color m_unselectedColor;
 
     /// <summary>
     /// Initialises the lobby
@@ -34,6 +37,14 @@ public class LobbyScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Gets the background image of the selected level
+    /// </summary>
+    UnityEngine.UI.Image GetSelectedBackground()
+    {
+        return selectedLevel.transform.FindChild("Background").GetComponent<UnityEngine.UI.Image>();
+    }
+
+    /// <summary>
     /// Selects the level
     /// </summary>
     public void SelectLevel(GameObject level)
@@ -42,9 +53,7 @@ public class LobbyScript : MonoBehaviour
         {
             if(selectedLevel != null)
             {
-                var oldBackground = selectedLevel.transform.FindChild("Background");
-                oldBackground.GetComponent<UnityEngine.UI.Image>().color = 
-                    new Color(1.0f, 1.0f, 1.0f, 0.88f);
+                GetSelectedBackground().color = m_unselectedColor;
             }
            
             SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
@@ -75,9 +84,12 @@ public class LobbyScript : MonoBehaviour
         slider.GetComponentInParent<GUIMaxPlayers>().SetMaxPlayers(
             Utilities.GetMaxPlayersForLevel(m_selectedLevel));
 
-        var newBackground = selectedLevel.transform.FindChild("Background");
-        newBackground.GetComponent<UnityEngine.UI.Image>().color = 
-            new Color(1.0f, 0.96f, 0.43f, 0.88f);
+        if (m_firstSelection)
+        {
+            m_unselectedColor = GetSelectedBackground().color;
+            m_firstSelection = false;
+        }
+        GetSelectedBackground().color = m_selectedColour;
 
         isReady.isOn = false;
     }
