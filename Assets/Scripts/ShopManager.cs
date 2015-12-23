@@ -135,10 +135,18 @@ public class ShopManager : MonoBehaviour
             {
                 if ((playerScore.RoundedScore - fleetShipCost) >= 0.0f)
                 {
-                    fleetShipToSpawn.networkedAI.SetVisible(true, false);
-                    fleetShipToSpawn.aiShip.Purchased = true;
-                    playerScore.MinusScore(fleetShipCost);
-                    success = true;
+                    if (fleetShipToSpawn.aiShip.AssignFormationPosition())
+                    {
+                        fleetShipToSpawn.networkedAI.SetVisible(true, false);
+                        fleetShipToSpawn.aiShip.Purchased = true;
+                        playerScore.MinusScore(fleetShipCost);
+                        success = true;
+                    }
+                    else
+                    {
+                        success = false;
+                        failureMsg = "No formationPositions available.";
+                    }
                 }
                 else
                 {

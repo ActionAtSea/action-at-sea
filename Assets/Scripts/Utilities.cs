@@ -69,6 +69,7 @@ class Utilities
     static string sm_defaultName = "Unnamed";
     static string sm_playerName = sm_defaultName;
     static int sm_maxPlayers = 0;
+    public static readonly int sm_noOfFleetAIPerPlayer = 2;
 
     /// <summary>
     /// Returns the game version

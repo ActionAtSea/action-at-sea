@@ -199,6 +199,7 @@ public class GameOverScript : MonoBehaviour
                                 if (fleet.Purchased)
                                 {
                                     network.SetVisible(false, true);
+                                    fleet.UnassignFormationPosition();
                                     fleet.Purchased = false;
                                 }
 

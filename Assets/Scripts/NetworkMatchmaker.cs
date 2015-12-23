@@ -20,7 +20,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     string m_networkStatus = "";                /// Public description of the network connection
     string m_networkDiagnostic = "";            /// Diagnostic description of the network connection
     GameObject m_player = null;                 /// Current client player instantiated
-    GameObject m_playerAI = null;               /// AI controlled helper of the client
+    List<GameObject> m_playerFleetAIs = new List<GameObject>();
     GameObject m_syncher = null;                /// Allows synching to other clients the game state
 
     /// <summary>
@@ -340,10 +340,13 @@ public class NetworkMatchmaker : Photon.PunBehaviour
             m_player = null;
         }
 
-        if(m_playerAI != null)
+        if (m_playerFleetAIs.Count != 0)
         {
-            PhotonNetwork.Destroy(m_playerAI);
-            m_playerAI = null;
+            for (int i = 0; i < m_playerFleetAIs.Count; ++i)
+            {
+                PhotonNetwork.Destroy(m_playerFleetAIs[i]);
+            }
+            m_playerFleetAIs.Clear();
         }
 
         if(m_syncher != null)
@@ -375,8 +378,11 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if (!Utilities.IsOpenLeveL())
         {
-            m_playerAI = PhotonNetwork.Instantiate(
-                "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+
+            for (int i = 0; i < Utilities.sm_noOfFleetAIPerPlayer; ++i)
+            {
+                m_playerFleetAIs.Add(PhotonNetwork.Instantiate("FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0));
+            }
 
             if (PhotonNetwork.isMasterClient)
             {

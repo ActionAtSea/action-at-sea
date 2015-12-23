@@ -24,9 +24,15 @@ public class FleetAI : MonoBehaviour
         private bool assigned = false;
         private GameObject assignedGameObject = null;
 
-        public void AssignObject(GameObject objectToAssign)
+        public FormationPosition AssignObject(GameObject objectToAssign)
         {
-
+            if (!assigned)
+            {
+                assignedGameObject = objectToAssign;
+                assigned = true;
+                return this;
+            }
+            return null;
         }
 
         public void RemoveAssignedObject()
@@ -51,11 +57,11 @@ public class FleetAI : MonoBehaviour
         }
     };
 
-    public static readonly Vector3[] formationPositions = { new Vector3(-5.0f, 0, -5.0f), new Vector3(-10.0f, 0, -5.0f), new Vector3(-15.0f, 0, -5.0f) };  
+    //TODO: Figure out a way to make fleet ship positions relative to the direction the player is facing.
+    public static readonly Vector3[] formationPositions = { new Vector3(-5.0f, 0, -5.0f), new Vector3(5.0f, 0, -5.0f)};  
     public static FormationPosition[] formationSlots = { 
                                                            new FormationPosition(formationPositions[0]), 
-                                                           new FormationPosition(formationPositions[1]), 
-                                                           new FormationPosition(formationPositions[2])
+                                                           new FormationPosition(formationPositions[1])
                                                        }; 
     private CannonController cannonController = null;
     private NavMeshAgent navAgent = null;
@@ -64,6 +70,7 @@ public class FleetAI : MonoBehaviour
     private int ownerPlayerID = -1;
     private bool gameInitialised = false;
     private bool purchased = false;
+    private FormationPosition formationSlot = null;
 
     /// <summary>
     /// Whether or not the fleet ship has been purchased yet.
@@ -77,6 +84,30 @@ public class FleetAI : MonoBehaviour
     public int OwnerPlayerID
     {
         get { return ownerPlayerID; }
+    }
+
+    public bool AssignFormationPosition()
+    {
+        for (int i = 0; i < formationSlots.Length; ++i)
+        {
+            if (!formationSlots[i].Assigned)
+            {
+                formationSlot = formationSlots[i].AssignObject(gameObject);
+                if (formationSlot != null)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void UnassignFormationPosition()
+    {
+        if (formationSlot != null)
+        {
+            formationSlot.RemoveAssignedObject();
+        }
     }
 
 
@@ -114,18 +145,25 @@ public class FleetAI : MonoBehaviour
                 }
             }
         }
+
         if (player != null)
         {
-            if (navAgent.isOnNavMesh)
+            if (formationSlot != null)
             {
-                Vector3 formationPos = player.transform.position;
-                formationPos -= formationPositions[0];
-                navAgent.SetDestination(formationPos);
+                if (formationSlot.Assigned)
+                {
+                    if (navAgent.isOnNavMesh)
+                    {
+                        Vector3 formationPos = player.transform.position;
+                        formationPos -= formationSlot.Position;
+                        navAgent.SetDestination(formationPos);
+                    }
+                }
             }
         }
         else
         {
-            Debug.Log("PLayer not set");
+            Debug.Log("Player not set");
         }
 
     }
