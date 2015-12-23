@@ -34,6 +34,7 @@ public class ShopManager : MonoBehaviour
 
     public float fleetShipCost;
     public float patrolShipCost;
+    public bool viewDebuggingInfo = false;
 
     [Range(0.0f, 1.0f)]
     public float buttonPressCooldown = 0.4f;
@@ -124,7 +125,10 @@ public class ShopManager : MonoBehaviour
 
     public void FleetButtonPress()
     {
+        string failureMsg = string.Empty;
         bool success = false;
+        fleetShipToSpawn = GetFleetShipToSpawn();
+
         if (fleetShipToSpawn != null)
         {
             if (!fleetShipToSpawn.aiShip.Purchased)
@@ -134,22 +138,27 @@ public class ShopManager : MonoBehaviour
                     fleetShipToSpawn.networkedAI.SetVisible(true, false);
                     fleetShipToSpawn.aiShip.Purchased = true;
                     playerScore.MinusScore(fleetShipCost);
-                    fleetShipToSpawn = GetFleetShipToSpawn();
                     success = true;
                 }
                 else
                 {
                     success = false;
+                    failureMsg = "Player has insufficient coin to purchase a ship.";
                 }
             }
             else
             {
                 success = false;
+                failureMsg = "Ship has already been purchased.";
             }
         }
         else
         {
             success = false;
+            if (viewDebuggingInfo)
+            {
+                failureMsg = "The fleetShipToSpawn was null.";
+            }
         }
 
         if (success)
@@ -158,6 +167,7 @@ public class ShopManager : MonoBehaviour
         }
         else
         {
+            Debug.Log(failureMsg);
             //Play failure noise.
         }
         
@@ -166,7 +176,11 @@ public class ShopManager : MonoBehaviour
         {
             soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
         }
-        Debug.Log("FleetButtonPress.");
+
+        if (viewDebuggingInfo)
+        {
+            Debug.Log("FleetButtonPress.");
+        }
     }
 
     public void PatrolButtonPress()
@@ -175,7 +189,11 @@ public class ShopManager : MonoBehaviour
         {
             soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
         }
-        Debug.Log("PatrolButtonPress.");
+
+        if (viewDebuggingInfo)
+        {
+            Debug.Log("PatrolButtonPress.");
+        }
     }
 
     public void CannonButtonPress()
@@ -184,7 +202,11 @@ public class ShopManager : MonoBehaviour
         {
             soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
         }
-        Debug.Log("CannonButtonPress");
+
+        if (viewDebuggingInfo)
+        {
+            Debug.Log("CannonButtonPress");
+        }
     }
 
     /// <summary>
