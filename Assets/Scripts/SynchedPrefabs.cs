@@ -10,9 +10,9 @@ using UnityEngine;
 
 public class SynchedPrefabs
 {
-    GameObject m_player = null;                 /// Current client player instantiated
-    List<GameObject> m_playerFleetAIs = null;   /// Current client player AI helpers
-    GameObject m_syncher = null;                /// Allows synching to other clients the game state
+    GameObject m_player = null;
+    List<GameObject> m_playerFleetAIs = new List<GameObject>();
+    GameObject m_syncher = null;
     bool m_initialised = false;
 
     /// <summary>
@@ -68,7 +68,6 @@ public class SynchedPrefabs
             //TODO: Figure out how way to instantiate a patrol ship for each island within a level.
             //PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
 
-            m_playerFleetAIs = new List<GameObject>();
             for (int i = 0; i < Utilities.sm_noOfFleetAIPerPlayer; ++i)
             {
                 m_playerFleetAIs.Add(PhotonNetwork.Instantiate(
