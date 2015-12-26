@@ -19,16 +19,16 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     float m_reconnectTimer = 0.0f;              /// Timer to count down for reconnection attempts
     string m_networkStatus = "";                /// Public description of the network connection
     string m_networkDiagnostic = "";            /// Diagnostic description of the network connection
-    GameObject m_player = null;                 /// Current client player instantiated
-    List<GameObject> m_playerFleetAIs = new List<GameObject>();
-    GameObject m_syncher = null;                /// Allows synching to other clients the game state
-
+    SynchedPrefabs m_synchedPrefabs = null;     /// Prefabs synched across networked players
+        
     /// <summary>
     /// Initialises the matchmaker
     /// </summary>
     void Start()
     {
         PhotonNetwork.autoJoinLobby = false;
+
+        m_synchedPrefabs = new SynchedPrefabs();
 
         int maxLevels = Utilities.GetMaxLevels();
         m_lobbys = (from i in Enumerable.Range(0, maxLevels)
@@ -281,7 +281,7 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     /// </summary>
     public void LeaveGameLevel()
     {
-        DestroyPlayer();
+        m_synchedPrefabs.Destroy();
        
         if(IsInRoom())
         {
@@ -328,73 +328,21 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     }
 
     /// <summary>
-    /// Destroys the player on all connected clients
+    /// Destroys the player and other prefabs on all connected clients
     /// </summary>
-    public void DestroyPlayer()
+    public void DestroyPrefabs()
     {
-        SetDiagnostic("Destroying client player");
-
-        if(m_player != null)
-        {
-            PhotonNetwork.Destroy(m_player);
-            m_player = null;
-        }
-
-        if (m_playerFleetAIs.Count != 0)
-        {
-            for (int i = 0; i < m_playerFleetAIs.Count; ++i)
-            {
-                PhotonNetwork.Destroy(m_playerFleetAIs[i]);
-            }
-            m_playerFleetAIs.Clear();
-        }
-
-        if(m_syncher != null)
-        {
-            PhotonNetwork.Destroy(m_syncher);
-            m_syncher = null;
-        }
+        SetDiagnostic("Destroying client");
+        m_synchedPrefabs.Destroy();
     }
 
     /// <summary>
-    /// Creates a new player on all connected clients
+    /// Creates a new player and other prefabs on all connected clients
     /// </summary>
     void CreatePlayer()
     {
-        SetDiagnostic("Creating client player");
-
-        m_player = PhotonNetwork.Instantiate(
-            "PlayerPVP", Vector3.zero, Quaternion.identity, 0);
-
-        m_syncher = PhotonNetwork.Instantiate(
-            "GameSyncher", Vector3.zero, Quaternion.identity, 0);
-    }
-
-    /// <summary>
-    /// Creates AI on all connected clients
-    /// AI not supported for open levels
-    /// </summary>
-    void CreateAI()
-    {
-        if (!Utilities.IsOpenLeveL())
-        {
-            //TODO: Figure out how way to instantiate a patrol ship for each island within a level.
-            //PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
-
-            for (int i = 0; i < Utilities.sm_noOfFleetAIPerPlayer; ++i)
-            {
-                m_playerFleetAIs.Add(PhotonNetwork.Instantiate("FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0));
-            }
-
-            if (PhotonNetwork.isMasterClient)
-            {
-                for (int i = 0; i < Utilities.GetAICount(); ++i)
-                {
-                    PhotonNetwork.InstantiateSceneObject(
-                        "RogueAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
-                }
-            }
-        }
+        SetDiagnostic("Creating client");
+        m_synchedPrefabs.Create();
     }
 
     /// <summary>
@@ -440,14 +388,12 @@ public class NetworkMatchmaker : Photon.PunBehaviour
         }
 
         // Creates a new player when the level has fully initialised
-        if(m_player == null && 
+        if(!m_synchedPrefabs.IsInitialised() && 
            IsConnectedToLevel() &&
            Utilities.IsLevelLoaded() && 
            !Utilities.IsGameOver())
         {
-            
-            CreatePlayer();
-            CreateAI();
+            m_synchedPrefabs.Create();
         }
     }
 
