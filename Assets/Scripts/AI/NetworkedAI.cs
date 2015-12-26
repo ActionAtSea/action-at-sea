@@ -91,9 +91,18 @@ public class NetworkedAI : NetworkedEntity
 
         base.InitialiseAtWorld();
 
-        if(aiType == AIType.FLEET)
+        switch (aiType)
         {
-            SetVisible(false, false);
+            case AIType.FLEET:
+                SetVisible(false, false);
+                break;
+
+            case AIType.PATROL:
+                SetVisible(false, false);
+                break;
+
+            default:
+                break;
         }
     }
 

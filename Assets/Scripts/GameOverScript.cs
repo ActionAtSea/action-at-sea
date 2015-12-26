@@ -191,9 +191,10 @@ public class GameOverScript : MonoBehaviour
                                 break;
 
                             case NetworkedAI.AIType.FLEET:
-                                //TODO: Handle fleet ship spawning and dying. Also make sure that fleet ships a not visible on game start
+                                //DONE: Handle fleet ship spawning and dying. Also make sure that fleet ships a not visible on game start
                                 //      and only become visible once they have been purchased by the player. The shop manager will hold 
                                 //      a list of AI fleet ships. The FleetAI class will keep track of whether a fleet ship has been purchased.
+
 
                                 FleetAI fleet = network.GetComponent<FleetAI>();
                                 if (fleet.Purchased)

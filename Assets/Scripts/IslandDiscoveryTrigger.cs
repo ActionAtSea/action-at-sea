@@ -29,7 +29,9 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     private IslandDiscoveryNode[] m_nodes;
     private GameObject m_owner = null;
     private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
+    private GameObject m_patrolAI = null;
 
+    private bool m_aiInitialised = false;
     private bool m_ownerWithinRange = false;
 
     /// <summary>
@@ -74,6 +76,13 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if (NetworkMatchmaker.Get().IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver() && !m_aiInitialised)
+        {
+            //TODO: Disabled atm. Work in progress.
+            //m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
+            m_aiInitialised = true;
+        }
+
         GameObject owner = m_nodes[0].Owner;
         for (int i = 1; i < m_nodes.Length; ++i)
         {
