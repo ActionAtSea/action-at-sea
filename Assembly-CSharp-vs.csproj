@@ -111,6 +111,7 @@
      <Compile Include="Assets\Scripts\AI\AIHealth.cs" />
      <Compile Include="Assets\Scripts\AI\FleetAI.cs" />
      <Compile Include="Assets\Scripts\AI\NetworkedAI.cs" />
+     <Compile Include="Assets\Scripts\AI\PatrolAI.cs" />
      <Compile Include="Assets\Scripts\AI\RogueAI.cs" />
      <Compile Include="Assets\Scripts\AnimationGenerator.cs" />
      <Compile Include="Assets\Scripts\Bullet.cs" />

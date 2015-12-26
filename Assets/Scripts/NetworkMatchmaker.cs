@@ -378,6 +378,8 @@ public class NetworkMatchmaker : Photon.PunBehaviour
     {
         if (!Utilities.IsOpenLeveL())
         {
+            //TODO: Figure out how way to instantiate a patrol ship for each island within a level.
+            //PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", Vector3.zero, Quaternion.identity, 0, null);
 
             for (int i = 0; i < Utilities.sm_noOfFleetAIPerPlayer; ++i)
             {
