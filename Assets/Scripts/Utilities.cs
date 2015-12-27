@@ -69,6 +69,7 @@ class Utilities
     static string sm_defaultName = "Unnamed";
     static string sm_playerName = sm_defaultName;
     static int sm_maxPlayers = 0;
+    static NetworkMatchmaker sm_networking = null;
     public static readonly int sm_noOfFleetAIPerPlayer = 2;
 
     /// <summary>
@@ -349,7 +350,7 @@ class Utilities
     /// </summary>
     static public bool IsPlayerInitialised(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedEntity>().IsInitialised();
+        return obj != null ? obj.GetComponentInParent<NetworkedEntity>().IsInitialised() : false;
     }
     
     /// <summary>
@@ -381,7 +382,7 @@ class Utilities
     /// </summary>
     static public int GetPlayerID(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedEntity>().PlayerID;
+        return obj != null ? obj.GetComponentInParent<NetworkedEntity>().PlayerID : -1;
     }
 
     /// <summary>
@@ -389,7 +390,7 @@ class Utilities
     /// </summary>
     static public bool IsPlayerAlive(GameObject obj)
     {
-        return obj.GetComponentInParent<Health>().IsAlive;
+        return obj != null ? obj.GetComponentInParent<Health>().IsAlive : false;
     }
 
     /// <summary>
@@ -397,8 +398,12 @@ class Utilities
     /// </summary>
     static public bool IsAssignedAI(GameObject obj)
     {
-        var entity = obj.GetComponentInParent<NetworkedEntity>();
-        return entity.IsControllable() && entity.IsInitialised() && entity.name != "Rogue";
+        if (obj != null)
+        {
+            var entity = obj.GetComponentInParent<NetworkedEntity>();
+            return entity.IsControllable() && entity.IsInitialised() && entity.name != "Rogue";
+        }
+        return false;
     }
 
     /// <summary>
@@ -406,8 +411,12 @@ class Utilities
     /// </summary>
     static public bool IsControllableAI(GameObject obj)
     {
-        var entity = obj.GetComponentInParent<NetworkedEntity>();
-        return entity.IsControllable() && entity.IsInitialised();
+        if(obj != null)
+        {
+            var entity = obj.GetComponentInParent<NetworkedEntity>();
+            return entity.IsControllable() && entity.IsInitialised();
+        }
+        return false;
     }
 
     /// <summary>
@@ -415,6 +424,24 @@ class Utilities
     /// </summary>
     static public bool IsPlayerControllable(GameObject obj)
     {
-        return obj.GetComponentInParent<NetworkedEntity>().IsControllable();
+        return obj != null ? obj.GetComponentInParent<NetworkedEntity>().IsControllable() : false;
+    }
+
+    /// <summary>
+    /// Gets the Network Matchmaker instance from the scene
+    /// Note, relies on only one matchmaker instance per scene
+    /// </summary>
+    public static NetworkMatchmaker GetNetworking()
+    {
+        if(sm_networking == null)
+        {
+            sm_networking = GameObject.FindObjectOfType<NetworkMatchmaker>();
+            if (sm_networking == null)
+            {
+                throw new NullReferenceException(
+                    "Could not find Random Matchmaker in scene");
+            }
+        }
+        return sm_networking;
     }
 }

@@ -28,6 +28,7 @@ public class GameOverScript : MonoBehaviour
     private bool m_toPlayRequest = false;
     private bool m_levelComplete = false;
     private CameraMovement m_camera = null;
+    static private GameOverScript sm_gameOverScript = null;
 
     //Co-routine for delayed ai respawn
     IEnumerator RespawnAI(NetworkedAI networkedAI, float timeDelay)
@@ -41,7 +42,7 @@ public class GameOverScript : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_network = NetworkMatchmaker.Get();
+        m_network = Utilities.GetNetworking();
 
         m_camera = FindObjectOfType<CameraMovement>();
         if(m_camera == null)
@@ -88,7 +89,7 @@ public class GameOverScript : MonoBehaviour
                 if(m_toMenuRequest)
                 {
                     Debug.Log("Leaving game room from game over");
-                    NetworkMatchmaker.Get().LeaveGameLevel();
+                    Utilities.GetNetworking().LeaveGameLevel();
                     Application.LoadLevel((int)SceneID.LOBBY);
                 }
                 else
@@ -369,11 +370,14 @@ public class GameOverScript : MonoBehaviour
     /// </summary>
     public static GameOverScript Get()
     {
-        var gameover = FindObjectOfType<GameOverScript>();
-        if(gameover == null)
+        if(sm_gameOverScript == null)
         {
-            Debug.LogError("Could not find Game Over Script in scene");
+            sm_gameOverScript = FindObjectOfType<GameOverScript>();
+            if (sm_gameOverScript == null)
+            {
+                Debug.LogError("Could not find Game Over Script in scene");
+            }
         }
-        return gameover;
+        return sm_gameOverScript;
     }
 }

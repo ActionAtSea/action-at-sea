@@ -14,7 +14,7 @@ public class GUINetworkStatus : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_network = NetworkMatchmaker.Get();
+        m_network = Utilities.GetNetworking();
     }
 
     /// <summary>

@@ -61,33 +61,12 @@ public class FillScoreBoard : MonoBehaviour
     /// </summary>
     void Update () 
     {
-        foreach(var obj in m_scoreBack)
-        {
-            obj.gameObject.SetActive(false);
-        }
-
-        Dictionary<int, int> islandsOwned = new Dictionary<int, int>();
+        Dictionary<int, int> islandsOwned = IslandDiscoveryTrigger.GetIslandsOwned();
         List<GameObject> players = PlayerManager.GetAllPlayersByScore();
         int maxShown = Mathf.Min(players.Count, Utilities.GetMaxLevels());
+        int i = 0;
 
-        for(int i = 0; i < m_islandList.Length; ++i)
-        {
-            var island = m_islandList[i];
-            if (island.IsDiscovered() && island.GetOwner() != null)
-            {
-                int ID = Utilities.GetPlayerID(island.GetOwner());
-                if(islandsOwned.ContainsKey(ID))
-                {
-                    islandsOwned[ID] += 1;
-                }
-                else
-                {
-                    islandsOwned[ID] = 1;
-                }
-            }
-        }
-
-        for(int i = 0; i < maxShown; ++i)
+        for(; i < maxShown; ++i)
         {
             var obj = players[i];
             if(obj != null)
@@ -114,6 +93,11 @@ public class FillScoreBoard : MonoBehaviour
                 m_scoreFront[i].text = text;
             }
 
+        }
+
+        for (; i < m_scoreBack.Count; ++i)
+        {
+            m_scoreBack[i].gameObject.SetActive(false);
         }
     }
 }

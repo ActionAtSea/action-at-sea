@@ -45,7 +45,7 @@ public class GameSyncher : MonoBehaviour
             Debug.LogError("Could not find any island nodes");
         }
 
-        m_network = NetworkMatchmaker.Get();
+        m_network = Utilities.GetNetworking();
         m_gameManager = GameModeManager.Get();
         m_startUpTime = Time.time;
         m_initialised = true;

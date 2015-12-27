@@ -19,18 +19,16 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     public float m_fadeSpeed = 4.0f;
     public float m_minScoreSize = 1.0f;
     public float m_scaleToFade = 1.5f;
-
     private UnityEngine.UI.Outline m_scoreOutline = null;
     private RectTransform m_scoreTransform = null;
     private Vector3 m_scoreScale;
-
     private float m_timePassed = 0.0f;
     private Canvas m_canvas = null;
     private IslandDiscoveryNode[] m_nodes;
     private GameObject m_owner = null;
     private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
     private GameObject m_patrolAI = null;
-
+    private static Dictionary<int, int> sm_islandsOwned = new Dictionary<int, int>();
     private bool m_aiInitialised = false;
     private bool m_ownerWithinRange = false;
 
@@ -39,6 +37,8 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Start()
     {
+        sm_islandsOwned.Clear();
+
         m_scoreOutline = scoreText.GetComponent<UnityEngine.UI.Outline>();
         m_scoreTransform = scoreText.GetComponent<RectTransform>();
         scoreText.gameObject.SetActive(false);
@@ -76,7 +76,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (NetworkMatchmaker.Get().IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver() && !m_aiInitialised)
+        if (Utilities.GetNetworking().IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver() && !m_aiInitialised)
         {
             //TODO: Disabled atm. Work in progress.
             //m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
@@ -90,22 +90,32 @@ public class IslandDiscoveryTrigger : MonoBehaviour
                m_nodes[i].Owner == null ||
                owner.name != m_nodes[i].Owner.name)
             {
-                // Island was captured but is no longer
-                owner = null;
+                if(m_owner != null)
+                {
+                    Debug.Log("Island no longer owned");
+                    SetCaptured(null);
+                }
                 break;
             }
         }
 
-        if (owner == null)
+        if (owner != null)
         {
-            SetCaptured(null);
-        }
-        else if (m_owner == null || m_owner.name != owner.name)
-        {
-            Debug.Log("Setting new owner of island: " + owner.name);
-            SetCaptured(owner);
+            if(m_owner == null || m_owner.name != owner.name)
+            {
+                Debug.Log("Setting new owner of island: " + owner.name);
+                SetCaptured(owner);
+            }
         }
 
+        UpdateIslandScore();
+    }
+
+    /// <summary>
+    /// Updates the floating score text
+    /// </summary>
+    void UpdateIslandScore()
+    {
         if (m_owner != null && PlayerManager.IsControllablePlayer(m_owner))
         {
             m_timePassed += Time.deltaTime;
@@ -123,23 +133,23 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             }
         }
 
-        if(scoreText.gameObject.activeSelf)
+        if (scoreText.gameObject.activeSelf)
         {
             m_scoreScale.x += Time.deltaTime * m_scaleSpeed;
             m_scoreScale.y = m_scoreScale.x;
             m_scoreScale.z = m_scoreScale.x;
             m_scoreTransform.localScale = m_scoreScale;
 
-            if(m_scoreScale.x > m_scaleToFade)
+            if (m_scoreScale.x > m_scaleToFade)
             {
                 float alpha = scoreText.color.a - (Time.deltaTime * m_fadeSpeed);
                 alpha = Mathf.Min(Mathf.Max(0.0f, alpha), 1.0f);
                 m_scoreOutline.effectColor = new Color(0.0f, 0.0f, 0.0f, alpha);
 
                 scoreText.color = new Color(
-                    scoreText.color.r, 
-                    scoreText.color.g, 
-                    scoreText.color.b, 
+                    scoreText.color.r,
+                    scoreText.color.g,
+                    scoreText.color.b,
                     alpha);
 
                 if (alpha == 0.0f)
@@ -208,6 +218,27 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         foreach(var island in m_islands)
         {
             island.color = tickImage.color;
+        }
+
+        if (m_owner != null)
+        {
+            int ownerID = Utilities.GetPlayerID(m_owner);
+            if(sm_islandsOwned.ContainsKey(ownerID))
+            {
+                sm_islandsOwned[ownerID]--;
+            }
+        }
+        if (owner != null)
+        {
+            int ownerID = Utilities.GetPlayerID(owner);
+            if (sm_islandsOwned.ContainsKey(ownerID))
+            {
+                sm_islandsOwned[ownerID]++;
+            }
+            else
+            {
+                sm_islandsOwned[ownerID] = 1;
+            }
         }
 
         m_scoreToAdd = 0.0f;
@@ -287,11 +318,20 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     {
         return m_owner;
     }
+
     /// <summary>
     /// Whether the current owner of the island is within range.
     /// </summary>
     public bool OwnerWithinRange
     {
         get { return m_ownerWithinRange; }
+    }
+
+    /// <summary>
+    /// Gets a list of what player owns what islands
+    /// </summary>
+    static public Dictionary<int, int> GetIslandsOwned()
+    {
+        return sm_islandsOwned;
     }
 }

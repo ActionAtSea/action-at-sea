@@ -32,7 +32,7 @@ public class LobbyScript : MonoBehaviour
     /// </summary>
     void Start () 
     {
-        m_network = NetworkMatchmaker.Get();
+        m_network = Utilities.GetNetworking();
         m_playersList = GameObject.FindObjectOfType<ConnectedPlayersList>();
     }
 

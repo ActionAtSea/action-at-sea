@@ -56,7 +56,7 @@ public class NetworkedPlayer : NetworkedEntity
         {
             gameObject.tag = "Player";
 
-            var matchMaker = NetworkMatchmaker.Get();
+            var matchMaker = Utilities.GetNetworking();
             m_spawnIndex = matchMaker.GetPlayerIndex();
 
             m_name = Utilities.GetPlayerName();

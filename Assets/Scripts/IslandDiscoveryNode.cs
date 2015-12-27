@@ -12,6 +12,7 @@ public class IslandDiscoveryNode : MonoBehaviour
     private IslandDiscoveryTrigger m_trigger = null;
     private int m_ownerID = 0;
     private GameObject m_owner = null;
+    private bool m_hasOwner = false;
     private double m_timestamp = 0.0;
     private SpriteRenderer m_renderer = null;
     private Color m_unownedColor = new Color(1.0f, 1.0f, 1.0f);
@@ -39,11 +40,12 @@ public class IslandDiscoveryNode : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(m_owner == null)
+        if(m_hasOwner && m_owner == null)
         {
             m_renderer.color = m_unownedColor;
             m_ownerID = -1;
             m_timestamp = 0.0;
+            m_hasOwner = false;
         }
     }
 
@@ -82,7 +84,7 @@ public class IslandDiscoveryNode : MonoBehaviour
             //Checks if object is a player.
             if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("EnemyPlayer"))
             {
-                SetOwner(other.gameObject, NetworkMatchmaker.Get().GetTime());
+                SetOwner(other.gameObject, Utilities.GetNetworking().GetTime());
             }
         }
     }
@@ -128,6 +130,8 @@ public class IslandDiscoveryNode : MonoBehaviour
                 {
                     SoundManager.Get().PlaySound(SoundManager.SoundID.ISLAND_NODE);
                 }
+
+                m_hasOwner = true;
 
                 m_owner = owner;
                 m_renderer.color = Utilities.GetPlayerColor(owner);

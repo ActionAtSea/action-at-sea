@@ -396,19 +396,4 @@ public class NetworkMatchmaker : Photon.PunBehaviour
             m_synchedPrefabs.Create();
         }
     }
-
-    /// <summary>
-    /// Gets the Network Matchmaker instance from the scene
-    /// Note, relies on only one matchmaker instance per scene
-    /// </summary>
-    public static NetworkMatchmaker Get()
-    {
-        var network = FindObjectOfType<NetworkMatchmaker>();
-        if(network == null)
-        {
-            throw new NullReferenceException(
-                "Could not find Random Matchmaker in scene");
-        }
-        return network;
-    }
 }

@@ -324,7 +324,7 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            Random.seed = (int)NetworkMatchmaker.Get().GetTime();
+            Random.seed = (int)(Utilities.GetNetworking().GetTime());
             place = GetRandomPosition();
             place.hue = Random.Range(0, 360);
         }
