@@ -90,22 +90,24 @@ public class IslandDiscoveryTrigger : MonoBehaviour
                m_nodes[i].Owner == null ||
                owner.name != m_nodes[i].Owner.name)
             {
-                if(m_owner != null)
-                {
-                    Debug.Log("Island no longer owned");
-                    SetCaptured(null);
-                }
+                // Island was captured but is no longer
+                owner = null;
                 break;
             }
         }
 
-        if (owner != null)
+        if (owner == null)
         {
-            if(m_owner == null || m_owner.name != owner.name)
+            if(m_owner != null)
             {
-                Debug.Log("Setting new owner of island: " + owner.name);
-                SetCaptured(owner);
+                Debug.Log("Island no longer owned");
+                SetCaptured(null);
             }
+        }
+        else if (m_owner == null || m_owner.name != owner.name)
+        {
+            Debug.Log("Setting new owner of island: " + owner.name);
+            SetCaptured(owner);
         }
 
         UpdateIslandScore();
