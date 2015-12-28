@@ -5,10 +5,10 @@ using System.Collections;
 /// </summary>
 public class AIAiming : MonoBehaviour 
 {
-    private Vector3 targetPosition = Vector3.zero;
     private CannonController cannonController = null;
     private NetworkedAI networkAI = null;
     private NetworkedAI.AIType aiType;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -68,7 +68,6 @@ public class AIAiming : MonoBehaviour
                 }
                 if (other.CompareTag("AIShip"))
                 {
-                    NetworkedAI networkedAI = GetComponent<NetworkedAI>();
                     if (networkAI != null)
                     {
                         if (networkAI.aiType == NetworkedAI.AIType.ROGUE)

@@ -147,7 +147,6 @@ public class GameOverScript : MonoBehaviour
                 // This includes all AI contolled by the client (including Rogues)
                 var health = ai[i].GetComponent<AIHealth>();
                 var network = ai[i].GetComponent<NetworkedAI>();
-                NetworkedAI.AIType aiType = network.aiType;
                 bool assignedPlayerDead = network.GetAssignedPlayer() != null &&
                     !network.IsAssignedPlayerIsAlive();
 

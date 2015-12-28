@@ -12,15 +12,12 @@ public class FillScoreBoard : MonoBehaviour
     public GameObject scoreText;
     private List<UnityEngine.UI.Text> m_scoreFront = new List<UnityEngine.UI.Text>();
     private List<UnityEngine.UI.Text> m_scoreBack = new List<UnityEngine.UI.Text>();
-    private IslandDiscoveryTrigger[] m_islandList = null;
 
     /// <summary>
     /// Instantiates player text
     /// </summary>
     void Start()
     {
-        m_islandList = GameObject.FindObjectsOfType<IslandDiscoveryTrigger>();
-
         AddText(scoreText);
         scoreText.SetActive(false);
         float xPosition = scoreText.GetComponent<RectTransform>().localPosition.x;

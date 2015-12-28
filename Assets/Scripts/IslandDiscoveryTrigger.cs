@@ -83,6 +83,15 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             m_aiInitialised = true;
         }
 
+        UpdateIslandOwner();
+        UpdateIslandScore();
+    }
+
+    /// <summary>
+    /// Checks and updates who owns the island
+    /// </summary>
+    void UpdateIslandOwner()
+    {
         GameObject owner = m_nodes[0].Owner;
         for (int i = 1; i < m_nodes.Length; ++i)
         {
@@ -98,7 +107,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
 
         if (owner == null)
         {
-            if(m_owner != null)
+            if (IsDiscovered())
             {
                 Debug.Log("Island no longer owned");
                 SetCaptured(null);
@@ -109,12 +118,10 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             Debug.Log("Setting new owner of island: " + owner.name);
             SetCaptured(owner);
         }
-
-        UpdateIslandScore();
     }
 
     /// <summary>
-    /// Updates the floating score text
+    /// Updates the score per tick and floating score text
     /// </summary>
     void UpdateIslandScore()
     {

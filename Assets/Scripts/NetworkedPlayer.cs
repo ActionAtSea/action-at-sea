@@ -17,8 +17,6 @@ public class NetworkedPlayer : NetworkedEntity
     #region infonotnetworked
     private PlayerScore m_score = null;
     private GameObject m_networkDiagnostics = null;
-    private bool m_usePrediction = false;
-    private PlayerPrediction m_playerPrediction = new PlayerPrediction();
     private GameObject m_islandWithinRange = null;
     public bool fleetShipBought = false;
     #endregion
@@ -182,12 +180,6 @@ public class NetworkedPlayer : NetworkedEntity
         }
         else
         {
-            if (m_usePrediction)
-            {
-                m_playerPrediction.OnNetworkUpdate(
-                    m_networkedPosition, m_networkedRotation, m_networkedVelocity);
-            }
-
             m_playerScore = (int)stream.ReceiveNext();
         }
     }
@@ -197,16 +189,7 @@ public class NetworkedPlayer : NetworkedEntity
     /// </summary>
     protected override void PositionNonClientPlayer()
     {
-        if(!m_usePrediction)
-        {
-            base.PositionNonClientPlayer();
-        }
-        else
-        {
-            m_playerPrediction.Update();
-            transform.position = m_playerPrediction.GetPosition();
-            transform.rotation = m_playerPrediction.GetRotation();
-        }
+        base.PositionNonClientPlayer();
     }
 
     /// <summary>
