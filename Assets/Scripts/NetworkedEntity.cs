@@ -41,7 +41,6 @@ public abstract class NetworkedEntity : MonoBehaviour
     protected bool m_firedCannonsRight = false;
     protected Vector3 m_networkedPosition;
     protected Quaternion m_networkedRotation;
-    protected Vector3 m_networkedVelocity;
     #endregion
 
     /// <summary>
@@ -104,11 +103,20 @@ public abstract class NetworkedEntity : MonoBehaviour
     }
 
     /// <summary>
-    /// Adds the entity to the minimap
+    /// Adds the entity to the minimap and colours sections of the ship
     /// </summary>
     protected virtual void NotifyPlayerCreation()
     {
         m_colour = Colour.HueToRGB(m_hue);
+
+        SetShipColour[] colouredComponets = GetComponentsInChildren<SetShipColour>();
+        if(colouredComponets != null)
+        {
+            foreach(SetShipColour component in colouredComponets)
+            {
+                component.SetColour(m_colour);
+            }
+        }
 
         var minimap = GameObject.FindObjectOfType<Minimap>();
         minimap.AddPlayer(gameObject, photonView.isMine, m_colour);
@@ -277,7 +285,6 @@ public abstract class NetworkedEntity : MonoBehaviour
             stream.SendNext(m_ID);
             stream.SendNext(m_hue);
             stream.SendNext(m_name);
-            stream.SendNext(m_rigidBody.velocity);
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(m_health);
@@ -295,7 +302,6 @@ public abstract class NetworkedEntity : MonoBehaviour
             m_hue = (int)stream.ReceiveNext();
             m_name = (string)stream.ReceiveNext();
 
-            m_networkedVelocity = (Vector3)stream.ReceiveNext();
             m_networkedPosition = (Vector3)stream.ReceiveNext();
             m_networkedRotation = (Quaternion)stream.ReceiveNext();
 

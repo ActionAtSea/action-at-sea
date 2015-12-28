@@ -11,17 +11,16 @@ using System.Collections.ObjectModel;
 public class PlayerManager : MonoBehaviour 
 {
     private static GameObject sm_player = null;
-    private static Dictionary<int, GameObject> sm_playerIDs = null;
-    private static Dictionary<int, GameObject> sm_aiIDs = null;
-    private static List<GameObject> sm_allplayers = null;
-    private static List<GameObject> sm_allAI = null;
-    private static List<GameObject> sm_fleetAI = null;
-
+    private static Dictionary<int, GameObject> sm_playerIDs = new Dictionary<int, GameObject>();
+    private static Dictionary<int, GameObject> sm_aiIDs = new Dictionary<int, GameObject>();
+    private static List<GameObject> sm_allplayers = new List<GameObject>();
+    private static List<GameObject> sm_allAI = new List<GameObject>();
+    private static List<GameObject> sm_fleetAI = new List<GameObject>(2);
     private GameObject m_gameboard = null;
     private float m_gameboardOffset = 20.0f;
     private float m_playerRadious = 5.0f;
-    private List<GameObject> m_spawns = null;
-    private List<GameObject> m_aispawns = null;
+    private List<GameObject> m_spawns = new List<GameObject>();
+    private List<GameObject> m_aispawns = new List<GameObject>();
 
     /// <summary> 
     /// Position/rotation/color information
@@ -38,15 +37,8 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        sm_allAI = new List<GameObject>();
-        sm_allplayers = new List<GameObject>();
-        sm_playerIDs = new Dictionary<int, GameObject>();
-        sm_aiIDs = new Dictionary<int, GameObject>();
-        sm_fleetAI = new List<GameObject>(2);
         m_gameboard = GameBoard.Get();
 
-        m_spawns = new List<GameObject>();
-        m_aispawns = new List<GameObject>();
         var spawns = Utilities.GetOrderedList("Spawn");
         foreach(var spawn in spawns)
         {
@@ -141,7 +133,7 @@ public class PlayerManager : MonoBehaviour
         if(!sm_playerIDs.ContainsKey(ID))
         {
             // This can sometimes be null if the player hasn't been networked yet
-            Debug.Log("Could not find player with ID " + ID);
+            // This is expected, don't log messages here or it can freeze the editor
             return null;
         }
         return sm_playerIDs[ID];

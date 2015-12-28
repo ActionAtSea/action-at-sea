@@ -25,18 +25,22 @@ public class FillScoreBoard : MonoBehaviour
 
         var level = Utilities.GetLoadedLevel();
         int amount = Utilities.GetMaxPlayersForLevel(level);
+        float spacingOffset = 20.0f;
 
         for(int i = 1; i < amount; ++i)
         {
             var obj = Instantiate(scoreText);
             obj.SetActive(false);
             obj.transform.SetParent(transform);
+
+            obj.GetComponent<RectTransform>().localRotation = Quaternion.identity;
+
             obj.GetComponent<RectTransform>().localScale =
                 scoreText.GetComponent<RectTransform>().localScale;
 
             obj.GetComponent<RectTransform>().localPosition = new Vector3(
                 xPosition, 
-                yPosition - (i * 15.0f),
+                yPosition - (i * spacingOffset),
                 0.0f);
 
             AddText(obj);
@@ -60,7 +64,7 @@ public class FillScoreBoard : MonoBehaviour
     {
         Dictionary<int, int> islandsOwned = IslandDiscoveryTrigger.GetIslandsOwned();
         List<GameObject> players = PlayerManager.GetAllPlayersByScore();
-        int maxShown = Mathf.Min(players.Count, Utilities.GetMaxLevels());
+        int maxShown = Mathf.Min(players.Count, m_scoreBack.Count);
         int i = 0;
 
         for(; i < maxShown; ++i)

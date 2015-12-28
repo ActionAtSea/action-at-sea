@@ -104,25 +104,26 @@ public class GameSyncher : MonoBehaviour
             return;
         }
 
-        //TODO: Optimise this with RPCs (remote procedure calls)
         if (stream.isWriting)
         {
-            for(int i = 0; i < m_nodes.Count; ++i)
+            stream.SendNext(m_networkedTimePassed);
+            stream.SendNext((int)m_gameManager.GetState());
+
+            for (int i = 0; i < m_nodes.Count; ++i)
             {
                 stream.SendNext(m_nodes[i].OwnerID);
                 stream.SendNext(m_nodes[i].TimeStamp);
-                stream.SendNext(m_networkedTimePassed);
-                stream.SendNext((int)m_gameManager.GetState());
             }
         }
         else
         {
-            for(int i = 0; i < m_nodes.Count; ++i)
+            m_networkedTimePassed = (float)stream.ReceiveNext();
+            m_networkedState = (GameState)stream.ReceiveNext();
+
+            for (int i = 0; i < m_nodes.Count; ++i)
             {
                 int ownerID = (int)stream.ReceiveNext();
                 double timestamp = (double)stream.ReceiveNext();
-                m_networkedTimePassed = (float)stream.ReceiveNext();
-                m_networkedState = (GameState)stream.ReceiveNext();
                 m_nodes[i].TrySetOwner(ownerID, timestamp);
             }
         }
