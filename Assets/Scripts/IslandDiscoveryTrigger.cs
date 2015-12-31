@@ -8,29 +8,31 @@ using System.Collections.Generic;
 
 public class IslandDiscoveryTrigger : MonoBehaviour
 {
-    public float onCaptureScore = 20.0f;
-    public float scorePerTime = 1.0f;
-    public float timePassedForScore = 2.0f;
-    private float m_scoreToAdd = 0.0f;
-    public UnityEngine.UI.Image tickImage = null;
-    public UnityEngine.UI.Text ownerText = null;
-    public UnityEngine.UI.Text scoreText = null;
-    public float m_scaleSpeed = 1.0f;
-    public float m_fadeSpeed = 4.0f;
-    public float m_minScoreSize = 1.0f;
-    public float m_scaleToFade = 1.5f;
-    private UnityEngine.UI.Outline m_scoreOutline = null;
-    private RectTransform m_scoreTransform = null;
-    private Vector3 m_scoreScale;
-    private float m_timePassed = 0.0f;
-    private Canvas m_canvas = null;
-    private IslandDiscoveryNode[] m_nodes;
-    private GameObject m_owner = null;
-    private List<SpriteRenderer> m_islands = new List<SpriteRenderer>();
-    private GameObject m_patrolAI = null;
+    public float                        onCaptureScore = 20.0f;
+    public float                        scorePerTime = 1.0f;
+    public float                        timePassedForScore = 2.0f;
+    private float                       m_scoreToAdd = 0.0f;
+    public UnityEngine.UI.Image         tickImage = null;
+    public UnityEngine.UI.Text          ownerText = null;
+    public UnityEngine.UI.Text          scoreText = null;
+    public float                        m_scaleSpeed = 1.0f;
+    public float                        m_fadeSpeed = 4.0f;
+    public float                        m_minScoreSize = 1.0f;
+    public float                        m_scaleToFade = 1.5f;
+    private UnityEngine.UI.Outline      m_scoreOutline = null;
+    private RectTransform               m_scoreTransform = null;
+    private Vector3                     m_scoreScale;
+    private float                       m_timePassed = 0.0f;
+    private Canvas                      m_canvas = null;
+    private IslandDiscoveryNode[]       m_nodes;
+    private GameObject                  m_owner = null;
+    private List<SpriteRenderer>        m_islands = new List<SpriteRenderer>();
+    private GameObject                  m_patrolAI = null;
+    private PatrolAI                    m_ai = null;
     private static Dictionary<int, int> sm_islandsOwned = new Dictionary<int, int>();
-    private bool m_aiInitialised = false;
-    private bool m_ownerWithinRange = false;
+    private bool                        m_aiSpawned = false;
+    private bool                        m_aiInitialised = false;
+    private bool                        m_ownerWithinRange = false;
 
     /// <summary>
     /// Initialises the script
@@ -79,8 +81,11 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         if (Utilities.GetNetworking().IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver() && !m_aiInitialised)
         {
             //TODO: Disabled atm. Work in progress.
-            //m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
-            m_aiInitialised = true;
+            if (PhotonNetwork.isMasterClient)
+            {
+                m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
+                m_aiInitialised = true;
+            }
         }
 
         UpdateIslandOwner();
@@ -336,11 +341,23 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         get { return m_ownerWithinRange; }
     }
 
+    public bool AISpawned
+    {
+        get { return m_aiSpawned; }
+    }
+
     /// <summary>
     /// Gets a list of what player owns what islands
     /// </summary>
     static public Dictionary<int, int> GetIslandsOwned()
     {
         return sm_islandsOwned;
+    }
+
+    public void SpawnPatrolAI()
+    {
+        //TODO: Set PatolAI's owner.
+        m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
+        m_aiSpawned = true;
     }
 }

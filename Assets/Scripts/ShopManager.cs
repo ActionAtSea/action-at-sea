@@ -46,6 +46,7 @@ public class ShopManager : MonoBehaviour
     private SoundManager soundManager = null;
     private GameObject player = null;
     private NetworkedPlayer networkedPlayer = null;
+    private IslandDiscoveryTrigger nearbyIsland = null;
     private PlayerScore playerScore = null;
 
     private GameObject[] fleetShips = null;
@@ -84,6 +85,7 @@ public class ShopManager : MonoBehaviour
         {
             if (networkedPlayer.IslandWithinRange != null)
             {
+                nearbyIsland = networkedPlayer.IslandWithinRange.GetComponent<IslandDiscoveryTrigger>();
                 fleetButton.interactable = true;
                 patrolButton.interactable = true;
                 //TODO: Enable cannonButton once cannon upgrades have been implemented.
@@ -91,6 +93,7 @@ public class ShopManager : MonoBehaviour
             }
             else
             {
+                nearbyIsland = null;
                 fleetButton.interactable = false;
                 patrolButton.interactable = false;
                 cannonButton.interactable = false;
@@ -193,6 +196,36 @@ public class ShopManager : MonoBehaviour
 
     public void PatrolButtonPress()
     {
+        bool success = false;
+        string failureMessage = string.Empty;
+
+        if (nearbyIsland != null)
+        {
+            if (!nearbyIsland.AISpawned)
+            {
+                if (playerScore.RoundedScore - patrolShipCost >= 0)
+                {
+                    nearbyIsland.SpawnPatrolAI();
+                    playerScore.MinusScore(patrolShipCost);
+                    success = true;
+                }
+                else
+                {
+                    success = false;
+                    failureMessage = "Player has insufficient coin to purchase a Patrol ship.";
+                }
+            }
+            else
+            {
+                success = false;
+                failureMessage = "PatrolAI already spawned.";
+            }
+        }
+        else
+        {
+            failureMessage = "NearbyIsland was null.";
+        }
+
         if (soundManager != null)
         {
             soundManager.PlaySound(SoundManager.SoundID.BUTTON_CLICK);
@@ -200,7 +233,14 @@ public class ShopManager : MonoBehaviour
 
         if (viewDebuggingInfo)
         {
-            Debug.Log("PatrolButtonPress.");
+            if (success)
+            {
+                Debug.Log("Patrol Button Pressed.");
+            }
+            else
+            {
+                Debug.Log(failureMessage);
+            }
         }
     }
 
