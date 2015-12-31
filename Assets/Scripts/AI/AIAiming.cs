@@ -75,6 +75,16 @@ public class AIAiming : MonoBehaviour
                             AimAndFire(other.transform.position);
                             break;
                         }
+
+                        if (networkAI.aiType == NetworkedAI.AIType.PATROL)
+                        {
+                            if (other.GetComponentInParent<PatrolAI>().OwnerPlayerID != GetComponentInParent<FleetAI>().OwnerPlayerID)
+                            {
+                                Debug.Log("Other AI targeted");
+                                AimAndFire(other.transform.position);
+                                break;
+                            }
+                        }
                     }
                 }
                 break;

@@ -85,6 +85,14 @@ public class IslandDiscoveryTrigger : MonoBehaviour
             {
                 m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
                 m_aiInitialised = true;
+                m_ai = m_patrolAI.GetComponentInChildren<PatrolAI>();
+
+            }
+            else
+            {
+                //Find Patrol AI
+                var patrolShips = PhotonNetwork.FindGameObjectsWithComponent(typeof(PatrolAI));
+
             }
         }
 
@@ -354,9 +362,10 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         return sm_islandsOwned;
     }
 
-    public void SpawnPatrolAI()
+    public void SpawnPatrolAI(int playerID)
     {
         //TODO: Set PatolAI's owner.
+        m_ai.OwnerPlayerID = playerID;
         m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
         m_aiSpawned = true;
     }

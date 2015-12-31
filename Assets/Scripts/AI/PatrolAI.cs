@@ -21,6 +21,7 @@ public class PatrolAI : MonoBehaviour
     public int OwnerPlayerID
     {
         get { return ownerPlayerID; }
+        set { ownerPlayerID = value; }
     }
 
     // Use this for initialization

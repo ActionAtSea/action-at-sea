@@ -205,7 +205,7 @@ public class ShopManager : MonoBehaviour
             {
                 if (playerScore.RoundedScore - patrolShipCost >= 0)
                 {
-                    nearbyIsland.SpawnPatrolAI();
+                    nearbyIsland.SpawnPatrolAI(networkedPlayer.PlayerID);
                     playerScore.MinusScore(patrolShipCost);
                     success = true;
                 }
