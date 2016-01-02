@@ -140,6 +140,7 @@ public class GameOverScript : MonoBehaviour
     {
         // Must do this here as health component gets turned off when it dies
         var ai = PlayerManager.GetAllAI();
+        GameObject aiToDestroy = null;
         for (int i = 0; i < ai.Count; ++i)
         {
             if (Utilities.IsControllableAI(ai[i]))
@@ -219,6 +220,8 @@ public class GameOverScript : MonoBehaviour
                                  * that will be used to determine whether the 
                                  * player has purchased the patrol ship for an island.
                                  */
+                                network.SetVisible(false, true);
+                                aiToDestroy = ai[i];
                                 break;
 
                             default:
@@ -230,6 +233,13 @@ public class GameOverScript : MonoBehaviour
                     }
                 }
             }
+        }
+
+        //Destory flagged AI
+        if (aiToDestroy != null)
+        {
+            PlayerManager.RemoveAI(aiToDestroy);
+            PhotonNetwork.Destroy(aiToDestroy.transform.parent.gameObject);
         }
     }
 

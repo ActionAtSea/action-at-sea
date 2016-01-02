@@ -80,6 +80,29 @@ public class AIBulletImpact : BulletImpact
 
                     case NetworkedAI.AIType.PATROL:
                         //TODO: Implement patrol hit detection logic.
+                        if (bullet.Owner == GetComponentInParent<PatrolAI>().OwnerPlayerID)
+                        {
+                            if (Diagnostics.IsActive())
+                            {
+                                Debug.Log("It worked");
+                            }
+                        }
+                        else
+                        {
+                            if (Diagnostics.IsActive())
+                            {
+                                Debug.Log("Non-player attacked fleet ship");
+                            }
+
+                            m_parentHealth.InflictDamage(bullet.Damage);
+                            other.gameObject.GetComponent<Bullet>().DestroyOnImpact();
+
+                            var player = PlayerManager.GetControllablePlayer();
+                            if (player != null && bullet.Owner == Utilities.GetPlayerID(player))
+                            {
+                                player.GetComponent<PlayerScore>().AddScore(1.0f);
+                            }
+                        }
                         break;
                 }
             }

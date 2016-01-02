@@ -78,23 +78,23 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (Utilities.GetNetworking().IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver() && !m_aiInitialised)
-        {
-            //TODO: Disabled atm. Work in progress.
-            if (PhotonNetwork.isMasterClient)
-            {
-                m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
-                m_aiInitialised = true;
-                m_ai = m_patrolAI.GetComponentInChildren<PatrolAI>();
+        //if (Utilities.GetNetworking().IsConnectedToLevel() && Utilities.IsLevelLoaded() && !Utilities.IsGameOver() && !m_aiInitialised)
+        //{
+        //    //TODO: Disabled atm. Work in progress.
+        //    if (PhotonNetwork.isMasterClient)
+        //    {
+        //        m_patrolAI = PhotonNetwork.InstantiateSceneObject("PatrolAIPhotonView", transform.position, Quaternion.identity, 0, null);
+        //        m_aiInitialised = true;
+        //        m_ai = m_patrolAI.GetComponentInChildren<PatrolAI>();
 
-            }
-            else
-            {
-                //Find Patrol AI
-                var patrolShips = PhotonNetwork.FindGameObjectsWithComponent(typeof(PatrolAI));
+        //    }
+        //    else
+        //    {
+        //        //Find Patrol AI
+        //        var patrolShips = PhotonNetwork.FindGameObjectsWithComponent(typeof(PatrolAI));
 
-            }
-        }
+        //    }
+        //}
 
         UpdateIslandOwner();
         UpdateIslandScore();
@@ -365,8 +365,17 @@ public class IslandDiscoveryTrigger : MonoBehaviour
     public void SpawnPatrolAI(int playerID)
     {
         //TODO: Set PatolAI's owner.
-        m_ai.OwnerPlayerID = playerID;
-        m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
-        m_aiSpawned = true;
+        
+        if (m_patrolAI == null)
+        {
+            m_patrolAI = PhotonNetwork.Instantiate("PatrolAIPhotonView", Vector3.zero, Quaternion.identity, 0);
+        }
+        if (m_patrolAI != null)
+        {
+            m_ai = m_patrolAI.GetComponentInChildren<PatrolAI>();
+            m_ai.OwnerPlayerID = playerID;
+            m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
+            m_aiSpawned = true;
+        }
     }
 }
