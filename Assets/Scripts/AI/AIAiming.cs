@@ -61,36 +61,59 @@ public class AIAiming : MonoBehaviour
                 {
                     if (other.GetComponent<NetworkedPlayer>().PlayerID != GetComponentInParent<FleetAI>().OwnerPlayerID)
                     {
-                        Debug.Log("Other player targeted");
+                        //Debug.Log("Other player targeted");
                         AimAndFire(other.transform.position);
                         break;
                     }
                 }
                 if (other.CompareTag("AIShip"))
                 {
-                    if (networkAI != null)
+                    if (other.GetComponent<NetworkedAI>().aiType == NetworkedAI.AIType.ROGUE)
                     {
-                        if (networkAI.aiType == NetworkedAI.AIType.ROGUE)
+                        AimAndFire(other.transform.position);
+                        break;
+                    }
+
+                    if (other.GetComponent<NetworkedAI>().aiType == NetworkedAI.AIType.PATROL)
+                    {
+                        if (other.GetComponentInParent<PatrolAI>().OwnerPlayerID != GetComponentInParent<FleetAI>().OwnerPlayerID)
                         {
+                           // Debug.Log("Other AI targeted");
                             AimAndFire(other.transform.position);
                             break;
-                        }
-
-                        if (networkAI.aiType == NetworkedAI.AIType.PATROL)
-                        {
-                            if (other.GetComponentInParent<PatrolAI>().OwnerPlayerID != GetComponentInParent<FleetAI>().OwnerPlayerID)
-                            {
-                                Debug.Log("Other AI targeted");
-                                AimAndFire(other.transform.position);
-                                break;
-                            }
                         }
                     }
                 }
                 break;
 
             case NetworkedAI.AIType.PATROL:
+                 if (other.CompareTag("EnemyPlayer"))
+                {
+                    if (other.GetComponent<NetworkedPlayer>().PlayerID != GetComponentInParent<PatrolAI>().OwnerPlayerID)
+                    {
+                        //Debug.Log("Other player targeted");
+                        AimAndFire(other.transform.position);
+                        break;
+                    }
+                }
+                if (other.CompareTag("AIShip"))
+                {
+                    if (other.GetComponent<NetworkedAI>().aiType == NetworkedAI.AIType.ROGUE)
+                    {
+                        AimAndFire(other.transform.position);
+                        break;
+                    }
 
+                    if (other.GetComponent<NetworkedAI>().aiType == NetworkedAI.AIType.FLEET)
+                    {
+                        if (other.GetComponentInParent<FleetAI>().OwnerPlayerID != GetComponentInParent<PatrolAI>().OwnerPlayerID)
+                        {
+                            //Debug.Log("Other AI targeted");
+                            AimAndFire(other.transform.position);
+                            break;
+                        }
+                    }
+                }
                 break;
 
             default:

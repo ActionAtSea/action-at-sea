@@ -374,7 +374,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         {
             m_ai = m_patrolAI.GetComponentInChildren<PatrolAI>();
             m_ai.OwnerPlayerID = playerID;
-            m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
+            //m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
             m_aiSpawned = true;
         }
     }

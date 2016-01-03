@@ -98,7 +98,6 @@ public class NetworkedAI : NetworkedEntity
                 break;
 
             case AIType.PATROL:
-                //SetVisible(false, false);
                 break;
 
             default:
