@@ -86,6 +86,13 @@ public class IslandDiscoveryNode : MonoBehaviour
             {
                 SetOwner(other.gameObject, Utilities.GetNetworking().GetTime());
             }
+            else if(other.gameObject.CompareTag("AIShip"))
+            {
+                if (other.GetComponent<NetworkedAI>().aiType == NetworkedAI.AIType.PATROL)
+                {
+                    SetOwner(PlayerManager.GetPlayerWithID(other.GetComponent<PatrolAI>().OwnerPlayerID), Utilities.GetNetworking().GetTime());
+                }
+            }
         }
     }
 
