@@ -364,7 +364,6 @@ public class IslandDiscoveryTrigger : MonoBehaviour
 
     public void SpawnPatrolAI(int playerID)
     {
-        //TODO: Set PatolAI's owner.
         
         if (m_patrolAI == null)
         {
@@ -373,8 +372,7 @@ public class IslandDiscoveryTrigger : MonoBehaviour
         if (m_patrolAI != null)
         {
             m_ai = m_patrolAI.GetComponentInChildren<PatrolAI>();
-            m_ai.OwnerPlayerID = playerID;
-            //m_patrolAI.GetComponentInChildren<NetworkedAI>().SetVisible(true, false);
+            m_ai.Initialise(m_nodes, playerID);
             m_aiSpawned = true;
         }
     }
