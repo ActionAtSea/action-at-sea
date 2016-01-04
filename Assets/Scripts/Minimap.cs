@@ -11,10 +11,9 @@ class MapItem
 {
     public GameObject item;
     public SpriteRenderer renderer;
-    public Transform parentTransform;
+    public GameObject parent;
     public SpriteRenderer parentRenderer;
     public bool updatesColor = false;
-    public Func<bool> isActive = null;
 };
 
 public class Minimap : MonoBehaviour 
@@ -60,18 +59,18 @@ public class Minimap : MonoBehaviour
     /// <summary>
     /// Adds a new item to the minimap
     /// </summary>
-    MapItem AddStaticItem(Transform itemTransform, 
+    MapItem AddStaticItem(GameObject parent, 
                           SpriteRenderer itemRenderer, 
                           Color colour,
                           bool updatesColor = false)
     {
-        return AddItem(itemTransform, itemRenderer, colour, false, 0, 1.0f, updatesColor);
+        return AddItem(parent, itemRenderer, colour, false, 0, 1.0f, updatesColor);
     }
 
     /// <summary>
     /// Adds a new item to the minimap
     /// </summary>
-    MapItem AddItem(Transform itemTransform, 
+    MapItem AddItem(GameObject parent, 
                     SpriteRenderer itemRenderer, 
                     Color colour,
                     bool isMarker,
@@ -88,12 +87,17 @@ public class Minimap : MonoBehaviour
         }
         else
         {
+            if(parent.GetComponentInParent<NetworkedEntity>() == null)
+            {
+                Debug.LogError("Minimap markers must have a networked entity");
+            }
+
             m_markers.Add (new MapItem ());
             item = m_markers [m_markers.Count - 1];
         }
 
         item.updatesColor = updatesColor;
-        item.parentTransform = itemTransform;
+        item.parent = parent;
         item.parentRenderer = itemRenderer;
 
         item.item = new GameObject();
@@ -117,21 +121,21 @@ public class Minimap : MonoBehaviour
         item.renderer.color = new Color(colour.r, colour.g, colour.b, colour.a);
 
         item.item.transform.localPosition = new Vector3 (
-            item.parentTransform.position.x,
-            item.parentTransform.position.z,
+            item.parent.transform.position.x,
+            item.parent.transform.position.z,
             0.0f);
 
         if(!isMarker)
         {
             item.item.transform.localRotation = new Quaternion(
-                0.0f, item.parentTransform.localRotation.y,
-                0.0f, item.parentTransform.localRotation.w);
+                0.0f, item.parent.transform.localRotation.y,
+                0.0f, item.parent.transform.localRotation.w);
         }
         
         item.item.transform.localScale = new Vector3 (
-            item.parentTransform.localScale.x * scale,
-            item.parentTransform.localScale.y * scale,
-            item.parentTransform.localScale.z * scale);
+            item.parent.transform.localScale.x * scale,
+            item.parent.transform.localScale.y * scale,
+            item.parent.transform.localScale.z * scale);
 
         return item;
     }
@@ -143,7 +147,7 @@ public class Minimap : MonoBehaviour
     {
         if(!m_isInitialised)
         {
-            var boardItem = AddStaticItem(m_gameBoard.transform, 
+            var boardItem = AddStaticItem(m_gameBoard, 
                 m_gameBoard.GetComponent<SpriteRenderer>(), 
                 m_gameBoard.GetComponent<SpriteRenderer>().color);
 
@@ -161,7 +165,7 @@ public class Minimap : MonoBehaviour
 
             for(int i = 0; i < terrain.Length; ++i)
             {
-                AddStaticItem(terrain[i].transform, 
+                AddStaticItem(terrain[i], 
                         terrain[i].GetComponent<SpriteRenderer>(), 
                         terrain[i].GetComponent<SpriteRenderer>().color,
                         true);
@@ -174,7 +178,7 @@ public class Minimap : MonoBehaviour
             }
             else
             {
-                m_fog = AddStaticItem(fog.transform, 
+                m_fog = AddStaticItem(fog, 
                     fog.GetComponent<SpriteRenderer>(),
                     GetComponent<SpriteRenderer>().color);
             }
@@ -190,6 +194,7 @@ public class Minimap : MonoBehaviour
     /// </summary>
     void UpdateMap()
     {
+        // Hide the fog sprite when its removed
         if(m_fog.parentRenderer == null)
         {
             m_fog.item.SetActive(false);
@@ -202,10 +207,6 @@ public class Minimap : MonoBehaviour
                 Destroy (m_markers[i].item);
                 m_markers.Remove(m_markers[i]);
                 --i;
-            }
-            else
-            {
-                m_markers[i].item.SetActive(m_markers[i].isActive());
             }
         }
 
@@ -225,33 +226,34 @@ public class Minimap : MonoBehaviour
     {
         var maxMapScale = Mathf.Max(transform.localScale.x, transform.localScale.y);
 
-        var item = AddItem(player.transform, 
+        var item = AddItem(player, 
                            marker.GetComponent<SpriteRenderer>(), 
                            color, true, controlled ? 1 : 0,
                            m_shipMarkerSize / maxMapScale, false);
-
-        item.isActive = () => { return Utilities.IsPlayerAlive(player); };
     }
+
+    /// <summary>
+    /// Removes a player from the minimap
+    /// </summary>
 
     /// <summary>
     /// Updates a map item positions
     /// </summary>
     bool UpdateMapItem(MapItem item)
     {
-        if(item.parentTransform == null)
+        if(item.parent == null)
         {
-            // Item has been destroyed
-            if(item.item.activeSelf)
-            {
-                return false;
-            }
+            // Mark has been destroyed
+            return false;
         }
 
         item.item.transform.localRotation = Quaternion.identity;
         item.item.transform.localPosition = new Vector3 (
-            item.parentTransform.position.x,
-            item.parentTransform.position.z,
+            item.parent.transform.position.x,
+            item.parent.transform.position.z,
             0.0f);
+
+        item.item.SetActive(Utilities.IsEntityVisible(item.parent));
 
         return true;
     }

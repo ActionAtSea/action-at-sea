@@ -36,9 +36,6 @@ public class NetworkedPlayer : NetworkedEntity
     {
         m_isAI = false;
 
-        m_cannonController = GetComponentInChildren<PlayerCannonController>();
-        m_healthBar = GetComponent<PlayerHealth>();
-        m_score = GetComponent<PlayerScore>();
         m_networkDiagnostics = transform.parent.FindChild("NetworkDiagnostics").gameObject;
 
         base.InitialiseAtStart();
@@ -208,5 +205,31 @@ public class NetworkedPlayer : NetworkedEntity
     {
         get { return m_islandWithinRange; }
         set { m_islandWithinRange = value; }
+    }
+
+    /// <summary>
+    /// Gets the entity components
+    /// </summary>
+    protected override void InitialiseEntityComponents()
+    {
+        base.InitialiseEntityComponents();
+
+        m_cannonController = GetComponentInChildren<PlayerCannonController>();
+        if (m_cannonController == null)
+        {
+            Debug.LogError("Could not find cannon controller");
+        }
+
+        m_healthBar = GetComponent<PlayerHealth>();
+        if (m_healthBar == null)
+        {
+            Debug.LogError("Could not find health bar");
+        }
+
+        m_score = GetComponent<PlayerScore>();
+        if (m_score == null)
+        {
+            Debug.LogError("Could not find score");
+        }
     }
 }

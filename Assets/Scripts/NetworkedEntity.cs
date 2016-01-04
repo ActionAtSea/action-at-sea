@@ -20,6 +20,7 @@ public abstract class NetworkedEntity : MonoBehaviour
     protected bool m_visible = true;
     protected bool m_isAI = false;
     protected bool m_recievedValidData = false;
+    private bool m_initialisedComponents = false;
     protected Health m_healthBar = null;
     protected GameObject m_floatingHealthBar = null;
     protected CannonController m_cannonController = null;
@@ -49,27 +50,14 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// </summary>
     protected void InitialiseAtStart()
     {
+        if(!m_initialisedComponents)
+        {
+            InitialiseEntityComponents();
+        }
+
         // Photon Networking will destroy the object
         var parent = transform.parent;
         DontDestroyOnLoad(parent);
-
-        m_collider = GetComponent<CapsuleCollider>();
-        if(m_collider == null)
-        {
-            Debug.LogError("Could not find capsule collider");
-        }
-
-        m_rigidBody = GetComponent<Rigidbody>();
-        if (m_rigidBody == null)
-        {
-            Debug.LogError("Could not find rigid body");
-        }
-
-        m_trailRenderer = GetComponentInChildren<TrailRenderer>();
-        if (m_trailRenderer == null)
-        {
-            Debug.LogError("Could not find trail renderer");
-        }
     }
 
     /// <summary>
@@ -158,6 +146,12 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// </summary>
     public void SetVisible(bool isVisible, bool shouldExplode)
     {
+        // Set visible can be called before initialisation is completed
+        if (!m_initialisedComponents)
+        {
+            InitialiseEntityComponents();
+        }
+
         if (isVisible)
         {
             ShowShip(true);
@@ -376,6 +370,14 @@ public abstract class NetworkedEntity : MonoBehaviour
     }
 
     /// <summary>
+    /// Whether the entity is visible
+    /// </summary>
+    public bool IsVisible()
+    {
+        return m_visible;
+    }
+
+    /// <summary>
     /// Gets the player ID
     /// </summary>
     public int PlayerID
@@ -390,4 +392,31 @@ public abstract class NetworkedEntity : MonoBehaviour
     {
         get { return m_name; }
     }
+
+    /// <summary>
+    /// Gets the entity components
+    /// </summary>
+    protected virtual void InitialiseEntityComponents()
+    {
+        m_collider = GetComponent<CapsuleCollider>();
+        if (m_collider == null)
+        {
+            Debug.LogError("Could not find capsule collider");
+        }
+
+        m_rigidBody = GetComponent<Rigidbody>();
+        if (m_rigidBody == null)
+        {
+            Debug.LogError("Could not find rigid body");
+        }
+
+        m_trailRenderer = GetComponentInChildren<TrailRenderer>();
+        if (m_trailRenderer == null)
+        {
+            Debug.LogError("Could not find trail renderer");
+        }
+
+        m_initialisedComponents = true;
+    }
+
 }

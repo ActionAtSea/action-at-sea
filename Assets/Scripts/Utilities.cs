@@ -386,14 +386,6 @@ class Utilities
     }
 
     /// <summary>
-    /// Returns whether the player can control this
-    /// </summary>
-    static public bool IsPlayerAlive(GameObject obj)
-    {
-        return obj != null ? obj.GetComponentInParent<Health>().IsAlive : false;
-    }
-
-    /// <summary>
     /// Returns whether the AI is assigned to the player
     /// </summary>
     static public bool IsAssignedAI(GameObject obj)
@@ -417,6 +409,15 @@ class Utilities
             return entity.IsControllable() && entity.IsInitialised();
         }
         return false;
+    }
+
+    /// <summary>
+    /// Returns whether the entity is visible
+    /// Note use this rather than activeself as it never sets that
+    /// </summary>
+    static public bool IsEntityVisible(GameObject obj)
+    {
+        return obj != null ? obj.GetComponentInParent<NetworkedEntity>().IsVisible() : false;
     }
 
     /// <summary>

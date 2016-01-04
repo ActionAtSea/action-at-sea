@@ -55,9 +55,6 @@ public class NetworkedAI : NetworkedEntity
     {
         m_isAI = true;
 
-        m_cannonController = GetComponentInChildren<AICannonController>();
-        m_healthBar = GetComponent<AIHealth>();
-
         base.InitialiseAtStart();
     }
 
@@ -209,7 +206,8 @@ public class NetworkedAI : NetworkedEntity
     /// </summary>    
     public bool IsAssignedPlayerIsAlive()
     {
-        return Utilities.IsPlayerAlive(m_assignedPlayer);
+        return m_assignedPlayer != null ? 
+            m_assignedPlayer.GetComponentInParent<Health>().IsAlive : false;
     }
 
     public AIType aiType
@@ -226,6 +224,26 @@ public class NetworkedAI : NetworkedEntity
     {
         get { return m_alreadySpawned; }
         set { m_alreadySpawned = value; }
+    }
+
+    /// <summary>
+    /// Gets the entity components
+    /// </summary>
+    protected override void InitialiseEntityComponents()
+    {
+        base.InitialiseEntityComponents();
+
+        m_cannonController = GetComponentInChildren<AICannonController>();
+        if (m_cannonController == null)
+        {
+            Debug.LogError("Could not find cannon controller");
+        }
+
+        m_healthBar = GetComponent<AIHealth>();
+        if (m_healthBar == null)
+        {
+            Debug.LogError("Could not find health");
+        }
     }
 }
 

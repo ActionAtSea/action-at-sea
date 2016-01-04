@@ -324,7 +324,9 @@ public class FogOfWar : MonoBehaviour
             bool updatedMinimap = false;
 
             var player = PlayerManager.GetControllablePlayer();
-            if (player != null && Utilities.IsPlayerInitialised(player))
+            if (player != null && 
+                Utilities.IsPlayerInitialised(player) &&
+                Utilities.IsEntityVisible(player))
             {
                 updatedMinimap = true;
                 UpdateMinimap(player);
@@ -333,7 +335,9 @@ public class FogOfWar : MonoBehaviour
             var allAI = PlayerManager.GetAllAI();
             foreach (var ai in allAI)
             {
-                if (Utilities.IsAssignedAI(ai))
+                if (ai != null &&
+                    Utilities.IsAssignedAI(ai) && 
+                    Utilities.IsEntityVisible(ai))
                 {
                     updatedMinimap = true;
                     UpdateMinimap(ai);
