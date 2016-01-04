@@ -95,9 +95,12 @@ public class PatrolAI : MonoBehaviour
             {
                     if (navAgent != null)
                     {
-                        //Debug.Log("CALLING FUNCTION!");
-                        navAgent.SetDestination(currentWaypoint.transform.position);
-                        aiInitialised = true;
+                        if (currentWaypoint != null)
+                        {
+                            //Debug.Log("CALLING FUNCTION!");
+                            navAgent.SetDestination(currentWaypoint.transform.position);
+                            aiInitialised = true;
+                        }
                     }
             }
         }
