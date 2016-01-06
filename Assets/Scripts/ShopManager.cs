@@ -63,6 +63,9 @@ public class ShopManager : MonoBehaviour
         patrolButton.interactable = false;
         cannonButton.interactable = false;
         soundManager = SoundManager.Get();
+
+        fleetButton.GetComponentInChildren<Text>().text = fleetShipCost.ToString("n0");
+        patrolButton.GetComponentInChildren<Text>().text = patrolShipCost.ToString("n0");
     }
 
     // Update is called once per frame

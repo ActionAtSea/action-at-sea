@@ -309,6 +309,7 @@ public class PlayerManager : MonoBehaviour
             place = new Placement();
             place.position.x = m_aispawns[index].transform.position.x;
             place.position.z = m_aispawns[index].transform.position.z;
+            place.position.y = 0.0f;
             place.rotation.x = 0.0f;
             place.rotation.y = 0.0f;
             place.rotation.z = -m_aispawns[index].transform.localEulerAngles.y;
