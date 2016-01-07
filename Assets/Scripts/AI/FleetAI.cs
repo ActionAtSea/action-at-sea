@@ -84,6 +84,11 @@ public class FleetAI : MonoBehaviour
     public int OwnerPlayerID
     {
         get { return ownerPlayerID; }
+        set
+        {
+            ownerPlayerID = value;
+            GetComponent<NetworkedAI>().SetAssignedPlayer(ownerPlayerID);
+        }
     }
 
     public bool AssignFormationPosition()
@@ -137,7 +142,7 @@ public class FleetAI : MonoBehaviour
 
             if (player != null)
             {
-                ownerPlayerID = player.GetComponent<NetworkedPlayer>().PlayerID;
+                OwnerPlayerID = player.GetComponent<NetworkedPlayer>().PlayerID;
 
                 if (navAgent.isOnNavMesh)
                 {

@@ -35,7 +35,7 @@ public abstract class NetworkedEntity : MonoBehaviour
     #region infonetworkedp2p
     protected int m_ID = -1; // photon creates one to uniquely identify this. 
     protected string m_name = "";
-    protected int m_hue = 0;
+    private int m_hue = -1;
     protected float m_health = -1.0f;
     protected float m_mouseCursorAngle = 0.0f;
     protected bool m_firedCannonsLeft = false;
@@ -95,19 +95,26 @@ public abstract class NetworkedEntity : MonoBehaviour
     /// </summary>
     protected virtual void NotifyPlayerCreation()
     {
+        var minimap = GameObject.FindObjectOfType<Minimap>();
+        minimap.AddPlayer(gameObject, photonView.isMine, () => { return m_colour; });
+    }
+
+    /// <summary>
+    /// Sets the colour of the ship from its hue
+    /// </summary>
+    protected void SetHue(int hue)
+    {
+        m_hue = hue;
         m_colour = Colour.HueToRGB(m_hue);
 
         SetShipColour[] colouredComponets = GetComponentsInChildren<SetShipColour>();
-        if(colouredComponets != null)
+        if (colouredComponets != null)
         {
-            foreach(SetShipColour component in colouredComponets)
+            foreach (SetShipColour component in colouredComponets)
             {
                 component.SetColour(m_colour);
             }
         }
-
-        var minimap = GameObject.FindObjectOfType<Minimap>();
-        minimap.AddPlayer(gameObject, photonView.isMine, m_colour);
     }
 
     /// <summary>
@@ -117,7 +124,11 @@ public abstract class NetworkedEntity : MonoBehaviour
     {
         var playerManager = PlayerManager.Get();
         var place = playerManager.GetNewPosition(m_spawnIndex, m_isAI);
-        m_hue = place.hue;
+
+        if(!m_isAI)
+        {
+            SetHue(place.hue);
+        }
 
         m_rigidBody.velocity = Vector3.zero;
         gameObject.transform.position = place.position;
@@ -293,7 +304,7 @@ public abstract class NetworkedEntity : MonoBehaviour
         else
         {
             m_ID = (int)stream.ReceiveNext();
-            m_hue = (int)stream.ReceiveNext();
+            int hue = (int)stream.ReceiveNext();
             m_name = (string)stream.ReceiveNext();
 
             m_networkedPosition = (Vector3)stream.ReceiveNext();
@@ -320,14 +331,24 @@ public abstract class NetworkedEntity : MonoBehaviour
                 SetVisible(isVisible, !isVisible);
             }
 
-            // On first recieve valid data
-            if (m_initialised && !m_recievedValidData && m_name.Length > 0)
+            if (m_initialised && hue >= 0)
             {
-                m_recievedValidData = true;
-                m_rigidBody.velocity = Vector3.zero;
-                transform.rotation = m_networkedRotation;
-                transform.position = m_networkedPosition;
-                NotifyPlayerCreation();
+                // On first recieve valid data
+                if (!m_recievedValidData)
+                {
+                    m_recievedValidData = true;
+                    m_rigidBody.velocity = Vector3.zero;
+                    transform.rotation = m_networkedRotation;
+                    transform.position = m_networkedPosition;
+                    SetHue(hue);
+                    NotifyPlayerCreation();
+                }
+
+                // Only change the colour once fully initialised
+                if (hue != m_hue)
+                {
+                    SetHue(hue);
+                }
             }
         }
     }
@@ -350,6 +371,14 @@ public abstract class NetworkedEntity : MonoBehaviour
     public Color PlayerColor
     {
         get { return m_colour; }
+    }
+
+    /// <summary>
+    /// Gets the entity Hue
+    /// </summary>
+    public int PlayerHue
+    {
+        get { return m_hue; }
     }
 
     /// <summary>

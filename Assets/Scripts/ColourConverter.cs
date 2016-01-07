@@ -10,6 +10,9 @@ using System.Linq;
 
 class Colour
 {
+    static int WHITE_HUE = 1000;
+    static int BLACK_HUE = 2000;
+
     /// <summary>
     /// Gets whether the colour has saturation and value
     /// Note, discards value and saturation
@@ -29,10 +32,14 @@ class Colour
     /// </summary>
     static public int RGBToHue(Color color)
     {
-        // Return no hue if the colour is white
+        // Return a special hue value
         if(color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)
         {
-            return -1;
+            return WHITE_HUE;
+        }
+        if (color.r == 0.0f && color.g == 0.0f && color.b == 0.0f)
+        {
+            return BLACK_HUE;
         }
 
         float max = Mathf.Max(Mathf.Max(color.r, color.b), color.g);
@@ -79,7 +86,15 @@ class Colour
     /// </summary>
     static public Color HueToRGB(int hue)
     {
-        if(hue > 360 || hue < 0)
+        if(hue == WHITE_HUE)
+        {
+            return new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        if(hue == BLACK_HUE)
+        {
+            return new Color(0.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if (hue > 360 || hue < 0)
         {
             return new Color(1.0f, 1.0f, 1.0f, 1.0f);
         }

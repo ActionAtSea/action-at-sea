@@ -29,13 +29,18 @@ public class PatrolAI : MonoBehaviour
     public int OwnerPlayerID
     {
         get { return ownerPlayerID; }
+        set
+        {
+            ownerPlayerID = value;
+            GetComponent<NetworkedAI>().SetAssignedPlayer(ownerPlayerID);
+        }
     }
 
     public void Initialise(IslandDiscoveryNode[] buoys, int owningPlayerID)
     {
         if (!aiInitialised)
         {
-            ownerPlayerID = owningPlayerID;
+            OwnerPlayerID = owningPlayerID;
             waypoints = buoys;
             if (waypoints != null)
             {

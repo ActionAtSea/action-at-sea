@@ -13,7 +13,7 @@ class MapItem
     public SpriteRenderer renderer;
     public GameObject parent;
     public SpriteRenderer parentRenderer;
-    public bool updatesColor = false;
+    public Func<Color> getColor;
 };
 
 public class Minimap : MonoBehaviour 
@@ -61,22 +61,20 @@ public class Minimap : MonoBehaviour
     /// </summary>
     MapItem AddStaticItem(GameObject parent, 
                           SpriteRenderer itemRenderer, 
-                          Color colour,
-                          bool updatesColor = false)
+                          Func<Color> getColor)
     {
-        return AddItem(parent, itemRenderer, colour, false, 0, 1.0f, updatesColor);
+        return AddItem(parent, itemRenderer, getColor, false, 0, 1.0f);
     }
 
     /// <summary>
     /// Adds a new item to the minimap
     /// </summary>
     MapItem AddItem(GameObject parent, 
-                    SpriteRenderer itemRenderer, 
-                    Color colour,
+                    SpriteRenderer itemRenderer,
+                    Func<Color> getColor,
                     bool isMarker,
                     int orderOffset,
-                    float scale, 
-                    bool updatesColor)
+                    float scale)
     {
         MapItem item = null;
 
@@ -96,7 +94,7 @@ public class Minimap : MonoBehaviour
             item = m_markers [m_markers.Count - 1];
         }
 
-        item.updatesColor = updatesColor;
+        item.getColor = getColor;
         item.parent = parent;
         item.parentRenderer = itemRenderer;
 
@@ -118,7 +116,7 @@ public class Minimap : MonoBehaviour
         item.renderer.sprite = Sprite.Create(itemRenderer.sprite.texture, rect, 
                                              pivot, itemRenderer.sprite.pixelsPerUnit);
 
-        item.renderer.color = new Color(colour.r, colour.g, colour.b, colour.a);
+        item.renderer.color = getColor();
 
         item.item.transform.localPosition = new Vector3 (
             item.parent.transform.position.x,
@@ -147,9 +145,11 @@ public class Minimap : MonoBehaviour
     {
         if(!m_isInitialised)
         {
-            var boardItem = AddStaticItem(m_gameBoard, 
-                m_gameBoard.GetComponent<SpriteRenderer>(), 
-                m_gameBoard.GetComponent<SpriteRenderer>().color);
+            // Add the board to the minimap
+            var boardRenderer = m_gameBoard.GetComponent<SpriteRenderer>();
+            var boardItem = AddStaticItem(
+                m_gameBoard, boardRenderer, 
+                ()=>{ return boardRenderer.color; });
 
             boardItem.item.transform.localRotation = Quaternion.identity;
             boardItem.item.transform.localScale = new Vector3(
@@ -157,6 +157,7 @@ public class Minimap : MonoBehaviour
                 boardItem.item.transform.localScale.y,
                 boardItem.item.transform.localScale.y);
 
+            // Add the terrain to the minimap
             GameObject[] terrain = GameObject.FindGameObjectsWithTag("Island");
             if(terrain == null || terrain.Length == 0)
             {
@@ -165,12 +166,12 @@ public class Minimap : MonoBehaviour
 
             for(int i = 0; i < terrain.Length; ++i)
             {
-                AddStaticItem(terrain[i], 
-                        terrain[i].GetComponent<SpriteRenderer>(), 
-                        terrain[i].GetComponent<SpriteRenderer>().color,
-                        true);
+                var terrainRenderer = terrain[i].GetComponent<SpriteRenderer>();
+                AddStaticItem(terrain[i], terrainRenderer,
+                    ()=> { return terrainRenderer.color; });
             }
 
+            // Add the fog to the minimap
             var fog = GameObject.FindGameObjectWithTag("MinimapFog");
             if(fog == null)
             {
@@ -178,9 +179,9 @@ public class Minimap : MonoBehaviour
             }
             else
             {
-                m_fog = AddStaticItem(fog, 
-                    fog.GetComponent<SpriteRenderer>(),
-                    GetComponent<SpriteRenderer>().color);
+                var fogRenderer = fog.GetComponent<SpriteRenderer>();
+                m_fog = AddStaticItem(fog, fogRenderer,
+                    ()=> { return fogRenderer.color; });
             }
             
             m_isInitialised = true;
@@ -202,7 +203,7 @@ public class Minimap : MonoBehaviour
 
         for(int i = 0; i < m_markers.Count; ++i)
         {
-            if(!UpdateMapItem(m_markers[i]))
+            if(!UpdateMapMarker(m_markers[i]))
             {
                 Destroy (m_markers[i].item);
                 m_markers.Remove(m_markers[i]);
@@ -212,24 +213,21 @@ public class Minimap : MonoBehaviour
 
         foreach (var item in m_world)
         {
-            if(item.updatesColor)
-            {
-                item.renderer.color = item.parentRenderer.color;
-            }
+            item.renderer.color = item.getColor();
         }
     }
 
     /// <summary>
     /// Adds the player to the minimap
     /// </summary>
-    public void AddPlayer(GameObject player, bool controlled, Color color)
+    public void AddPlayer(GameObject player, bool controlled, Func<Color> getColor)
     {
         var maxMapScale = Mathf.Max(transform.localScale.x, transform.localScale.y);
 
         var item = AddItem(player, 
-                           marker.GetComponent<SpriteRenderer>(), 
-                           color, true, controlled ? 1 : 0,
-                           m_shipMarkerSize / maxMapScale, false);
+                           marker.GetComponent<SpriteRenderer>(),
+                           getColor, true, controlled ? 1 : 0,
+                           m_shipMarkerSize / maxMapScale);
     }
 
     /// <summary>
@@ -239,7 +237,7 @@ public class Minimap : MonoBehaviour
     /// <summary>
     /// Updates a map item positions
     /// </summary>
-    bool UpdateMapItem(MapItem item)
+    bool UpdateMapMarker(MapItem item)
     {
         if(item.parent == null)
         {
@@ -254,6 +252,7 @@ public class Minimap : MonoBehaviour
             0.0f);
 
         item.item.SetActive(Utilities.IsEntityVisible(item.parent));
+        item.renderer.color = item.getColor();
 
         return true;
     }

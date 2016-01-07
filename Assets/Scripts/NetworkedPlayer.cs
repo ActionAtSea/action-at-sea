@@ -156,7 +156,7 @@ public class NetworkedPlayer : NetworkedEntity
             Diagnostics.Add("Player" + m_ID, m_name + 
                 "|" + m_playerScore + 
                 "|" + m_health + 
-                "|" + m_hue + 
+                "|" + PlayerHue + 
                 "|" + m_initialised + 
                 "|" + playerConnection);
         }

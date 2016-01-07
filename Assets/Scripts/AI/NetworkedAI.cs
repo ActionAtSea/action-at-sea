@@ -66,7 +66,6 @@ public class NetworkedAI : NetworkedEntity
     {
         m_spawnIndex = 0;
         gameObject.tag = "AIShip";
-        
 
         // Name is used to determine when successful
         // data is recieved and cannot be null
@@ -85,7 +84,6 @@ public class NetworkedAI : NetworkedEntity
                 break;
         }
 
-
         base.InitialiseAtWorld();
 
         switch (m_aiType)
@@ -93,12 +91,16 @@ public class NetworkedAI : NetworkedEntity
             case AIType.FLEET:
                 SetVisible(false, false);
                 break;
-
             case AIType.PATROL:
                 break;
-
             default:
                 break;
+        }
+
+        // Rogue AIs are coloured black
+        if (m_aiType == AIType.ROGUE)
+        {
+            SetHue(Colour.RGBToHue(new Color(0, 0, 0)));
         }
     }
 
@@ -122,7 +124,6 @@ public class NetworkedAI : NetworkedEntity
     protected override void ShowShip(bool show)
     {
         base.ShowShip(show);
-
 
         NavMeshAgent temp = GetComponent<NavMeshAgent>();
         temp.enabled = show;
@@ -180,25 +181,23 @@ public class NetworkedAI : NetworkedEntity
     }
 
     /// <summary>
-    /// Gets the assigned player of the ai
+    /// Gets the assigned player of the ai, will be null for rogue AI
     /// </summary>    
     public GameObject GetAssignedPlayer()
     {
         return m_assignedPlayer;
     }
 
-    public bool SetAssignedPlayer(GameObject player)
+    /// <summary>
+    /// Sets the player this AI is assigned to
+    /// </summary>  
+    public void SetAssignedPlayer(int ID)
     {
+        m_assignedPlayer = ID == -1 ? null : PlayerManager.GetPlayerWithID(ID);
         if (m_assignedPlayer != null)
         {
-            return false;
+            SetHue(m_assignedPlayer.GetComponentInParent<NetworkedEntity>().PlayerHue);
         }
-        m_assignedPlayer = player;
-        if (m_assignedPlayer == null)
-        {
-            return false;
-        }
-        return true;
     }
 
     /// <summary>
@@ -210,6 +209,9 @@ public class NetworkedAI : NetworkedEntity
             m_assignedPlayer.GetComponentInParent<Health>().IsAlive : false;
     }
 
+    /// <summary>
+    /// Gets the type of AI this is
+    /// </summary>    
     public AIType aiType
     {
         get { return m_aiType; }
