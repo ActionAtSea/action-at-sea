@@ -18,7 +18,7 @@ public class GUIGameState : MonoBehaviour
     void Start()
     {
         m_backText = GetComponent<UnityEngine.UI.Text>();
-        m_frontText = transform.FindChild("GameStateFront").GetComponent<UnityEngine.UI.Text>();
+        m_frontText = transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         m_backText.text = "";
         m_frontText.text = "";
     }

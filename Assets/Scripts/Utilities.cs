@@ -172,28 +172,6 @@ class Utilities
     }
 
     /// <summary>
-    /// Returns the number of AI for the level
-    /// </summary>
-    static public int GetAICount()
-    {
-        switch (Utilities.GetLoadedLevel())
-        {
-            case LevelID.LEVEL1:
-                return 0;
-            case LevelID.LEVEL2:
-                return 4;
-            case LevelID.LEVEL3:
-                return 0;
-            case LevelID.LEVEL4:
-                return 0;
-            case LevelID.LEVEL5:
-                return 0;
-            default:
-                throw new ArgumentException("Unknown level ID");
-        }
-    }
-
-    /// <summary>
     /// Returns the name for the level
     /// </summary>
     static public string GetLevelName(LevelID level)

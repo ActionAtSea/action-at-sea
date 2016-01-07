@@ -74,7 +74,7 @@ public class SynchedPrefabs
                     "FleetAIPhotonView", Vector3.zero, Quaternion.identity, 0));
             }
 
-            int rogueAICount = PhotonNetwork.isMasterClient ? Utilities.GetAICount() : 0;
+            int rogueAICount = PhotonNetwork.isMasterClient ? 4 : 0;
             for (int i = 0; i < rogueAICount; ++i)
             {
                 PhotonNetwork.InstantiateSceneObject(
