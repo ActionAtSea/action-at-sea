@@ -91,7 +91,7 @@ Shader "Shader Forge/S_Ship" {
                 indirectDiffuse += _AOMap_var.rgb; // Diffuse Ambient Light
                 float4 _Diffuse_var = tex2D(_Diffuse,TRANSFORM_TEX(i.uv0, _Diffuse));
                 float4 _IDMap_var = tex2D(_IDMap,TRANSFORM_TEX(i.uv0, _IDMap));
-                float3 diffuseColor = lerp(lerp(_Diffuse_var.rgb,_TrimmingColour.rgb,_IDMap_var.r),_FlagColour.rgb,_IDMap_var.g);
+                float3 diffuseColor = lerp(lerp(_Diffuse_var.rgb,_TrimmingColour.rgb * 0.5,_IDMap_var.r),_FlagColour.rgb,_IDMap_var.g);
                 float3 diffuse = (directDiffuse + indirectDiffuse) * diffuseColor;
 /// Final Color:
                 float3 finalColor = diffuse;
