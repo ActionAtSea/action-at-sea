@@ -100,7 +100,7 @@ public class NetworkedAI : NetworkedEntity
         // Rogue AIs are coloured black
         if (m_aiType == AIType.ROGUE)
         {
-            SetHue(Colour.RGBToHue(new Color(0, 0, 0)));
+            SetHue(Colour.RGBToHue(new Color(0.0f, 0.0f, 0.0f)));
         }
     }
 
