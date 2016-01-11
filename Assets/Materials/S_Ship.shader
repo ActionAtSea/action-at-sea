@@ -5,6 +5,7 @@
 
 Shader "Shader Forge/S_Ship" {
     Properties {
+        _TrimmingBrightness ("Trimming Brightness", float) = 0.5
         _TrimmingColour ("Trimming Colour", Color) = (1,1,1,1)
         _AOMap ("AO Map", 2D) = "white" {}
         _NormalMap ("Normal Map", 2D) = "bump" {}
@@ -35,6 +36,7 @@ Shader "Shader Forge/S_Ship" {
             #pragma target 3.0
             uniform float4 _LightColor0;
             uniform float4 _TrimmingColour;
+            uniform float _TrimmingBrightness;
             uniform sampler2D _NormalMap; uniform float4 _NormalMap_ST;
             uniform sampler2D _AOMap; uniform float4 _AOMap_ST;
             uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
@@ -91,7 +93,7 @@ Shader "Shader Forge/S_Ship" {
                 indirectDiffuse += _AOMap_var.rgb; // Diffuse Ambient Light
                 float4 _Diffuse_var = tex2D(_Diffuse,TRANSFORM_TEX(i.uv0, _Diffuse));
                 float4 _IDMap_var = tex2D(_IDMap,TRANSFORM_TEX(i.uv0, _IDMap));
-                float3 diffuseColor = lerp(lerp(_Diffuse_var.rgb,_TrimmingColour.rgb * 0.5,_IDMap_var.r),_FlagColour.rgb,_IDMap_var.g);
+                float3 diffuseColor = lerp(lerp(_Diffuse_var.rgb,_TrimmingColour.rgb * _TrimmingBrightness,_IDMap_var.r),_FlagColour.rgb,_IDMap_var.g);
                 float3 diffuse = (directDiffuse + indirectDiffuse) * diffuseColor;
 /// Final Color:
                 float3 finalColor = diffuse;
