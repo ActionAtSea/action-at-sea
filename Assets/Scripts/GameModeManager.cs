@@ -19,7 +19,7 @@ public class GameModeManager : MonoBehaviour
     private bool? m_stateInitiatedByNetwork = null;
     private bool m_startedStage1Timer = false;
     private float m_stage1Countdown = 3.0f * 60.0f; // 3 minutes
-    private float m_stage2Countdown = 10.0f * 60.0f; // 10 minutes
+    private float m_stage2Countdown = 5.0f * 60.0f; // 5 minutes
     private Action m_stage1CountdownFinish = null;
     private Action m_stage2CountdownFinish = null;
     static GameModeManager m_gameManager = null;

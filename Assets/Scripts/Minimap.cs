@@ -213,7 +213,10 @@ public class Minimap : MonoBehaviour
 
         foreach (var item in m_world)
         {
-            item.renderer.color = item.getColor();
+            if(item.item.activeSelf)
+            {
+                item.renderer.color = item.getColor();
+            }
         }
     }
 
