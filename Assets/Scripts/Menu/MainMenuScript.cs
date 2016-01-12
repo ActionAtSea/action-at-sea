@@ -41,6 +41,13 @@ public class MainMenuScript : MonoBehaviour
             if (!howToPlayMenu.enabled)
             {
                 howToPlayMenu.enabled = true;
+                if (optionsMenu != null)
+                {
+                    if (optionsMenu.enabled)
+                    {
+                        optionsMenu.enabled = false;
+                    }
+                }
             }
             else
             {
@@ -59,6 +66,14 @@ public class MainMenuScript : MonoBehaviour
             if(!optionsMenu.enabled)
             {
                 optionsMenu.enabled = true;
+                if (howToPlayMenu != null)
+                {
+                    if (howToPlayMenu.enabled)
+                    {
+                        howToPlayMenu.enabled = false;
+                        howToPlay.ResetImages();
+                    }
+                }
             }
             else
             {
