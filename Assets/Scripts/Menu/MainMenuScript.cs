@@ -9,12 +9,20 @@ using System.Collections;
 public class MainMenuScript : MonoBehaviour 
 {
     public Canvas optionsMenu = null;
+    public Canvas howToPlayMenu = null;
+    private HowToPlayMenu howToPlay = null;
 
     void Start()
     {
         if(optionsMenu != null)
         {
             optionsMenu.enabled = false;
+        }
+
+        if (howToPlayMenu != null)
+        {
+            howToPlayMenu.enabled = false;
+            howToPlay = howToPlayMenu.GetComponentInChildren<HowToPlayMenu>();
         }
     }
 
@@ -27,7 +35,19 @@ public class MainMenuScript : MonoBehaviour
     public void HowToPlayButton ()
     {
         SoundManager.Get().PlaySound(SoundManager.SoundID.BUTTON_CLICK);
-        Application.LoadLevel((int)SceneID.MOVE_AND_FIRE);
+        //Application.LoadLevel((int)SceneID.MOVE_AND_FIRE);
+        if (howToPlayMenu != null)
+        {
+            if (!howToPlayMenu.enabled)
+            {
+                howToPlayMenu.enabled = true;
+            }
+            else
+            {
+                howToPlay.ResetImages();
+                howToPlayMenu.enabled = false;
+            }
+        }
     }
 
     public void OptionsButton()
