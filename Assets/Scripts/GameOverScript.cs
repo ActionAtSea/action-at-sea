@@ -154,7 +154,10 @@ public class GameOverScript : MonoBehaviour
                 if (health.IsAlive && assignedPlayerDead)
                 {
                     health.AssignedPlayerDead = true;
-                    network.SetVisible(false, true);
+
+                    //This caused player owned Ai to be destroyed when the player died.
+                    //This is now disabled as this was not desired functionality.
+                    //network.SetVisible(false, true);
                 }
 
                 if (!health.IsAlive)
@@ -165,15 +168,20 @@ public class GameOverScript : MonoBehaviour
                         if (!assignedPlayerDead)
                         {
                             health.AssignedPlayerDead = false;
-                            network.SetVisible(true, false);
+
+                            if (network.aiType == NetworkedAI.AIType.FLEET)
+                            {
+                                if (network.GetComponent<FleetAI>().Purchased)
+                                {
+                                    network.SetVisible(true, false);
+                                }
+                            }
+
                         }
                     }
                     else
                     {
                         //Handles ai respawning and showing on game start.
-                        //TODO: Add individual respawn functionality for different AI types.
-
-                        
                         switch (network.aiType)
                         {
                             case NetworkedAI.AIType.ROGUE:
@@ -347,6 +355,7 @@ public class GameOverScript : MonoBehaviour
             soundManager.PlayMusic(SoundManager.MusicID.GAME_AMBIENCE);
             FadeGame.Get().FadeIn();
             m_toPlayRequest = true;
+            Debug.Log("Game over called");
         }
     }
     

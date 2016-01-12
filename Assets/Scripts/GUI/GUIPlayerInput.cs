@@ -24,7 +24,10 @@ public class GUIPlayerInput : MonoBehaviour
         else if(name != Utilities.GetPlayerDefaultName())
         {
             GetComponent<UnityEngine.UI.Text>().text = name;
-            placeholder.text = name;
+            if (placeholder != null)
+            {
+                placeholder.text = name;
+            }
         }
     }
 

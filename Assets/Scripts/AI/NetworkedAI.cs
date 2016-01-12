@@ -125,6 +125,7 @@ public class NetworkedAI : NetworkedEntity
     {
         base.ShowShip(show);
 
+        Debug.Log("Show AI called");
         NavMeshAgent temp = GetComponent<NavMeshAgent>();
         temp.enabled = show;
     }
