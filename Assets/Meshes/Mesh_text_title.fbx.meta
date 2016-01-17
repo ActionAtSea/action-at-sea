@@ -1,0 +1,174 @@
+fileFormatVersion: 2
+guid: 9476fe3594139514db51d20abe6b8bd6
+timeCreated: 1453016123
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Char_A_1
+    100002: Char_a_1
+    100004: Char_A_2
+    100006: Char_c_1
+    100008: Char_e_1
+    100010: Char_i_1
+    100012: Char_n_1
+    100014: Char_o_1
+    100016: Char_S_1
+    100018: Char_t_1
+    100020: Char_t_2
+    100022: curve1
+    100024: curve1 1
+    100026: curve10
+    100028: curve11
+    100030: curve12
+    100032: curve13
+    100034: curve14
+    100036: curve15
+    100038: curve2
+    100040: curve3
+    100042: curve4
+    100044: curve5
+    100046: curve6
+    100048: curve7
+    100050: curve8
+    100052: curve9
+    100054: //RootNode
+    100056: Text_ActionxAtxSea_1
+    100058: transform1
+    100060: transform10
+    100062: transform11
+    100064: transform2
+    100066: transform3
+    100068: transform4
+    100070: transform5
+    100072: transform6
+    100074: transform7
+    100076: transform8
+    100078: transform9
+    100080: Trim_Char_A_1_1
+    100082: Trim_Char_a_1_1
+    100084: Trim_Char_A_2_1
+    100086: Trim_Char_c_1_1
+    100088: Trim_Char_e_1_1
+    100090: Trim_Char_i_1_1
+    100092: Trim_Char_n_1_1
+    100094: Trim_Char_o_1_1
+    100096: Trim_Char_S_1_1
+    100098: Trim_Char_t_1_1
+    100100: Trim_Char_t_2_1
+    100102: Trim_Text_ActionxAtxSea_1_1
+    400000: Char_A_1
+    400002: Char_a_1
+    400004: Char_A_2
+    400006: Char_c_1
+    400008: Char_e_1
+    400010: Char_i_1
+    400012: Char_n_1
+    400014: Char_o_1
+    400016: Char_S_1
+    400018: Char_t_1
+    400020: Char_t_2
+    400022: curve1
+    400024: curve1 1
+    400026: curve10
+    400028: curve11
+    400030: curve12
+    400032: curve13
+    400034: curve14
+    400036: curve15
+    400038: curve2
+    400040: curve3
+    400042: curve4
+    400044: curve5
+    400046: curve6
+    400048: curve7
+    400050: curve8
+    400052: curve9
+    400054: //RootNode
+    400056: Text_ActionxAtxSea_1
+    400058: transform1
+    400060: transform10
+    400062: transform11
+    400064: transform2
+    400066: transform3
+    400068: transform4
+    400070: transform5
+    400072: transform6
+    400074: transform7
+    400076: transform8
+    400078: transform9
+    400080: Trim_Char_A_1_1
+    400082: Trim_Char_a_1_1
+    400084: Trim_Char_A_2_1
+    400086: Trim_Char_c_1_1
+    400088: Trim_Char_e_1_1
+    400090: Trim_Char_i_1_1
+    400092: Trim_Char_n_1_1
+    400094: Trim_Char_o_1_1
+    400096: Trim_Char_S_1_1
+    400098: Trim_Char_t_1_1
+    400100: Trim_Char_t_2_1
+    400102: Trim_Text_ActionxAtxSea_1_1
+    2300000: curve1
+    3300000: curve1
+    4300000: curve1
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
